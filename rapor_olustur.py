@@ -184,6 +184,7 @@ def html_yaz(D, tarih, olcekli, cikti):
         "{{ARALIK}}": f"{a0} {p0[:4]} – {a1} {p1[:4]}",
         "{{ARALIK_DEN_YA}}": f"{a0} {yil_den(p0[:4])} {a1} {yil_ya(p1[:4])}",
         "{{N}}": str(len(P)),
+        "{{NBANKA}}": str(len(D["solo"]["A"]["codes"]) if "solo" in D else len(D["kons"]["A"]["codes"])),
         "{{ILK_YIL_DEN}}": yil_den(p0[:4]),
         "{{YILLAR}}": f"{p0[:4]}–{p1[:4]}",
         "{{ORAN_NOTU}}": oran_notu,
