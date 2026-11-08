@@ -29,7 +29,17 @@ LIKIDITE = {
     "solo": {"109460": "hqla", "109463": "out", "109466": "lcr", "109467": "lcrYp", "17130": "asf", "17131": "rsf", "17144": "nsfr"},
     "kons": {"359460": "hqla", "359463": "out", "359466": "lcr", "359467": "lcrYp", "487130": "asf", "487131": "rsf", "487144": "nsfr"},
 }
-ORANLAR = ("lcr", "lcrYp", "nsfr")
+# Dipnot kökleri (solo kodları): mevduat vade yapısı ve özkaynak kalemleri
+DIPNOT_ADI = {"114171": "8. Mevduat Vade Yapısı", "109865": "9. Yasal Özkaynak"}
+# Sermaye yeterliliği oranları (yüzde); kalem listesine girmez, ayrı dizi olarak tutulur
+SERMAYE_ORAN = {"159980": "cet1", "159981": "t1", "159982": "car", "159984": "buf"}
+MEVDUAT_TUR = [("114173", "Tasarruf"), ("114181", "Döviz tevdiat"), ("114206", "Ticari kuruluş"), ("114198", "Resmi kuruluş"),
+               ("114214", "Diğer kuruluş"), ("114222", "Kıymetli maden"), ("114230", "Bankalar")]
+VADE = ["Vadesiz", "7 Gün İhbarlı", "1Aya Kadar", "1-3 Ay", "3-6 Ay", "6 Ay-1 Yıl", "1 Yıl ve Üstü", "Birikimli Mevduat"]
+VADE_ETIKET = {"1Aya Kadar": "1 aya kadar", "7 Gün İhbarlı": "7 gün ihbarlı", "1 Yıl ve Üstü": "1 yıl ve üstü", "Birikimli Mevduat": "Birikimli"}
+ORANLAR = ("lcr", "lcrYp", "nsfr", "cet1", "t1", "car", "buf")
+YENI_AD = {"114172": "Toplam Mevduat", "159909": "İndirimler Öncesi Çekirdek Sermaye", "159953": "Ana Sermaye Toplamı (Çekirdek + İlave Ana Sermaye)",
+           "159977": "Yasal Özkaynak (Ana Sermaye + Katkı Sermaye)", "159978": "Toplam Risk Ağırlıklı Tutarlar"}
 ILK7 = [3, 6, 32, 5, 30, 8, 37]  # Ziraat, VakıfBank, İş, Halkbank, Garanti BBVA, Akbank, Yapı Kredi
 KISA = {3: "Ziraat", 6: "VakıfBank", 32: "İş Bankası", 5: "Halkbank", 30: "Garanti BBVA", 8: "Akbank", 37: "Yapı Kredi"}
 AY = {"03": ("Mar", "Mart", 3), "06": ("Haz", "Haziran", 6), "09": ("Eyl", "Eylül", 9), "12": ("Ara", "Aralık", 12)}
@@ -116,11 +126,23 @@ def veri_kur(tur, sec, banks, solo_kodlar):
         q = str(int(c) - off)
         return q if q in solo_kodlar else c
 
-    kok_eslestir = {str(int(k) + 250000): k for k in TABLO_ADI} if tur == "kons" else {}
+    oranlar = {(str(int(k) + off)): v for k, v in SERMAYE_ORAN.items()}
+    kok_eslestir = {str(int(k) + 250000): k for k in list(TABLO_ADI) + list(DIPNOT_ADI)} if tur == "kons" else {}
     kok_eslestir.update({"266039": "16039"})
+    ust_of = {c: (str(u) if u is not None else None) for c, ad, u, sk in its}
     kalemler = []
+    dipnot = []
     for c, ad, ust, sk in its:
-        if c in liq or ust is None:
+        if c in liq or c in oranlar or ust is None:
+            continue
+        # dipnot kalemleri: üst zincirini kalem listesinin dışına çıkana kadar izle
+        d, a = 0, str(ust)
+        while a in ust_of and ust_of[a] is not None:
+            d += 1; a = ust_of[a]
+        a = kok_eslestir.get(a, a)
+        if a in DIPNOT_ADI:
+            skey = tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,)
+            dipnot.append([skey, eslestir(c), c, re.sub(r"^\d+\.\s*", "", ad.strip()), DIPNOT_ADI[a], d, str(ust)])
             continue
         kok = str(ust)
         kok = kok_eslestir.get(kok, kok)
@@ -135,7 +157,34 @@ def veri_kur(tur, sec, banks, solo_kodlar):
         lv = min(lv, onceki.get(tab, -1) + 1)
         onceki[tab] = lv
         items.append([int(mc), ad, lv, tab])
+    # dipnot kalemleri ağaç sırasıyla (derinlik öncelikli) eklenir
+    by_parent = {}
+    for row in dipnot:
+        by_parent.setdefault(row[6], []).append(row)
+    dip_codes = {row[2] for row in dipnot}
+    def dfs(par):
+        for row in sorted(by_parent.get(par, []), key=lambda r: r[0]):
+            items.append([int(row[1]), YENI_AD.get(row[1], row[3]), row[5], row[4]])
+            dfs(row[2])
+    for par in sorted({r[6] for r in dipnot if r[6] not in dip_codes}, key=lambda p: by_parent[p][0][4]):
+        dfs(par)
     kaynak = {str(mc): c for sk, mc, c, ad, tab in kalemler}
+    kaynak.update({str(r[1]): r[2] for r in dipnot})
+    # mevduat yapısı: türler ve vade dilimleri (yaprak kalemler)
+    adi = {str(it[0]): it[1].split(" (")[0].strip() for it in items}
+    ebeveyn = {str(r[1]): (str(int(r[6]) - off) if tur == "kons" and str(int(r[6]) - off) in adi else r[6]) for r in dipnot}
+    def alti(kod):
+        k = kod
+        while k in ebeveyn:
+            k = ebeveyn[k]
+            if k == kod: break
+            yield k
+    mv_vade = {v: [] for v in VADE}
+    for kod, nm in adi.items():
+        if nm in mv_vade and any(a == "114172" for a in alti(kod)):
+            mv_vade[nm].append(int(kod))
+    MV = {"top": 114172, "tur": [[ad, int(k)] for k, ad in MEVDUAT_TUR if k in adi],
+          "vade": [[VADE_ETIKET.get(v, v), mv_vade[v]] for v in VADE]}
 
     meta = {b[0]: b for b in banks}
     akod = "16018" if tur == "solo" else "266018"
@@ -144,9 +193,10 @@ def veri_kur(tur, sec, banks, solo_kodlar):
          "names": [meta[b][1] if b in meta else str(b) for b in bks],
          "short": [KISA.get(b) or kisa_ad(meta[b][1] if b in meta else str(b)) for b in bks],
          "grp": [(meta[b][2] if b in meta and len(meta[b]) > 2 else "Grup bilgisi yok") for b in bks],
-         "v": {}, "yp": {}, **{k: {} for k in liq.values()}}
+         "v": {}, "yp": {}, **{k: {} for k in liq.values()}, **{k: {} for k in SERMAYE_ORAN.values()}}
     num = lambda x: int(round(x)) if abs(x) >= 100 or float(x).is_integer() else round(x, 2)
     olcekli = olcek_tespit(val, [k for k, v in liq.items() if v == "lcr"][0], P)
+    olcekli_syo = olcek_tespit(val, [k for k, v in oranlar.items() if v == "car"][0], P)
     for p in P:
         A["v"][p] = {}
         for it in items:
@@ -162,12 +212,15 @@ def veri_kur(tur, sec, banks, solo_kodlar):
             A[key][p] = [None if (c, b, p) not in val else
                          (round(sum(val[(c, b, p)]) / sc, 2) if key in ORANLAR else int(round(sum(val[(c, b, p)]))))
                          for b in bks]
+        for c, key in oranlar.items():
+            sc = 1000 if p in olcekli_syo else 1
+            A[key][p] = [None if (c, b, p) not in val else round(sum(val[(c, b, p)]) / sc, 2) for b in bks]
     T7 = [bks.index(c) for c in ILK7 if c in bks]
     if len(T7) != 7:
         sys.exit(f"[{tur}] ilk 7 bankanın hepsi veride yok")
     plabel = {p: f"{AY[p[5:]][0]} {p[:4]}" for p in P}
     months = {p: AY[p[5:]][2] for p in P}
-    return {"periods": P, "plabel": plabel, "months": months, "items": items, "A": A, "T7": T7}, olcekli
+    return {"periods": P, "plabel": plabel, "months": months, "items": items, "A": A, "T7": T7, "MV": MV}, olcekli | olcekli_syo
 
 
 def html_yaz(D, tarih, olcekli, cikti):

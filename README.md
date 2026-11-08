@@ -14,6 +14,8 @@ Mart 2018'den bu yana çeyreklik olarak çeken ve tek dosyalık, etkileşimli bi
 * **İlk 7 ve sektör:** Ziraat, VakıfBank, İş Bankası, Halkbank, Garanti BBVA, Akbank, Yapı Kredi; TBB'de veri yayımlayan bankaların tamamı ve banka grupları.
 * **Nakit yaratma kapasitesi:** Nakit akış tablosundan faaliyet nakit kârı, kârın nakde dönüşüm oranı, faiz tahsilatı oranı ve dönem başı nakitten dönem sonu nakde köprü.
 * **Likidite:** Likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO).
+* **Mevduat yapısı:** Dipnotlardan mevduatın türlere (tasarruf, döviz tevdiat, ticari ve resmi kuruluşlar, kıymetli maden, bankalar) ve vade dilimlerine göre dağılımı.
+* **Yasal özkaynak ve sermaye yeterliliği:** Çekirdek, ilave ana ve katkı sermaye, yasal özkaynak, risk ağırlıklı tutarlar, ÇSYO, ASYO ve SYO.
 * **İki banka karşılaştırması**, oran haritası, bilanço yapısı ve 300'ü aşkın kalemin tamamını gezme.
 
 ![Nakit yaratma kapasitesi](docs/ekran_nakit.png)
@@ -58,7 +60,7 @@ python rapor_olustur.py --excel tbb_veri.xlsx       # → Turk_Bankacilik_Sistem
 * Tutarlar bin TL olarak çekilir, raporda milyar TL gösterilir; tutarlar nominaldir.
 * Gelir tablosu ve nakit akış tablosu yıl başından kümülatiftir; oranlar yıllıklaştırılır (× 12 / ay sayısı).
 * Konsolide kalemler (TBB kodu çoğunlukla solo kod + 250.000) solo kalemlerle eşleştirilir.
-* TBB bazı dönemlerde LKO/NİFO oranlarını 1.000 ile çarpılmış yayımlıyor; bu dönemler otomatik bulunup düzeltilir.
+* TBB bazı dönemlerde LKO, NİFO ve sermaye yeterliliği oranlarını 1.000 ile çarpılmış yayımlıyor; bu dönemler otomatik bulunup düzeltilir.
 * Banka listesi TBB'nin bugünkü listesidir; kapanan ya da birleşen bankalar yer almaz.
 * Araç TBB sayfasının arayüzüne dayanır; site değişirse `tbb_yardimci.js` güncellenmelidir. Lütfen siteyi gereğinden sık sorgulamayın.
 
