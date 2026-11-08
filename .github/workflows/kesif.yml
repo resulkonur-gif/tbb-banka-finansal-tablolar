@@ -1,0 +1,25 @@
+name: Keşif (geçici)
+on:
+  push:
+    branches: [kesif]
+    paths: ["kesif/**", ".github/workflows/kesif.yml"]
+permissions:
+  contents: write
+jobs:
+  kesif:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - run: python kesif/agac.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add kesif/agac.json
+          git commit -m "kesif: ağaç çıktısı [skip ci]" || true
+          git push
