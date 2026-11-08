@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+"""
+tbb_cek.py çıktısından (tbb_veri.csv) etkileşimli HTML raporu ve düz tablo üretir.
+
+Kullanım:
+    python rapor_olustur.py                          # tbb_veri.csv -> Turk_Bankacilik_Sistemi.html
+    python rapor_olustur.py --girdi tbb_veri.csv --html rapor.html --uzun tbb_uzun.csv
+    python rapor_olustur.py --excel tbb_veri.xlsx    # (pandas + openpyxl gerekir)
+
+Yalnız Python standart kütüphanesi yeterlidir (Excel çıktısı hariç).
+"""
+import argparse
+import csv
+import json
+import re
+import statistics
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+
+# Tablo kökü -> rapordaki tablo adı
+TABLO_ADI = {
+    "102087": "1. Varlıklar", "102086": "2. Yükümlülükler", "102519": "3. Nazım Hesaplar",
+    "102567": "4. Gelir-Gider Tablosu", "16039": "5. Kar veya Zarar ve DKG", "102404": "7. Nakit Akış Tablosu",
+}
+LIKIDITE = {
+    "solo": {"109460": "hqla", "109463": "out", "109466": "lcr", "109467": "lcrYp", "17130": "asf", "17131": "rsf", "17144": "nsfr"},
+    "kons": {"359460": "hqla", "359463": "out", "359466": "lcr", "359467": "lcrYp", "487130": "asf", "487131": "rsf", "487144": "nsfr"},
+}
+ORANLAR = ("lcr", "lcrYp", "nsfr")
+ILK7 = [3, 6, 32, 5, 30, 8, 37]  # Ziraat, VakıfBank, İş, Halkbank, Garanti BBVA, Akbank, Yapı Kredi
+KISA = {3: "Ziraat", 6: "VakıfBank", 32: "İş Bankası", 5: "Halkbank", 30: "Garanti BBVA", 8: "Akbank", 37: "Yapı Kredi"}
+AY = {"03": ("Mar", "Mart", 3), "06": ("Haz", "Haziran", 6), "09": ("Eyl", "Eylül", 9), "12": ("Ara", "Aralık", 12)}
+
+
+def yil_den(y):
+    """2018 -> 2018’den, 2019 -> 2019’dan (Türkçe ayrılma hâli eki)."""
+    son = int(y) % 10
+    onlar = int(y) % 100
+    if son == 0:
+        ek = {0: "dan", 10: "dan", 20: "den", 30: "dan", 40: "tan", 50: "den", 60: "tan", 70: "ten", 80: "den", 90: "dan"}[onlar]
+    else:
+        ek = {1: "den", 2: "den", 3: "ten", 4: "ten", 5: "ten", 6: "dan", 7: "den", 8: "den", 9: "dan"}[son]
+    return f"{y}’{ek}"
+
+
+def yil_ya(y):
+    """2026 -> 2026’ya, 2025 -> 2025’e (Türkçe yönelme hâli eki)."""
+    son, onlar = int(y) % 10, int(y) % 100
+    if son == 0:
+        ek = {0: "a", 10: "a", 20: "ye", 30: "a", 40: "a", 50: "ye", 60: "a", 70: "e", 80: "e", 90: "a"}[onlar]
+    else:
+        ek = {1: "e", 2: "ye", 3: "e", 4: "e", 5: "e", 6: "ya", 7: "ye", 8: "e", 9: "a"}[son]
+    return f"{y}’{ek}"
+
+
+def kisa_ad(n):
+    for x in ["Türkiye Cumhuriyeti ", " T.A.Ş.", " A.Ş.", " T.A.O.", " (SA)", " S.p.A.", " N.A."]:
+        n = n.replace(x, "")
+    return n.strip()
+
+
+def seviye(ad):
+    ad = re.sub(r"^(\d+(?:\.\d+)*) (\d+)\.", r"\1.\2.", ad.strip())  # "16.5 1.Yasal" -> "16.5.1."
+    if re.match(r"^[IVXLC]+\.", ad):
+        return 0
+    m = re.match(r"^([0-9]+(?:\.[0-9]+)*)\.?(?![0-9])", ad)
+    return m.group(1).count(".") if m else 0
+
+
+def oku(yol):
+    banks, sec, cur, baslik = None, {}, None, ""
+    with open(yol, encoding="utf-8-sig") as f:
+        for i, l in enumerate(f):
+            l = l.rstrip("\n")
+            if i == 0:
+                baslik = l
+                continue
+            if l.startswith("#BANKS "):
+                banks = json.loads(l[7:])
+            elif l.startswith("#ITEMS "):
+                _, tur, js = l.split(" ", 2)
+                sec[tur] = {"items": json.loads(js), "val": {}}
+            elif l.startswith("#DATA "):
+                cur = l.split(" ")[1]
+            elif l and cur:
+                c, b, o, tp, yp = l.split(",")
+                sec[cur]["val"][(c, int(b), f"{o[:4]}-{o[4:]}")] = (float(tp), float(yp))
+    m = re.search(r"alındı:\s*([0-9.]+)", baslik)
+    return banks, sec, (m.group(1) if m else "")
+
+
+def olcek_tespit(val, kod, donemler):
+    """TBB bazı dönemlerde oranları 1.000 ile çarpılmış yayımlıyor; medyanı 1.000'i aşan dönemleri bulur."""
+    out = set()
+    for p in donemler:
+        xs = [sum(v) for (c, b, q), v in val.items() if c == kod and q == p]
+        if xs and statistics.median(xs) > 1000:
+            out.add(p)
+    return out
+
+
+def veri_kur(tur, sec, banks, solo_kodlar):
+    val, its = sec[tur]["val"], sec[tur]["items"]
+    P = sorted({k[2] for k in val})
+    liq = LIKIDITE[tur]
+    off = 250000 if tur == "kons" else 0
+
+    def eslestir(c):  # konsolide kodları solo karşılıklarına çevrilir
+        if tur == "solo":
+            return c
+        if c == "17078":
+            return "17077"
+        q = str(int(c) - off)
+        return q if q in solo_kodlar else c
+
+    kok_eslestir = {str(int(k) + 250000): k for k in TABLO_ADI} if tur == "kons" else {}
+    kok_eslestir.update({"266039": "16039"})
+    kalemler = []
+    for c, ad, ust, sk in its:
+        if c in liq or ust is None:
+            continue
+        kok = str(ust)
+        kok = kok_eslestir.get(kok, kok)
+        if kok not in TABLO_ADI:
+            continue
+        skey = tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,)
+        kalemler.append([skey, eslestir(c), c, ad.strip(), TABLO_ADI[kok]])
+    kalemler.sort(key=lambda x: (x[4], x[0]))
+    items, onceki = [], {}
+    for sk, mc, c, ad, tab in kalemler:
+        lv = seviye(ad)
+        lv = min(lv, onceki.get(tab, -1) + 1)
+        onceki[tab] = lv
+        items.append([int(mc), ad, lv, tab])
+    kaynak = {str(mc): c for sk, mc, c, ad, tab in kalemler}
+
+    meta = {b[0]: b for b in banks}
+    akod = "16018" if tur == "solo" else "266018"
+    bks = sorted({k[1] for k in val}, key=lambda b: -sum(val.get((akod, b, P[-1]), (0, 0))))
+    A = {"codes": bks,
+         "names": [meta[b][1] if b in meta else str(b) for b in bks],
+         "short": [KISA.get(b) or kisa_ad(meta[b][1] if b in meta else str(b)) for b in bks],
+         "grp": [(meta[b][2] if b in meta and len(meta[b]) > 2 else "Grup bilgisi yok") for b in bks],
+         "v": {}, "yp": {}, **{k: {} for k in liq.values()}}
+    num = lambda x: int(round(x)) if abs(x) >= 100 or float(x).is_integer() else round(x, 2)
+    olcekli = olcek_tespit(val, [k for k, v in liq.items() if v == "lcr"][0], P)
+    for p in P:
+        A["v"][p] = {}
+        for it in items:
+            mc = str(it[0]); c = kaynak[mc]
+            arr = [None if (c, b, p) not in val else num(sum(val[(c, b, p)])) for b in bks]
+            while arr and arr[-1] is None:
+                arr.pop()
+            if any(x is not None for x in arr):
+                A["v"][p][mc] = arr
+        A["yp"][p] = [int(round(val.get((akod, b, p), (0, 0))[1])) for b in bks]
+        for c, key in liq.items():
+            sc = 1000 if (p in olcekli and key in ORANLAR) else 1
+            A[key][p] = [None if (c, b, p) not in val else
+                         (round(sum(val[(c, b, p)]) / sc, 2) if key in ORANLAR else int(round(sum(val[(c, b, p)]))))
+                         for b in bks]
+    T7 = [bks.index(c) for c in ILK7 if c in bks]
+    if len(T7) != 7:
+        sys.exit(f"[{tur}] ilk 7 bankanın hepsi veride yok")
+    plabel = {p: f"{AY[p[5:]][0]} {p[:4]}" for p in P}
+    months = {p: AY[p[5:]][2] for p in P}
+    return {"periods": P, "plabel": plabel, "months": months, "items": items, "A": A, "T7": T7}, olcekli
+
+
+def html_yaz(D, tarih, olcekli, cikti):
+    t = (HERE / "rapor_sablonu.html").read_text(encoding="utf-8")
+    P = D["solo"]["periods"] if "solo" in D else D["kons"]["periods"]
+    p0, p1 = P[0], P[-1]
+    a0, a1 = AY[p0[5:]][1], AY[p1[5:]][1]
+    olc = sorted(olcekli)
+    oran_notu = ""
+    if olc:
+        ad = ", ".join(f"{AY[p[5:]][1]} {p[:4]}" for p in olc)
+        oran_notu = f"{ad} verisinde TBB oranları 1.000 ile çarpılmış yayımladığı için bu dönem{'lerin' if len(olc) > 1 else 'in'} oranları 1.000’e bölündü. "
+    rep = {
+        "{{ARALIK}}": f"{a0} {p0[:4]} – {a1} {p1[:4]}",
+        "{{ARALIK_DEN_YA}}": f"{a0} {yil_den(p0[:4])} {a1} {yil_ya(p1[:4])}",
+        "{{N}}": str(len(P)),
+        "{{ILK_YIL_DEN}}": yil_den(p0[:4]),
+        "{{YILLAR}}": f"{p0[:4]}–{p1[:4]}",
+        "{{ORAN_NOTU}}": oran_notu,
+        "{{TARIH}}": tarih or "–",
+    }
+    for k, v in rep.items():
+        t = t.replace(k, v)
+    if "kons" not in D or "solo" not in D:
+        sys.exit("HTML rapor için hem solo hem konsolide veri gerekir (tbb_cek.py --tur solo,kons).")
+    t = t.replace("__DATA__", json.dumps(D, ensure_ascii=False, separators=(",", ":")))
+    head = t.split("<style>")[0]
+    rest = t[len(head):]
+    css = rest.split("</style>")[0] + "</style>"
+    body = rest.split("</style>", 1)[1]
+    html = ('<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+            + head + css + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
+    Path(cikti).write_text(html, encoding="utf-8")
+
+
+def uzun_yaz(sec, banks, cikti):
+    meta = {b[0]: b for b in banks}
+    with open(cikti, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f, delimiter=";")
+        w.writerow(["tur", "kalem_kodu", "kalem", "banka_kodu", "banka", "banka_grubu", "donem", "TP", "YP", "TOPLAM"])
+        for tur, s in sec.items():
+            ad = {c: n for c, n, *_ in s["items"]}
+            for (c, b, p), (tp, yp) in sorted(s["val"].items(), key=lambda x: (x[0][2], x[0][1], x[0][0])):
+                m = meta.get(b, [b, "", ""])
+                w.writerow([tur, c, ad.get(c, ""), b, m[1], m[2] if len(m) > 2 else "", p, tp, yp, tp + yp])
+
+
+def excel_yaz(sec, banks, cikti):
+    try:
+        import pandas as pd
+    except ImportError:
+        sys.exit("Excel çıktısı için:  pip install pandas openpyxl")
+    meta = {b[0]: b for b in banks}
+    with pd.ExcelWriter(cikti) as xw:
+        for tur, s in sec.items():
+            ad = {c: n for c, n, *_ in s["items"]}
+            rows = [(c, ad.get(c, ""), meta.get(b, [b, ""])[1], p, tp + yp) for (c, b, p), (tp, yp) in s["val"].items()]
+            df = pd.DataFrame(rows, columns=["kod", "kalem", "banka", "donem", "toplam"])
+            pv = df.pivot_table(index=["kod", "kalem", "banka"], columns="donem", values="toplam", aggfunc="sum")
+            pv.to_excel(xw, sheet_name=("Solo" if tur == "solo" else "Konsolide"))
+
+
+def main():
+    ap = argparse.ArgumentParser(description="tbb_veri.csv dosyasından HTML rapor ve tablolar üretir.")
+    ap.add_argument("--girdi", default="tbb_veri.csv")
+    ap.add_argument("--html", default="Turk_Bankacilik_Sistemi.html", help="HTML rapor dosyası ('' verilirse üretilmez)")
+    ap.add_argument("--json", default="", help="Rapor verisini ayrıca JSON olarak yaz")
+    ap.add_argument("--uzun", default="", help="Düz (uzun) CSV: her satır bir kalem-banka-dönem")
+    ap.add_argument("--excel", default="", help="Excel: her tür için kalem×banka satır, dönem sütun")
+    a = ap.parse_args()
+
+    banks, sec, tarih = oku(a.girdi)
+    ozet = ", ".join("{} {:,} değer".format(k, len(v["val"])) for k, v in sec.items())
+    print("Okundu: " + ozet)
+    solo_kodlar = {c for c, *_ in sec["solo"]["items"]} if "solo" in sec else set()
+    D, olc = {}, set()
+    for tur in sec:
+        D[tur], o = veri_kur(tur, sec, banks, solo_kodlar)
+        olc |= o
+        A = D[tur]["A"]
+        print(f"[{tur}] {len(D[tur]['periods'])} dönem, {len(A['codes'])} banka, {len(D[tur]['items'])} kalem"
+              + (f"; ölçeği düzeltilen oran dönemleri: {sorted(o)}" if o else ""))
+    if a.json:
+        Path(a.json).write_text(json.dumps(D, ensure_ascii=False), encoding="utf-8")
+        print("Yazıldı:", a.json)
+    if a.html:
+        html_yaz(D, tarih, olc, a.html)
+        print("Yazıldı:", a.html)
+    if a.uzun:
+        uzun_yaz(sec, banks, a.uzun)
+        print("Yazıldı:", a.uzun)
+    if a.excel:
+        excel_yaz(sec, banks, a.excel)
+        print("Yazıldı:", a.excel)
+
+
+if __name__ == "__main__":
+    main()

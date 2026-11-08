@@ -1,0 +1,1091 @@
+<title>Türk Bankacılık Sistemi Finansal Tabloları Karşılaştırması</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wdth,wght@8..144,75..100,400..700&family=Roboto:wght@400;500;700&display=swap">
+<style>
+/* Layout: report spine — sticky period bar, then summary → banks → comparisons → full statement explorer; content max 1180px */
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --surface-2:#EAEEF4; --line:#D6DCE6;
+  --ink:#0F1A2C; --ink-2:#3B475C; --ink-3:#5C6880;
+  --accent:#1E4FA3; --accent-soft:#DCE6F7; --warm:#B85C12; --warm-soft:#F6E5D3;
+  --good:#16794C; --bad:#B42318;
+  --heat-lo:#EEF3FB; --heat-hi:#173F86; --heat-ink-hi:#FFFFFF;
+  --b0:#0072B2; --b1:#E69F00; --b2:#6A4C93; --b3:#009E73; --b4:#D55E00; --b5:#CC79A7; --b6:#56B4E9; --bt:#0F1A2C;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C121D; --surface:#131B29; --surface-2:#1A2436; --line:#2A364B;
+  --ink:#E8EDF5; --ink-2:#B7C1D2; --ink-3:#8E9AAF;
+  --accent:#7FA8F0; --accent-soft:#1D2D4A; --warm:#F0A45C; --warm-soft:#3A2817;
+  --good:#4FC48A; --bad:#F2786D;
+  --heat-lo:#18233A; --heat-hi:#8DB2F5; --heat-ink-hi:#0C121D;
+  --b0:#4DA3E0; --b1:#F2B640; --b2:#A98BD6; --b3:#3CC79D; --b4:#F08A47; --b5:#E39BC4; --b6:#8AD0F5; --bt:#E8EDF5;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C121D; --surface:#131B29; --surface-2:#1A2436; --line:#2A364B;
+  --ink:#E8EDF5; --ink-2:#B7C1D2; --ink-3:#8E9AAF;
+  --accent:#7FA8F0; --accent-soft:#1D2D4A; --warm:#F0A45C; --warm-soft:#3A2817;
+  --good:#4FC48A; --bad:#F2786D;
+  --heat-lo:#18233A; --heat-hi:#8DB2F5; --heat-ink-hi:#0C121D;
+  --b0:#4DA3E0; --b1:#F2B640; --b2:#A98BD6; --b3:#3CC79D; --b4:#F08A47; --b5:#E39BC4; --b6:#8AD0F5; --bt:#E8EDF5;
+  color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:44px;padding-block:28px 64px}
+h1,h2,h3{font-family:var(--display);font-stretch:85%;text-wrap:balance;margin:0;color:var(--ink)}
+h1{font-size:clamp(34px,5.4vw,58px);line-height:1.02;font-weight:800;letter-spacing:-0.01em}
+h2{font-size:clamp(24px,3vw,32px);font-weight:750;line-height:1.1}
+h3{font-size:19px;font-weight:700}
+p{margin:0}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--warm)}
+.muted{color:var(--ink-3)}
+.lede{font-size:17px;color:var(--ink-2);max-width:68ch}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.hdr{display:flex;flex-direction:column;gap:14px}
+.hdr-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--ink-3)}
+/* period bar */
+.pbar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+.pbar-label{font-size:13px;font-weight:600;color:var(--ink-2)}
+.seg{display:flex;flex-wrap:wrap;gap:4px;background:var(--surface-2);padding:4px;border-radius:999px}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600;color:var(--ink-2);min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.pbar-note{font-size:12.5px;color:var(--ink-3)}
+section{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;flex-direction:column;gap:6px}
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:16px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:132px;transition:border-color .15s}
+.kpi:hover{border-color:var(--accent)}
+.kpi[aria-expanded="true"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.kpi .k-l{font-size:13px;font-weight:600;color:var(--ink-2)}
+.kpi .k-v{font-family:var(--display);font-stretch:80%;font-size:34px;font-weight:750;line-height:1.05}
+.kpi .k-u{font-size:12.5px;color:var(--ink-3)}
+.kpi .k-c{font-size:13px;font-weight:600;margin-top:auto}
+.up{color:var(--good)} .down{color:var(--bad)}
+.panel{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:16px}
+.panel-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:24px}
+@media (max-width:820px){.panel-grid{grid-template-columns:minmax(0,1fr)}}
+.barlist{display:flex;flex-direction:column;gap:8px}
+.bl-row{display:grid;grid-template-columns:110px minmax(0,1fr) 92px 64px;gap:10px;align-items:center;font-size:14px}
+.bl-track{height:12px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.bl-fill{height:100%;border-radius:3px}
+.bl-v{text-align:right;font-weight:600}
+.bl-c{text-align:right;font-size:13px;font-weight:600}
+@media (max-width:520px){.bl-row{grid-template-columns:84px minmax(0,1fr) 78px;}.bl-c{display:none}}
+.chartbox{position:relative;width:100%;height:260px}
+.chartbox.tall{height:340px}
+.chartbox.short{height:200px}
+/* banks */
+.banks{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.bank{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:16px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.bank::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--bc)}
+.bank:hover{border-color:var(--bc)}
+.bank[aria-expanded="true"]{border-color:var(--bc);background:var(--surface-2)}
+.bank-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bank-name{font-family:var(--display);font-stretch:85%;font-size:21px;font-weight:750}
+.bank-rank{font-size:12px;font-weight:700;color:var(--ink-3)}
+.bank-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.bs-l{font-size:11.5px;color:var(--ink-3);letter-spacing:.02em}
+.bs-v{font-size:15px;font-weight:700}
+.bank-more{font-size:12.5px;font-weight:600;color:var(--accent)}
+.bank-detail{grid-column:1/-1}
+.ratio-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.ratio-table th,.ratio-table td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.ratio-table th:first-child,.ratio-table td:first-child{text-align:left}
+.ratio-table thead th{font-size:12px;color:var(--ink-3);font-weight:600}
+.ratio-table td.cur,.ratio-table th.cur{background:var(--accent-soft);font-weight:700}
+.stack{display:flex;flex-direction:column;gap:10px}
+.stackbar{display:flex;height:26px;border-radius:5px;overflow:hidden;background:var(--surface-2)}
+.stackbar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.bridge{display:flex;flex-direction:column;gap:6px}
+.br-row{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 88px;gap:10px;align-items:center;font-size:13.5px}
+.br-row.total{font-weight:700}
+.br-track{position:relative;height:14px}
+.br-bar{position:absolute;top:0;height:14px;border-radius:2px}
+.br-v{text-align:right}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
+.subhead{font-size:13px;font-weight:700;color:var(--ink-2);letter-spacing:.02em}
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.field{min-width:0;max-width:100%}
+select{max-width:100%}
+select,input[type=search]{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px;font-size:14px}
+input[type=search]{min-width:0;width:240px;max-width:100%}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;min-height:40px;cursor:pointer;font-size:14px;font-weight:600}
+.btn:hover{border-color:var(--accent)}
+.insight{font-size:14.5px;color:var(--ink-2);max-width:80ch}
+.insight b{color:var(--ink)}
+/* heat */
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.heat{border-collapse:separate;border-spacing:4px;width:100%;min-width:560px}
+.heat th{font-size:12.5px;color:var(--ink-3);font-weight:600;padding:4px 6px;text-align:center}
+.heat th.rowh{text-align:left;color:var(--ink);font-size:14px;white-space:nowrap}
+.heat td{text-align:center;padding:12px 6px;border-radius:6px;font-weight:700;font-size:14.5px}
+.heat tr.total th.rowh,.heat tr.total td{font-weight:800}
+/* explorer */
+.xtable{border-collapse:collapse;width:100%;min-width:1000px;font-size:13.5px}
+.xtable thead th{position:sticky;top:0;background:var(--surface-2);font-size:12px;font-weight:700;color:var(--ink-2);padding:9px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.xtable thead th:first-child{text-align:left;min-width:330px}
+.xtable td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.xtable td:first-child{text-align:left;white-space:normal}
+.xtable tr.l0 td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
+.xtable tr.hit td:first-child{box-shadow:inset 3px 0 0 var(--warm)}
+.xname{display:flex;align-items:flex-start;gap:6px}
+.caret{border:0;background:transparent;cursor:pointer;width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;color:var(--ink-2)}
+.caret:hover{background:var(--surface-2)}
+.caret svg{transition:transform .15s}
+.caret[aria-expanded="true"] svg{transform:rotate(90deg)}
+.spacer{width:24px;flex:none}
+.xlabel{padding-top:2px}
+.xcode{font-size:11px;color:var(--ink-3);margin-left:6px}
+.chartbtn{border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;width:26px;height:24px;display:inline-flex;align-items:center;justify-content:center;flex:none;margin-left:auto;color:var(--accent)}
+.chartbtn[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.xchart td{background:var(--surface-2);padding:14px}
+.neg{color:var(--bad)}
+.tab-chip{display:inline-block;font-size:11px;font-weight:700;color:var(--warm);background:var(--warm-soft);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.xfoot{font-size:12.5px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px}
+details.notes{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:14px 18px}
+details.notes summary{cursor:pointer;font-weight:700}
+details.notes ul{margin:10px 0 0;padding-left:18px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px;font-size:14px}
+footer{font-size:13px;color:var(--ink-3)}
+.grp-bars{display:flex;flex-direction:column;gap:8px}
+.gb-row{display:grid;grid-template-columns:minmax(0,240px) minmax(0,1fr) 90px 70px;gap:10px;align-items:center;font-size:14px}
+@media (max-width:620px){.gb-row{grid-template-columns:minmax(0,130px) minmax(0,1fr) 70px}.gb-row .gb-s{display:none}}
+.atable{border-collapse:collapse;width:100%;min-width:1100px;font-size:13.5px}
+.atable thead th{position:sticky;top:0;background:var(--surface-2);font-size:12px;font-weight:700;color:var(--ink-2);padding:0;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right}
+.atable thead th button{all:unset;cursor:pointer;display:block;padding:9px 8px;width:100%;box-sizing:border-box}
+.atable thead th button:focus-visible{outline:2px solid var(--accent)}
+.atable thead th.l{text-align:left}
+.atable td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.atable td.l{text-align:left}
+.atable tr.t7 td.nm{font-weight:700}
+.atable tr.selA td:first-child{box-shadow:inset 4px 0 0 var(--b0)}
+.atable tr.selB td:first-child{box-shadow:inset 4px 0 0 var(--b1)}
+.pick{display:inline-flex;gap:4px}
+.pick button{border:1px solid var(--line);background:var(--surface);border-radius:6px;min-width:32px;height:30px;cursor:pointer;font-weight:700;font-size:12px;color:var(--ink-2)}
+.pick button.a[aria-pressed="true"]{background:var(--b0);border-color:var(--b0);color:#FFFFFF}
+.pick button.b[aria-pressed="true"]{background:var(--b1);border-color:var(--b1);color:#1B1205}
+.gtag{font-size:11.5px;color:var(--ink-3)}
+.flag{color:var(--warm);font-weight:700}
+.vs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:720px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs-card{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:16px 16px 16px 22px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.vs-card::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--bc)}
+.vs-name{font-family:var(--display);font-stretch:85%;font-size:22px;font-weight:750}
+.vs-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.vstable{border-collapse:collapse;width:100%;font-size:14px}
+.vstable th,.vstable td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.vstable th:first-child,.vstable td:first-child{text-align:left;white-space:normal}
+.vstable thead th{font-size:12px;color:var(--ink-3);font-weight:700}
+.vstable tr.grp td{background:var(--surface-2);font-weight:700;color:var(--ink-2)}
+/* ===== Material 3 layer ===== */
+:root{
+  --m-primary:#2B5EA7; --m-on-primary:#FFFFFF; --m-pc:#D7E3FF; --m-on-pc:#001B3F;
+  --m-sc:#DAE2F9; --m-on-sc:#131C2B; --m-tertiary:#8A5100; --m-tc:#FFDCBE; --m-on-tc:#2D1600;
+  --m-surface:#F9F9FF; --m-scl:#F3F3FA; --m-sc0:#EDEDF4; --m-sch:#E7E8EE; --m-schh:#E1E2E8; --m-lowest:#FFFFFF;
+  --m-on-surface:#191C20; --m-osv:#44474E; --m-outline:#74777F; --m-ov:#C4C6D0;
+  --m-shadow:rgba(17,24,39,.16); --m-state:rgba(43,94,167,.08);
+  --bg:var(--m-surface); --surface:var(--m-lowest); --surface-2:var(--m-sch); --line:var(--m-ov);
+  --ink:var(--m-on-surface); --ink-2:var(--m-osv); --ink-3:#5E6169;
+  --accent:var(--m-primary); --accent-soft:var(--m-pc); --warm:var(--m-tertiary); --warm-soft:var(--m-tc);
+  --heat-lo:#EEF2FB; --heat-hi:#1F4E91;
+  --display:"Roboto Flex","Roboto",system-ui,sans-serif; --body:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --r:16px; --e1:0 1px 2px var(--m-shadow),0 1px 3px 1px rgba(17,24,39,.08); --e2:0 1px 2px var(--m-shadow),0 2px 6px 2px rgba(17,24,39,.10);
+  --e3:0 4px 8px 3px rgba(17,24,39,.10),0 1px 3px var(--m-shadow);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --m-primary:#A9C7FF; --m-on-primary:#003063; --m-pc:#1E4679; --m-on-pc:#D7E3FF;
+  --m-sc:#3E4759; --m-on-sc:#DAE2F9; --m-tertiary:#FFB870; --m-tc:#693C00; --m-on-tc:#FFDCBE;
+  --m-surface:#111318; --m-scl:#191C20; --m-sc0:#1D2024; --m-sch:#282A2F; --m-schh:#33353A; --m-lowest:#1D2024;
+  --m-on-surface:#E2E2E9; --m-osv:#C4C6D0; --m-outline:#8E9099; --m-ov:#44474E;
+  --m-shadow:rgba(0,0,0,.5); --m-state:rgba(169,199,255,.10); --ink-3:#A3A6AF;
+  --bg:var(--m-surface); --surface:var(--m-lowest); --surface-2:var(--m-sch); --line:var(--m-ov); --ink:var(--m-on-surface); --ink-2:var(--m-osv); --accent:var(--m-primary); --accent-soft:var(--m-pc); --warm:var(--m-tertiary); --warm-soft:var(--m-tc);
+  --heat-lo:#1C2433; --heat-hi:#8DB4F7; --heat-ink-hi:#111318; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --m-primary:#A9C7FF; --m-on-primary:#003063; --m-pc:#1E4679; --m-on-pc:#D7E3FF;
+  --m-sc:#3E4759; --m-on-sc:#DAE2F9; --m-tertiary:#FFB870; --m-tc:#693C00; --m-on-tc:#FFDCBE;
+  --m-surface:#111318; --m-scl:#191C20; --m-sc0:#1D2024; --m-sch:#282A2F; --m-schh:#33353A; --m-lowest:#1D2024;
+  --m-on-surface:#E2E2E9; --m-osv:#C4C6D0; --m-outline:#8E9099; --m-ov:#44474E;
+  --m-shadow:rgba(0,0,0,.5); --m-state:rgba(169,199,255,.10); --ink-3:#A3A6AF;
+  --bg:var(--m-surface); --surface:var(--m-lowest); --surface-2:var(--m-sch); --line:var(--m-ov); --ink:var(--m-on-surface); --ink-2:var(--m-osv); --accent:var(--m-primary); --accent-soft:var(--m-pc); --warm:var(--m-tertiary); --warm-soft:var(--m-tc);
+  --heat-lo:#1C2433; --heat-hi:#8DB4F7; --heat-ink-hi:#111318; color-scheme:dark}
+body{padding-left:0;padding-right:0;font-size:15px;letter-spacing:.01em}
+.gut{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+h1,h2,h3{font-stretch:100%;letter-spacing:0}
+h1{font-weight:600;font-size:clamp(32px,4.6vw,48px);line-height:1.08}
+h2{font-weight:500;font-size:clamp(22px,2.6vw,28px)}
+h3{font-weight:500;font-size:18px}
+.eyebrow{color:var(--m-primary);letter-spacing:.1em;font-weight:600}
+/* top app bar */
+.appbar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:30;height:64px;display:flex;align-items:center;gap:8px;background:var(--m-sc0);transition:box-shadow .2s}
+.appbar.lift{box-shadow:var(--e2)}
+.appbar-in{max-width:1180px;margin:0 auto;width:100%;display:flex;align-items:center;gap:8px;min-width:0}
+.appbar-title{font-family:var(--display);font-size:22px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:48px;height:48px;border-radius:50%;border:0;background:transparent;color:var(--m-osv);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:none;position:relative}
+.icon-btn:hover{background:var(--m-state)}
+.icon-btn svg,.mi{width:24px;height:24px;fill:currentColor}
+body::before{background:var(--m-sc0);z-index:31}
+.pbar{top:calc(env(safe-area-inset-top, 0px) + 64px);background:var(--m-surface);border-bottom:1px solid var(--m-ov);z-index:20}
+/* segmented buttons */
+.seg{background:transparent;border:1px solid var(--m-outline);padding:0;gap:0;border-radius:20px;flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}
+.seg button{border-radius:0;border-left:1px solid var(--m-outline);min-height:40px;padding:0 14px;font-weight:500;font-size:14px;color:var(--m-on-surface);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;background:transparent}
+.seg button:first-child{border-left:0}
+.seg button:hover{background:var(--m-state)}
+.seg button[aria-pressed="true"]{background:var(--m-sc);color:var(--m-on-sc);box-shadow:none}
+.seg button[aria-pressed="true"]::before{content:"";width:16px;height:16px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center/contain no-repeat}
+.modeseg button{min-height:40px;padding:0 16px}
+@media (max-width:520px){.appbar-title{font-size:18px}.modeseg button{padding:0 10px;font-size:13px}.modeseg button[aria-pressed="true"]::before{display:none}}
+/* cards */
+.kpi{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px;transition:box-shadow .2s,background .2s}
+.kpi:hover{box-shadow:var(--e2);border-color:transparent}
+.kpi[aria-expanded="true"]{background:var(--m-pc);color:var(--m-on-pc);box-shadow:var(--e2)}
+.kpi[aria-expanded="true"] .k-l,.kpi[aria-expanded="true"] .k-u,.kpi[aria-expanded="true"] .muted{color:var(--m-on-pc)}
+.kpi .k-v{font-stretch:100%;font-weight:500;font-size:32px}
+.panel{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px}
+.bank{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px;transition:box-shadow .2s}
+.bank::before{inset:0 0 auto 0;width:auto;height:4px}
+.bank:hover{box-shadow:var(--e2)}
+.bank[aria-expanded="true"]{background:var(--m-sc0);box-shadow:var(--e3)}
+.bank-name,.vs-name{font-stretch:100%;font-weight:500}
+.bank-more{color:var(--m-primary);font-weight:500}
+.vs-card{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px}
+.vs-card::before{inset:0 0 auto 0;width:auto;height:4px}
+.vs-card{padding:20px 16px 16px}
+.scroll{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px}
+details.notes{border:0;background:var(--m-scl);box-shadow:var(--e1);border-radius:16px}
+details.notes summary{font-weight:500}
+/* fields & buttons */
+.field{font-weight:500;color:var(--m-osv);font-size:12px;letter-spacing:.03em}
+select,input[type=search]{border:1px solid var(--m-outline);border-radius:4px;min-height:48px;padding:10px 12px;background:var(--m-surface);color:var(--m-on-surface);font-size:15px}
+select:hover,input[type=search]:hover{border-color:var(--m-on-surface)}
+select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary);box-shadow:inset 0 0 0 1px var(--m-primary)}
+.btn{border:1px solid var(--m-outline);border-radius:20px;min-height:40px;padding:0 20px;background:transparent;color:var(--m-primary);font-weight:500;align-self:flex-end}
+.btn:hover{background:var(--m-state);border-color:var(--m-outline)}
+.pick button{border-radius:50%;width:32px;min-width:32px;height:32px;border:1px solid var(--m-outline);background:transparent}
+.ratio-table td.cur,.ratio-table th.cur{background:var(--m-pc);color:var(--m-on-pc)}
+.xtable thead th,.atable thead th{background:var(--m-sch)}
+.tab-chip{background:var(--m-tc);color:var(--m-on-tc);border-radius:8px}
+.mode-chip{display:inline-flex;align-items:center;height:28px;padding:0 12px;border-radius:8px;background:var(--m-sc);color:var(--m-on-sc);font-size:13px;font-weight:500;letter-spacing:.02em;width:fit-content}
+.hdr-top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+/* landing */
+#landing{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding-block:48px;background:
+  radial-gradient(1200px 500px at 85% -10%, var(--m-pc), transparent 60%), var(--m-surface)}
+.land{max-width:920px;width:100%;display:flex;flex-direction:column;gap:28px}
+.land-kicker{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--m-primary)}
+.land h1{font-size:clamp(40px,7vw,64px);font-weight:500;line-height:1.04;letter-spacing:-.01em}
+.land-sub{font-size:18px;line-height:1.5;color:var(--m-osv);max-width:60ch}
+.land-q{font-size:15px;font-weight:500;color:var(--m-on-surface)}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:680px){.choices{grid-template-columns:minmax(0,1fr)}}
+.choice{all:unset;box-sizing:border-box;cursor:pointer;position:relative;overflow:hidden;background:var(--m-scl);border-radius:28px;box-shadow:var(--e1);padding:24px;display:flex;flex-direction:column;gap:14px;transition:box-shadow .2s,transform .2s;min-width:0}
+.choice::after{content:"";position:absolute;inset:0;background:var(--m-primary);opacity:0;transition:opacity .15s;pointer-events:none}
+.choice:hover{box-shadow:var(--e3)}
+.choice:hover::after{opacity:.06}
+.choice:active::after{opacity:.12}
+.choice:focus-visible{outline:3px solid var(--m-primary);outline-offset:3px}
+.ch-ico{width:56px;height:56px;border-radius:16px;background:var(--m-pc);color:var(--m-on-pc);display:flex;align-items:center;justify-content:center}
+.ch-ico svg{width:28px;height:28px;fill:currentColor}
+.choice.k .ch-ico{background:var(--m-tc);color:var(--m-on-tc)}
+.ch-t{font-family:var(--display);font-size:28px;font-weight:500;color:var(--m-on-surface)}
+.ch-d{font-size:15px;line-height:1.5;color:var(--m-osv)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--m-ov);font-size:13px;font-weight:500;color:var(--m-osv);background:var(--m-surface)}
+.ch-go{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 24px;border-radius:20px;background:var(--m-primary);color:var(--m-on-primary);font-weight:500;font-size:14px;width:fit-content;margin-top:4px}
+.choice.k .ch-go{background:var(--m-tertiary);color:var(--m-surface)}
+.ch-go svg{width:18px;height:18px;fill:currentColor}
+.land-foot{font-size:13px;color:var(--ink-3);max-width:70ch}
+.fade-in{animation:fi .28s ease-out}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:520px){.pbar .seg button{padding:0 9px;font-size:13px}.pbar .seg button[aria-pressed="true"]::before{display:none}.pbar-label{display:none}}
+
+.land-h1b{color:var(--m-primary)}
+.ab-short{display:none}
+@media (max-width:640px){.ab-long{display:none}.ab-short{display:inline}}
+.pctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pctl select{min-height:40px;padding:6px 10px;border-radius:20px}
+.pctl .seg button:disabled{color:var(--ink-3);opacity:.45;cursor:default;background:transparent}
+.pctl .icon-btn{width:40px;height:40px}
+.pctl .icon-btn:disabled{opacity:.35;cursor:default}
+@media (max-width:520px){.pctl .icon-btn{width:34px;height:34px}}
+#cashKpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (min-width:1150px){#cashKpis{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media (max-width:560px){#cashKpis{grid-template-columns:repeat(2,minmax(0,1fr))}#cashKpis .kpi .k-v{font-size:26px}}
+#cashTable td.l,#cashTable th.l{text-align:left}
+#cashTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div id="landing" class="gut" lang="tr">
+  <div class="land fade-in">
+    <span class="land-kicker">TBB Veri Sistemi · TFRS 9 · {{ARALIK}}</span>
+    <h1>Türk Bankacılık Sistemi<br><span class="land-h1b">Finansal Tabloları Karşılaştırması</span></h1>
+    <p class="land-sub">TBB’de veri yayımlayan bankaların {{N}} çeyreklik bilançosu, gelir tablosu, nakit akış tablosu ve likidite oranları. Ziraat, VakıfBank, İş Bankası, Halkbank, Garanti BBVA, Akbank ve Yapı Kredi öne çıkarıldı; sektörün tamamı ve iki banka karşılaştırması da içeride.</p>
+    <p class="land-q">Hangi tablolarla açalım?</p>
+    <div class="choices">
+      <button type="button" class="choice" data-mode="solo">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h20v3H2zm15-9h3v7h-3zm-5-9L2 6v2h20V6z"/></svg></span>
+        <span class="ch-t">Solo</span>
+        <span class="ch-d">Yalnız bankanın kendi tabloları. Bağlı ortaklıklar iştirak olarak tek satırda durur. Bankayı bankayla kıyaslamak için.</span>
+        <span class="chips" id="chipsSolo"></span>
+        <span class="ch-go">Solo ile aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </button>
+      <button type="button" class="choice k" data-mode="kons">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg></span>
+        <span class="ch-t">Konsolide</span>
+        <span class="ch-d">Banka ile yurt dışı bankaları, leasing, faktoring, yatırım ve portföy şirketleri gibi bağlı ortaklıkları bir arada. Grubu bütün olarak görmek için.</span>
+        <span class="chips" id="chipsKons"></span>
+        <span class="ch-go">Konsolide ile aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </button>
+    </div>
+    <p class="land-foot">Seçiminizi raporun üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir.<br>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> (LinkedIn)</p>
+  </div>
+</div>
+
+<div id="app" lang="tr" hidden>
+  <div class="appbar gut" id="appbar">
+    <div class="appbar-in">
+      <button type="button" class="icon-btn" id="homeBtn" aria-label="Başlangıç ekranına dön" title="Başlangıç ekranı"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
+      <span class="appbar-title"><span class="ab-long">Türk Bankacılık Sistemi · Finansal Tablolar</span><span class="ab-short">Bankacılık Sistemi</span></span>
+      <div class="seg modeseg" id="modeSeg" role="group" aria-label="Tablo türü"><button type="button" data-mode="solo" aria-pressed="false">Solo</button><button type="button" data-mode="kons" aria-pressed="false">Konsolide</button></div>
+    </div>
+  </div>
+  <div id="appRoot"></div>
+</div>
+
+<template id="appTpl">
+<div class="wrap gut fade-in">
+  <header class="hdr">
+    <div class="hdr-top"><span class="eyebrow">TBB Veri Sistemi · TFRS 9 <span data-t="kindlow"></span> finansal tablolar</span><span class="mode-chip" data-t="kind"></span></div>
+    <h1>Türk Bankacılık Sistemi Finansal Tabloları</h1>
+    <p class="lede">{{ARALIK_DEN_YA}} {{N}} çeyrek; bilanço, gelir tablosu, nakit akış tablosu ve likidite. Öne çıkan yedi banka Ziraat, VakıfBank, İş Bankası, Halkbank, Garanti BBVA, Akbank ve Yapı Kredi. Sektördeki <span data-t="nbank"></span> bankanın tamamı, nakit yaratma kapasitesi ve iki banka karşılaştırması da sayfada; en altta <span data-t="nitem"></span> kalemin tamamını gezin.</p>
+    <div class="hdr-meta"><span>Birim: milyar TL (aksi belirtilmedikçe)</span><span>Veri: <span data-t="date"></span> tarihinde alındı</span><span>Tutarlar nominaldir</span></div>
+  </header>
+
+  <div class="pbar" role="group" aria-label="Dönem seçimi">
+    <span class="pbar-label">Dönem</span>
+    <div class="pctl" id="periodSeg"></div>
+    <span class="pbar-note" id="periodNote"></span>
+  </div>
+
+  <section aria-labelledby="h-sum">
+    <div class="sec-head">
+      <h2 id="h-sum">İlk 7'nin toplamı</h2>
+      <p class="insight" id="sumInsight"></p>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div id="kpiPanel" class="panel" hidden></div>
+  </section>
+
+  <section aria-labelledby="h-sec">
+    <div class="sec-head">
+      <h2 id="h-sec">Sektör: <span data-t="nbank"></span> bankanın tamamı</h2>
+      <p class="insight" id="secInsight"></p>
+    </div>
+    <div class="kpis" id="secKpis"></div>
+    <div class="panel-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))">
+      <div class="panel" style="min-width:0"><h3>Banka gruplarına göre toplam aktif</h3><div class="grp-bars" id="grpBars"></div><p class="muted" style="font-size:12.5px">Grup: TBB’nin banka grubu sınıflaması. Sağ sütun bir yıl öncesine göre değişim.</p></div>
+      <div class="panel" style="min-width:0"><h3>Likidite oranları</h3><div style="overflow-x:auto"><table class="ratio-table" id="secLiq"></table></div><p class="muted" style="font-size:12.5px">Grup oranları, bankaların yüksek kaliteli likit varlıkları ile net nakit çıkışları (NİFO’da mevcut ve gerekli istikrarlı fon) toplanarak hesaplandı.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-banks">
+    <div class="sec-head">
+      <h2 id="h-banks">Bankalar</h2>
+      <p class="insight">Aktif büyüklüğüne göre sıralı. Bir bankaya tıklayınca {{ILK_YIL_DEN}} bu yana seyri, oranları, bilanço yapısı ve gelirden net kâra köprüsü açılır.</p>
+    </div>
+    <div class="banks" id="banks"></div>
+  </section>
+
+  <section aria-labelledby="h-cash">
+    <div class="sec-head">
+      <h2 id="h-cash">Nakit yaratma kapasitesi</h2>
+      <p class="insight" id="cashInsight"></p>
+    </div>
+    <div class="controls"><label class="field" for="cashScope">Kapsam<select id="cashScope"></select></label></div>
+    <div class="kpis" id="cashKpis"></div>
+    <div class="panel-grid" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))">
+      <div class="panel" style="min-width:0"><h3 id="cashBridgeH">Dönem başı nakitten dönem sonu nakde</h3><p class="muted" style="font-size:13px">milyar TL, yıl başından kümülatif</p><div class="bridge" id="cashBridge"></div></div>
+      <div class="panel" style="min-width:0"><div class="controls"><label class="field" for="cashMetric">Gösterge<select id="cashMetric"></select></label></div><div class="chartbox"><canvas id="cashChart" role="img" aria-label="Nakit göstergesi, {{YILLAR}}"></canvas></div><p class="muted" id="cashChartNote" style="font-size:12.5px"></p></div>
+    </div>
+    <div class="scroll"><table class="xtable" id="cashTable" style="min-width:1080px"></table></div>
+    <p class="xfoot" id="cashNote"></p>
+  </section>
+
+  <section aria-labelledby="h-all">
+    <div class="sec-head">
+      <h2 id="h-all">Tüm bankalar</h2>
+      <p class="insight">Sütun başlıklarına tıklayarak sıralayın. Bir satırdaki <b>A</b> ve <b>B</b> düğmeleri o bankayı aşağıdaki iki banka karşılaştırmasına yerleştirir. Kalın isimler ilk 7.</p>
+    </div>
+    <div class="controls">
+      <label class="field" for="allGroup">Banka grubu<select id="allGroup"></select></label>
+      <label class="field" for="allSearch">Banka ara<input type="search" id="allSearch" placeholder="ör. QNB, Deniz, Eximbank" autocomplete="off"></label>
+    </div>
+    <div class="scroll" style="max-height:640px;overflow:auto"><table class="atable" id="allTable"></table></div>
+    <p class="xfoot" id="allNote"></p>
+  </section>
+
+  <section aria-labelledby="h-vs">
+    <div class="sec-head">
+      <h2 id="h-vs">İki bankayı karşılaştır</h2>
+      <p class="insight" id="vsInsight"></p>
+    </div>
+    <div class="controls">
+      <label class="field" for="vsA">Banka A<select id="vsA"></select></label>
+      <label class="field" for="vsB">Banka B<select id="vsB"></select></label>
+      <button class="btn" type="button" id="vsSwap">Yer değiştir</button>
+    </div>
+    <div class="vs" id="vsCards"></div>
+    <div class="panel"><div class="controls"><label class="field" for="vsMetric">Grafikteki gösterge<select id="vsMetric"></select></label></div><div class="chartbox"><canvas id="vsChart" role="img" aria-label="İki bankanın seçili göstergesi, {{YILLAR}}"></canvas></div></div>
+    <div class="panel" style="min-width:0"><h3>Oranlar, yıllar içinde aynı çeyrek</h3><div style="overflow-x:auto"><table class="vstable" id="vsRatios"></table></div></div>
+    <details class="notes" id="vsItemsWrap"><summary><span data-t="nitem"></span> kalemin tamamını yan yana gör</summary>
+      <div class="stack" style="margin-top:12px">
+        <div class="controls">
+          <label class="field" for="vsTab">Tablo<select id="vsTab"></select></label>
+          <label class="field" for="vsSearch">Kalem ara<input type="search" id="vsSearch" placeholder="ör. kredi kartı, swap" autocomplete="off"></label>
+        </div>
+        <div class="scroll" style="max-height:620px;overflow:auto"><table class="xtable" id="vsItems" style="min-width:760px"></table></div>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="h-cmp">
+    <div class="sec-head">
+      <h2 id="h-cmp">Göstergeleri karşılaştır</h2>
+      <p class="insight">Bir gösterge seçin; grafikte bankaların adına tıklayarak gizleyip gösterebilirsiniz. Oranlarda kalın çizgi ilk 7 toplamıdır.</p>
+    </div>
+    <div class="controls">
+      <label class="field" for="cmpMetric">Gösterge<select id="cmpMetric"></select></label>
+      <label class="field" for="cmpMode">Görünüm<select id="cmpMode"><option value="line">Dönemlere göre çizgi</option><option value="bar">Seçili dönemde sütun</option></select></label>
+    </div>
+    <div class="panel"><div class="chartbox tall"><canvas id="cmpChart" aria-label="Karşılaştırma grafiği" role="img"></canvas></div><p class="muted" id="cmpNote" style="font-size:13px"></p></div>
+  </section>
+
+  <section aria-labelledby="h-heat">
+    <div class="sec-head">
+      <h2 id="h-heat">Oran haritası</h2>
+      <p class="insight">Her hücre bir bankanın o dönemdeki oranıdır; koyu renk yüksek değer demektir.</p>
+    </div>
+    <div class="controls"><label class="field" for="heatMetric">Oran<select id="heatMetric"></select></label></div>
+    <div class="scroll"><table class="heat" id="heat"></table></div>
+    <p class="insight" id="heatNote"></p>
+  </section>
+
+  <section aria-labelledby="h-mix">
+    <div class="sec-head">
+      <h2 id="h-mix">Bilanço yapısı</h2>
+      <p class="insight">Seçili dönemde her bankanın aktifinin ya da pasifinin neye dağıldığı, yüzde olarak.</p>
+    </div>
+    <div class="controls"><div class="seg" id="mixSeg"><button type="button" data-v="a" aria-pressed="true">Aktif</button><button type="button" data-v="p" aria-pressed="false">Pasif</button></div></div>
+    <div class="panel"><div id="mixRows" class="stack"></div><div class="legend" id="mixLegend"></div></div>
+  </section>
+
+  <section aria-labelledby="h-x">
+    <div class="sec-head">
+      <h2 id="h-x">Tüm kalemler</h2>
+      <p class="insight">Altı tablonun <span data-t="nitem"></span> kalemi. Okla alt kalemleri açın, grafik simgesiyle kalemin {{ILK_YIL_DEN}} bu yana seyrini görün. Gelir tablosu ve nakit akış kalemleri yıl başından kümülatiftir; grafikleri yıllar içinde aynı çeyreği gösterir.</p>
+    </div>
+    <div class="controls">
+      <label class="field" for="xTab">Tablo<select id="xTab"></select></label>
+      <label class="field" for="xMode">Gösterim<select id="xMode"><option value="amt">Tutar (milyar TL)</option><option value="share">İlk 7 içindeki pay (%)</option><option value="yoy">Bir yıl öncesine göre değişim (%)</option><option value="toa">Banka aktifine oranı (%)</option></select></label>
+      <label class="field" for="xSearch">Kalem ara<input type="search" id="xSearch" placeholder="ör. kredi, mevduat, swap" autocomplete="off"></label>
+      <button class="btn" type="button" id="xExpand">Tümünü aç</button>
+      <button class="btn" type="button" id="xCollapse">Tümünü kapat</button>
+    </div>
+    <div class="scroll" style="max-height:720px;overflow:auto"><table class="xtable" id="xtable"></table></div>
+    <div class="xfoot"><span id="xCount"></span><span id="xModeNote"></span></div>
+  </section>
+
+  <details class="notes">
+    <summary>Yöntem ve notlar</summary>
+    <ul>
+      <li>Kaynak: TBB Veri Sistemi (verisistemi.tbb.org.tr), Finansal Tablolar, "TFRS9-<span data-t="kind"></span> Bankalarca Kamuya Açıklanacak Finansal Tablolar". Tablolar 1–5 ve 7 (nakit akış), {{ARALIK}} arası {{N}} çeyrek.</li>
+      <li>Toplam sütunu TP + YP'dir. Değerler sitede raporlandığı işaretle aktarılmıştır (örn. Personel Giderleri pozitif raporlanır).</li>
+      <li>Gelir tablosu ve kapsamlı gelir kalemleri yıl başından kümülatiftir: Mart 3, Haziran 6, Eylül 9, Aralık 12 ay. ROE, ROA ve net faiz geliri/aktif oranları "tutar × 12 / ay sayısı" ile yıllıklaştırılmış, dönem sonu özkaynak ve aktif kullanılmıştır. Mart değerleri tek çeyreğe dayandığından mevsimsel olarak yüksek görünebilir.</li>
+      <li>"Bir yıl öncesine göre değişim" seçili çeyreği bir önceki yılın aynı çeyreğiyle karşılaştırır; kümülatif kalemlerde ay sayısı aynı olduğundan karşılaştırma tutarlıdır. Tutarlar nominaldir; {{YILLAR}} arasındaki yüksek enflasyon büyüme oranlarını şişirir.</li>
+      <li>Nakit akış tablosu (Tablo 7) yıl başından kümülatiftir. "Faaliyet nakit kârı", bankacılık faaliyet konusu varlık ve yükümlülüklerdeki değişim öncesi faaliyet kârıdır (alınan faizler − ödenen faizler + ücret-komisyon ve diğer tahsilatlar − personel, vergi ve diğer ödemeler). Nakde dönüşüm oranı bunun dönem net kârına bölümüdür; TÜFE’ye endeksli menkul kıymetlerin tahakkuk eden ama tahsil edilmeyen getirileri gibi nakit dışı gelirler oranı düşürür. Faiz tahsilatı oranı, nakit olarak alınan ve ödenen faizlerin farkının gelir tablosundaki net faiz gelirine oranıdır. Oranlar yıllıklaştırılmış, dönem sonu aktif kullanılmıştır.</li>
+      <li>Banka listesi TBB’nin bugünkü banka listesidir; {{ILK_YIL_DEN}} bu yana kapanan ya da birleşen bankalar yer almaz, sonradan kurulan bankalar kuruldukları dönemden itibaren görünür. Bu nedenle banka sayısı dönemden döneme değişir. NİFO 2024’ten önce yayımlanmadığından o dönemlerde boştur.</li>
+      <li data-only="solo">Kapsam: TBB Veri Sistemi’nde veri yayımlanan 56 bankanın tamamı (mevduat, kalkınma ve yatırım bankaları). Katılım bankaları TBB verisinde yer almadığından kapsam dışıdır. "Sektör" bu 56 bankanın toplamıdır.</li>
+      <li>Likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO) bankaların dipnotlarındaki "cari dönem" oranlarıdır; LKO bankaların açıkladığı çeyrek ortalamasıdır. {{ORAN_NOTU}}İlk 7, grup ve sektör oranları, bankaların dönem sonu yüksek kaliteli likit varlıkları ile net nakit çıkışları (NİFO’da mevcut ve gerekli istikrarlı fon) toplanarak hesaplandı; bu yüzden bankaların açıkladığı ortalama oranlardan biraz farklı olabilir. Nakit çıkışı çok küçük yatırım bankalarında oranlar binlerce yüzdeye çıkabilir ya da bildirim tutarsız olabilir: %20’nin altı ve %1.000’in üstü <span class="flag">!</span> ile işaretlidir.</li>
+      <li data-only="kons">Kapsam: TBB Veri Sistemi’nde konsolide tablo yayımlayan 28 banka. Bağlı ortaklığı olmayan bankalar yalnız solo tablo açıkladığından bu görünümde yer almaz; "Sektör" bu 28 bankanın konsolide toplamıdır. Bir bankanın konsolide ettiği başka bir banka toplamda iki kez sayılabileceğinden sektör toplamı yaklaşık bir büyüklüktür.</li>
+      <li data-only="kons">Konsolide dönem net kârı azınlık paylarına düşen kârı da içerir. "Grubun kârı" ve "Azınlık payları kârı" ile özkaynaktaki "Azınlık payları" Tüm kalemler bölümünde ayrı satırlardır. ROE, toplam net kâr ile azınlık payları dahil toplam özkaynak üzerinden hesaplandı.</li>
+      <li data-only="kons">Konsolide kalemler TBB’de solo kalemlerin karşılığı olan ayrı kodlarla yayımlanır (çoğunlukla solo kod + 250.000). Bu raporda solo kodlarla eşleştirilerek gösterildi; yalnız konsolide tabloda bulunan beş kalem (azınlık payları, grubun kârı, kiralama faiz giderleri, donuk alacaklar) kendi kodlarıyla eklendi.</li>
+      <li>Bazı bankaların TBB’deki grup kaydı güncel değil; bunlar "Grup bilgisi yok" olarak gösterildi.</li>
+      <li>Hisse başına kâr kaynakta dönemden döneme farklı ölçekte raporlandığından karşılaştırma ve toplamlara dahil edilmemiştir.</li>
+      <li>Krediler (karşılık sonrası): krediler kalemi eksi itfa edilmiş maliyetle ölçülen finansal varlıklar için ayrılan beklenen zarar karşılığı.</li>
+    </ul>
+  </details>
+  <footer>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> · <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary)">LinkedIn</a> · Kaynak verisi TBB’ye aittir.</footer>
+</div>
+</template>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const DATA = __DATA__;
+const META = {solo:{kind:"Solo",kindlow:"solo",date:"{{TARIH}}"}, kons:{kind:"Konsolide",kindlow:"konsolide",date:"{{TARIH}}"}};
+function boot(D, MODE){
+const CLEAN=[];
+const A = D.A, T7 = D.T7, NA = A.names.length;
+const P = D.periods, B = T7.map(i=>A.short[i]), NB = B.length;
+const PL = D.plabel, MON = D.months;
+const ITEMS = D.items; // [code,name,level,tab]
+const byCode = {}; ITEMS.forEach((it,i)=>byCode[it[0]]=i);
+let curP = P[P.length-1];
+try { const s = localStorage.getItem("b7.period"); if (s && P.includes(s)) curP = s; } catch(e) {}
+
+const nf1 = new Intl.NumberFormat("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:1});
+const nf0 = new Intl.NumberFormat("tr-TR",{maximumFractionDigits:0});
+const nf2 = new Intl.NumberFormat("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const bcol = i => css(i===NB ? "--bt" : "--b"+i);
+const ALLIDX = [...Array(NA).keys()];
+const av = (p,code,i) => { const r=A.v[p][code]; return r && r[i]!=null ? r[i] : 0; };
+const has = (p,code,i) => { const r=A.v[p][code]; return !!(r && r[i]!=null); };
+const asum = (p,code,idxs) => idxs.reduce((s,i)=>s+av(p,code,i),0);
+const idxOf = b => b===NB ? T7 : [T7[b]];
+const v = (p,code,b) => av(p,code,T7[b]);
+const tot = (p,code) => asum(p,code,T7);
+const get = (p,code,b) => b===NB ? tot(p,code) : v(p,code,b);
+const mlr = x => x/1e6;               // bin TL → milyar TL
+const fmtM = x => nf1.format(mlr(x));
+const fmtBig = x => Math.abs(x)>=1e9 ? nf2.format(x/1e9) : nf1.format(x/1e6);
+const unitBig = x => Math.abs(x)>=1e9 ? "trilyon TL" : "milyar TL";
+const pct = (x,d=1) => (x==null||!isFinite(x)) ? "–" : (x<0?"−":"")+"%"+ (d===1?nf1:nf2).format(Math.abs(x)*100);
+const chg = x => (x==null||!isFinite(x)) ? "–" : (x>=0?"+":"−")+"%"+nf1.format(Math.abs(x*100));
+const isFlowTab = t => /^[457]/.test(t);
+const prevP = p => { const i=P.indexOf(p); return i>0?P[i-1]:null; };
+const yoyP = p => { const q=(+p.slice(0,4)-1)+p.slice(4); return P.includes(q)?q:null; };
+const SER = p => P.filter(q=>q.slice(5)===p.slice(5) && q<=p);
+const LASTP = P[P.length-1];
+const absSum = (p,code,idxs) => idxs.reduce((s,i)=>s+Math.abs(av(p,code,i)),0);
+
+const STOCK = {
+  aktif:{l:"Toplam aktif",c:16018}, kredi:{l:"Krediler",c:16005}, mevduat:{l:"Mevduat",c:102152},
+  ozk:{l:"Özkaynaklar",c:102170}, nfg:{l:"Net faiz geliri",c:102213,flow:1}, ucret:{l:"Net ücret ve komisyon",c:102215,flow:1},
+  netkar:{l:"Dönem net kârı",c:102088,flow:1}
+};
+const ypS = (p,idxs) => idxs.reduce((s,i)=>s+(A.yp[p][i]||0),0);
+const liq = (p,key,idxs) => { // reported ratio for one bank; sum-based for groups
+  if(idxs.length===1){ const x=A[key][p][idxs[0]]; return x==null?null:x/100; }
+  const [n,d]= key==="nsfr" ? ["asf","rsf"] : ["hqla","out"];
+  let sn=0, sd=0, k=0; idxs.forEach(i=>{ const a=A[n][p][i], b=A[d][p][i]; if(a!=null&&b!=null&&b>0){ sn+=a; sd+=b; k++; } });
+  return k&&sd? sn/sd : null;
+};
+const div=(a,b)=> b? a/b : null;
+const GR = {
+  roe:{l:"Özkaynak kârlılığı (ROE, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], asum(p,102170,x))},
+  roa:{l:"Aktif kârlılığı (ROA, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], asum(p,16018,x)), d:2},
+  nim:{l:"Net faiz geliri / aktif (yıllık)", f:(p,x)=>div(asum(p,102213,x)*12/MON[p], asum(p,16018,x)), d:2},
+  km:{l:"Kredi / mevduat", f:(p,x)=>div(asum(p,16005,x), asum(p,102152,x))},
+  oa:{l:"Özkaynak / aktif", f:(p,x)=>div(asum(p,102170,x), asum(p,16018,x))},
+  ka:{l:"Krediler / aktif", f:(p,x)=>div(asum(p,16005,x), asum(p,16018,x))},
+  kar:{l:"Karşılık / krediler", f:(p,x)=>div(-asum(p,16014,x), asum(p,16005,x)), d:2},
+  ypa:{l:"YP aktif / toplam aktif", f:(p,x)=>div(ypS(p,x), asum(p,16018,x))},
+  ucretg:{l:"Ücret-komisyon / faaliyet brüt kârı", f:(p,x)=>div(asum(p,102215,x), asum(p,102360,x))},
+  cost:{l:"Diğer faaliyet giderleri / brüt kâr", f:(p,x)=>div(-asum(p,102221,x), asum(p,102360,x))},
+  lcr:{l:"Likidite karşılama oranı (LKO)", f:(p,x)=>liq(p,"lcr",x), liq:1},
+  nsfr:{l:"Net istikrarlı fonlama oranı (NİFO)", f:(p,x)=>liq(p,"nsfr",x), liq:1},
+  cfk_a:{l:"Faaliyet nakit kârı / aktif (yıllık)", f:(p,x)=>div(asum(p,102405,x)*12/MON[p], asum(p,16018,x)), d:2, cash:1},
+  cfo_a:{l:"Bankacılık faaliyetleri net nakit akışı / aktif (yıllık)", f:(p,x)=>div(asum(p,102429,x)*12/MON[p], asum(p,16018,x)), d:2, cash:1},
+  cconv:{l:"Nakde dönüşüm: faaliyet nakit kârı / net kâr", f:(p,x)=>{ const n=asum(p,102088,x); return n>0 && has(p,102405,x[0]) ? asum(p,102405,x)/n : null; }, cash:1},
+  ftah:{l:"Faiz tahsilatı: nakit net faiz / net faiz geliri", f:(p,x)=>{ const n=asum(p,102213,x); return n>0 && has(p,102407,x[0]) ? (asum(p,102407,x)-absSum(p,102409,x))/n : null; }, cash:1}
+};
+const RATIO = {};
+Object.entries(GR).forEach(([k,r])=>RATIO[k]={l:r.l,d:r.d,liq:r.liq,f:(p,b)=>r.f(p,idxOf(b))});
+RATIO.pay={l:"Aktif payı (ilk 7 içinde)", f:(p,b)=>get(p,16018,b)/tot(p,16018)};
+const yp = (p,b) => ypS(p,idxOf(b));
+const charts = {};
+function mkChart(id, cfg){ if (charts[id]) charts[id].destroy(); const el=document.getElementById(id); if(!el||!window.Chart) return; charts[id]=new Chart(el,cfg); return charts[id]; }
+function baseOpts(yfmt, extra={}){
+  const ink=css("--ink-2"), grid=css("--line");
+  return Object.assign({responsive:true,maintainAspectRatio:false,animation:{duration:250},
+    interaction:{mode:"index",intersect:false},
+    plugins:{legend:{labels:{color:ink,boxWidth:12,boxHeight:12,font:{family:"Roboto",size:12}}},
+      tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${yfmt(c.parsed.y ?? c.parsed.x)}`}}},
+    scales:{x:{ticks:{color:ink,font:{family:"Roboto",size:12}},grid:{color:grid,drawTicks:false}},
+            y:{ticks:{color:ink,font:{family:"Roboto",size:12},callback:yfmt},grid:{color:grid}}}}, extra);
+}
+const el = (tag, attrs={}, html="") => { const e=document.createElement(tag); for (const k in attrs) e.setAttribute(k,attrs[k]); if(html) e.innerHTML=html; return e; };
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- period bar ---------- */
+function setP(p){ curP=p; try{localStorage.setItem("b7.period",p)}catch(e){} renderAll(); }
+function renderPeriodBar(){
+  const box=document.getElementById("periodSeg"); box.innerHTML="";
+  const i=P.indexOf(curP), y=curP.slice(0,4);
+  const prev=el("button",{type:"button",class:"icon-btn","aria-label":"Önceki çeyrek",title:"Önceki çeyrek"},'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>');
+  const next=el("button",{type:"button",class:"icon-btn","aria-label":"Sonraki çeyrek",title:"Sonraki çeyrek"},'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>');
+  if(i<=0) prev.disabled=true; if(i>=P.length-1) next.disabled=true;
+  prev.onclick=()=>setP(P[i-1]); next.onclick=()=>setP(P[i+1]);
+  const ys=el("select",{"aria-label":"Yıl"}); [...new Set(P.map(p=>p.slice(0,4)))].forEach(v=>ys.appendChild(el("option",{value:v},v))); ys.value=y;
+  ys.onchange=()=>{ let p=ys.value+curP.slice(4); if(!P.includes(p)) p=P.filter(q=>q.startsWith(ys.value)).pop(); setP(p); };
+  const qs=el("div",{class:"seg",role:"group","aria-label":"Çeyrek"});
+  [["03","Mar"],["06","Haz"],["09","Eyl"],["12","Ara"]].forEach(([m,l])=>{ const p=y+"-"+m; const b=el("button",{type:"button","aria-pressed":String(p===curP)},l); if(!P.includes(p)) b.disabled=true; b.onclick=()=>setP(p); qs.appendChild(b); });
+  box.append(prev,ys,qs,next);
+  document.getElementById("periodNote").textContent = `Gelir tablosu: Ocak–${PL[curP].split(" ")[0]} ${PL[curP].split(" ")[1]} kümülatif (${MON[curP]} ay)`;
+}
+
+/* ---------- KPIs ---------- */
+let openKpi = null;
+const KPI_KEYS = ["aktif","kredi","mevduat","ozk","nfg","netkar"];
+function renderKpis(){
+  const box=document.getElementById("kpis"); box.innerHTML="";
+  KPI_KEYS.forEach(k=>{
+    const m=STOCK[k], val=tot(curP,m.c);
+    let cmpP = m.flow ? yoyP(curP) : prevP(curP), cmpLabel = m.flow ? "geçen yılın aynı dönemine göre" : "önceki çeyreğe göre";
+    let c = cmpP ? val/tot(cmpP,m.c)-1 : null;
+    const btn=el("button",{type:"button",class:"kpi","aria-expanded":String(openKpi===k),"aria-controls":"kpiPanel"});
+    btn.innerHTML=`<span class="k-l">${m.l}${m.flow?' <span class="muted" style="font-weight:500">(kümülatif)</span>':''}</span><span class="k-v">${fmtBig(val)}</span><span class="k-u">${unitBig(val)}</span>
+      <span class="k-c ${c==null?'muted':(c>=0?'up':'down')}">${c==null?(m.flow?'Önceki yıl verisi yok':'İlk dönem'):chg(c)+' <span class="muted" style="font-weight:500">'+cmpLabel+'</span>'}</span>`;
+    btn.onclick=()=>{ openKpi = openKpi===k?null:k; renderKpis(); renderKpiPanel(); };
+    box.appendChild(btn);
+  });
+  const roeT=RATIO.roe.f(curP,NB), kmT=RATIO.km.f(curP,NB);
+  const yq=yoyP(curP);
+  document.getElementById("sumInsight").innerHTML = `${PL[curP]} itibarıyla yedi bankanın toplam aktifi <b>${fmtBig(tot(curP,16018))} ${unitBig(tot(curP,16018))}</b>, kredi/mevduat oranı <b>${pct(kmT)}</b>, yıllıklaştırılmış özkaynak kârlılığı <b>${pct(roeT)}</b>. ${yq?`Bir yılda (${PL[yq]} → ${PL[curP]}) aktif <b>${chg(tot(curP,16018)/tot(yq,16018)-1)}</b> büyüdü; ilk dönemden (${PL[P[0]]}) bu yana ${nf1.format(tot(curP,16018)/tot(P[0],16018))} katına çıktı.`:''} Bir karta tıklayınca bankalara dağılımı açılır.`;
+}
+function renderKpiPanel(){
+  const pan=document.getElementById("kpiPanel");
+  if(!openKpi){ pan.hidden=true; pan.innerHTML=""; return; }
+  const m=STOCK[openKpi]; pan.hidden=false;
+  const vals=B.map((_,i)=>v(curP,m.c,i)), T=tot(curP,m.c), mx=Math.max(...vals);
+  const cmpP = yoyP(curP);
+  const order=vals.map((x,i)=>i).sort((a,b)=>vals[b]-vals[a]);
+  let rows=order.map(i=>{ const c = cmpP && cmpP!==curP ? vals[i]/v(cmpP,m.c,i)-1 : null;
+    return `<div class="bl-row"><span>${B[i]}</span><span class="bl-track"><span class="bl-fill" style="display:block;width:${Math.max(0,vals[i]/mx*100)}%;background:${bcol(i)}"></span></span><span class="bl-v">${fmtM(vals[i])}</span><span class="bl-c ${c==null?'muted':(c>=0?'up':'down')}">${c==null?'–':chg(c)}</span></div>`; }).join("");
+  pan.innerHTML=`<div class="panel-grid"><div class="stack"><h3>${m.l} · ${PL[curP]}</h3><p class="muted" style="font-size:13px">milyar TL · sağ sütun: ${cmpP? PL[cmpP]+'\'e göre':'bir yıl önceki veri yok'} · ilk 7 içindeki pay: ${order.map(i=>B[i]+' '+pct(vals[i]/T)).slice(0,3).join(', ')}…</p><div class="barlist">${rows}</div></div>
+    <div class="stack"><h3>İlk 7 toplamı, ${m.flow?'yıllar içinde aynı dönem':'{{ILK_YIL_DEN}} bu yana'}</h3><p class="muted" style="font-size:13px">milyar TL${m.flow?' · kümülatif, aynı aylar karşılaştırılmalı':''}</p><div class="chartbox short"><canvas id="kpiChart" role="img" aria-label="${m.l} zaman serisi"></canvas></div></div></div>`;
+  const acc=css("--accent");
+  const KP = m.flow ? SER(curP) : P;
+  mkChart("kpiChart",{type:"bar",data:{labels:KP.map(p=>PL[p]),datasets:[{label:m.l,data:KP.map(p=>mlr(tot(p,m.c))),backgroundColor:KP.map(p=>p===curP?acc:css("--accent-soft")),borderRadius:3}]},
+    options:baseOpts(x=>nf0.format(x),{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>nf1.format(c.parsed.y)+" milyar TL"}}}})});
+}
+
+/* ---------- banks ---------- */
+let openBank = null;
+function renderBanks(){
+  const box=document.getElementById("banks"); box.innerHTML="";
+  const order=B.map((_,i)=>i).sort((a,b)=>v(curP,16018,b)-v(curP,16018,a));
+  const T=tot(curP,16018);
+  order.forEach((i,rank)=>{
+    const b=el("button",{type:"button",class:"bank","aria-expanded":String(openBank===i),style:`--bc:${bcol(i)}`});
+    b.innerHTML=`<div class="bank-top"><span class="bank-name">${B[i]}</span><span class="bank-rank">#${rank+1} · ${pct(v(curP,16018,i)/T)}</span></div>
+      <div class="bank-stats"><div><div class="bs-l">Aktif</div><div class="bs-v">${fmtBig(v(curP,16018,i))}<span class="muted" style="font-size:11px;font-weight:500"> ${Math.abs(v(curP,16018,i))>=1e9?'trn':'mlr'}</span></div></div>
+      <div><div class="bs-l">ROE</div><div class="bs-v">${pct(RATIO.roe.f(curP,i))}</div></div>
+      <div><div class="bs-l">Kredi/mev.</div><div class="bs-v">${pct(RATIO.km.f(curP,i))}</div></div></div>
+      <span class="bank-more">${openBank===i?'Ayrıntıyı kapat':'Ayrıntıyı aç'}</span>`;
+    b.onclick=()=>{ openBank = openBank===i?null:i; renderBanks(); };
+    box.appendChild(b);
+  });
+  if(openBank!=null){
+    const cards=[...box.children], pos=order.indexOf(openBank);
+    const cols=Math.max(1,getComputedStyle(box).gridTemplateColumns.split(" ").filter(Boolean).length);
+    const after=cards[Math.min(cards.length-1, Math.floor(pos/cols)*cols+cols-1)];
+    const d=el("div",{class:"bank-detail panel"}); after.after(d); renderBankDetail(d,openBank);
+  }
+}
+const ASSET_MIX = [
+  {l:"Nakit ve MB", f:(p,b)=>get(p,102094,b), c:"--b6"},
+  {l:"Menkul kıymetler", f:(p,b)=>get(p,104247,b)+get(p,102097,b)+get(p,102100,b), c:"--b2"},
+  {l:"Krediler (karşılık sonrası)", f:(p,b)=>get(p,16005,b)+get(p,16014,b), c:"--b0"},
+  {l:"Türev varlıklar", f:(p,b)=>get(p,104266,b), c:"--b5"},
+  {l:"Ortaklık yatırımları", f:(p,b)=>get(p,16004,b), c:"--b3"},
+];
+const LIAB_MIX = [
+  {l:"Mevduat", f:(p,b)=>get(p,102152,b), c:"--b0"},
+  {l:"Alınan krediler", f:(p,b)=>get(p,102160,b), c:"--b1"},
+  {l:"Para piyasası", f:(p,b)=>get(p,102151,b), c:"--b6"},
+  {l:"İhraç edilen menkul + sermaye benzeri", f:(p,b)=>get(p,102161,b)+get(p,102403,b), c:"--b2"},
+  {l:"Özkaynaklar", f:(p,b)=>get(p,102170,b), c:"--b3"},
+];
+function mixParts(kind,p,b){
+  const defs = kind==="a"?ASSET_MIX:LIAB_MIX, T=get(p,16018,b);
+  const parts = defs.map(d=>({l:d.l,c:css(d.c),x:d.f(p,b)}));
+  const rest = T - parts.reduce((a,x)=>a+x.x,0);
+  parts.push({l:"Diğer",c:css("--ink-3"),x:rest});
+  return parts.map(x=>Object.assign(x,{s:x.x/T}));
+}
+function stackHTML(parts){
+  return `<div class="stackbar">${parts.map(x=>`<span title="${esc(x.l)}: ${pct(x.s)}" style="width:${Math.max(0,x.s*100)}%;background:${x.c}"></span>`).join("")}</div>`;
+}
+function legendHTML(parts, withVal){ return `<div class="legend">${parts.map(x=>`<span><i style="background:${x.c}"></i>${x.l}${withVal?' '+pct(x.s):''}</span>`).join("")}</div>`; }
+function bridgeHTML(p,b){
+  const steps=[
+    ["Net faiz geliri",get(p,102213,b)],["Net ücret ve komisyon",get(p,102215,b)],["Ticari kâr/zarar",get(p,102217,b)],
+    ["Temettü ve diğer faaliyet gelirleri",get(p,102216,b)+get(p,102219,b)],["=Faaliyet brüt kârı",get(p,102360,b)],
+    ["Beklenen zarar karşılıkları",get(p,16034,b)+get(p,17077,b)+get(p,102220,b)],["Personel giderleri",-Math.abs(get(p,16033,b))],
+    ["Diğer faaliyet giderleri",get(p,102221,b)],["Ortaklıklardan kâr",get(p,102223,b)+get(p,104330,b)+get(p,102632,b)],
+    ["=Vergi öncesi kâr",get(p,102224,b)],["Vergi",get(p,104231,b)],["=Net kâr",get(p,102088,b)]];
+  const mx=Math.max(...steps.map(s=>Math.abs(s[1])));
+  let run=0;
+  return `<div class="bridge">${steps.map(([l,x])=>{
+    const total=l.startsWith("=");
+    let left,w,color;
+    if(total){ run=x; left=0; w=Math.abs(x)/mx*100; color=css("--ink"); }
+    else { const a=run, bnd=run+x; left=Math.min(a,bnd)/mx*100; w=Math.abs(x)/mx*100; color= x>=0?css("--good"):css("--bad"); run=bnd; }
+    return `<div class="br-row ${total?'total':''}"><span>${total?l.slice(1):l}</span><span class="br-track"><span class="br-bar" style="left:${Math.max(0,left)}%;width:${Math.max(0.4,w)}%;background:${color}"></span></span><span class="br-v ${!total&&x<0?'neg':''}">${fmtM(x)}</span></div>`;
+  }).join("")}</div>`;
+}
+function renderBankDetail(d,i){
+  const rk=["roe","roa","nim","km","oa","kar","ypa","cost","lcr","nsfr","cfk_a","cconv","ftah"]; const TC=SER(curP);
+  d.innerHTML=`<div class="panel-grid">
+    <div class="stack"><h3>${B[i]} · büyüklükler</h3><p class="muted" style="font-size:13px">milyar TL, dönem sonu, {{YILLAR}}</p><div class="chartbox"><canvas id="bankChart" role="img" aria-label="${B[i]} büyüklükler"></canvas></div></div>
+    <div class="stack" style="min-width:0"><h3>Oranlar</h3><div style="overflow-x:auto"><table class="ratio-table"><thead><tr><th>Oran</th>${TC.map(p=>`<th class="${p===curP?'cur':''}">${PL[p]}</th>`).join("")}</tr></thead>
+      <tbody>${rk.map(k=>`<tr><td style="white-space:normal;min-width:200px">${RATIO[k].l}</td>${TC.map(p=>`<td class="${p===curP?'cur':''}">${pct(RATIO[k].f(p,i),RATIO[k].d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+      <p class="muted" style="font-size:12.5px">İlk 7 ROE (${PL[curP]}): ${pct(RATIO.roe.f(curP,NB))} · bu banka ${pct(RATIO.roe.f(curP,i))}</p></div>
+  </div>
+  <div class="two">
+    <div class="stack"><h3>Bilanço yapısı · ${PL[curP]}</h3><span class="subhead">Aktif</span>${stackHTML(mixParts("a",curP,i))}${legendHTML(mixParts("a",curP,i),true)}<span class="subhead">Pasif</span>${stackHTML(mixParts("p",curP,i))}${legendHTML(mixParts("p",curP,i),true)}</div>
+    <div class="stack"><h3>Gelirden net kâra · Oca–${PL[curP].split(" ")[0]} ${PL[curP].split(" ")[1]}</h3><p class="muted" style="font-size:13px">milyar TL, kümülatif</p>${bridgeHTML(curP,i)}</div>
+  </div>`;
+  const series=[["Toplam aktif",16018,"--ink"],["Krediler",16005,"--b0"],["Mevduat",102152,"--b1"],["Özkaynaklar",102170,"--b3"]];
+  mkChart("bankChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:series.map(([l,c,col])=>({label:l,data:P.map(p=>mlr(v(p,c,i))),borderColor:css(col),backgroundColor:css(col),tension:.25,pointRadius:P.map(p=>p===curP?5:3),borderWidth:2}))},
+    options:baseOpts(x=>nf0.format(x))});
+}
+
+/* ---------- compare ---------- */
+function metricOptions(sel, includeStock){
+  sel.innerHTML="";
+  if(includeStock){ const g=el("optgroup",{label:"Tutarlar (milyar TL)"}); Object.entries(STOCK).forEach(([k,m])=>g.appendChild(el("option",{value:"s:"+k},m.l+(m.flow?" (kümülatif)":"")))); sel.appendChild(g); }
+  const g2=el("optgroup",{label:"Oranlar"}); Object.entries(RATIO).forEach(([k,r])=>g2.appendChild(el("option",{value:"r:"+k},r.l))); sel.appendChild(g2);
+}
+function seriesFor(key,b,p){ const [t,k]=key.split(":"); return t==="s" ? mlr(get(p,STOCK[k].c,b)) : RATIO[k].f(p,b)*100; }
+function renderCompare(){
+  const key=document.getElementById("cmpMetric").value, mode=document.getElementById("cmpMode").value;
+  const isR=key.startsWith("r:"), k=key.split(":")[1];
+  const yfmt = isR ? (x=>"%"+nf1.format(x)) : (x=>nf0.format(x));
+  const ttf = isR ? (x=>"%"+nf2.format(x)) : (x=>nf1.format(x)+" milyar TL");
+  const idx=[...B.keys()]; if(isR) idx.push(NB);
+  const lbl=b=> b===NB?"İlk 7":B[b];
+  let cfg;
+  const CP = (!isR && STOCK[k].flow) ? SER(curP) : P;
+  if(mode==="line"){
+    cfg={type:"line",data:{labels:CP.map(p=>PL[p]),datasets:idx.map(b=>({label:lbl(b),data:CP.map(p=>seriesFor(key,b,p)),borderColor:bcol(b),backgroundColor:bcol(b),borderWidth:b===NB?3.5:2,borderDash:b===NB?[6,4]:[],tension:.25,pointRadius:CP.map(p=>p===curP?5:(CP.length>12?0:2.5))}))},
+      options:baseOpts(yfmt,{})};
+  } else {
+    const ord=idx.slice().sort((a,b)=>seriesFor(key,b,curP)-seriesFor(key,a,curP));
+    cfg={type:"bar",data:{labels:ord.map(lbl),datasets:[{label:PL[curP],data:ord.map(b=>seriesFor(key,b,curP)),backgroundColor:ord.map(bcol),borderRadius:4}]},
+      options:baseOpts(yfmt,{plugins:{legend:{display:false}}})};
+  }
+  cfg.options.plugins.tooltip={callbacks:{label:c=>`${c.dataset.label===PL[curP]&&mode==="bar"?c.label:c.dataset.label}: ${ttf(c.parsed.y)}`}};
+  mkChart("cmpChart",cfg);
+  const flow = !isR && STOCK[k].flow;
+  document.getElementById("cmpNote").textContent = flow ? "Kümülatif tutar; grafik yıllar içinde seçili çeyreği (aynı ay sayısını) gösterir." :
+    (isR && ["roe","roa","nim"].includes(k) ? "Yıllıklaştırılmış oran; Mart değerleri tek çeyreğe dayanır." : "");
+}
+
+/* ---------- heat ---------- */
+function mixColor(t){ const a=hex(css("--heat-lo")), b=hex(css("--heat-hi")); return `rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*t)).join(",")})`; }
+function hex(h){ h=h.replace("#",""); return [0,2,4].map(i=>parseInt(h.substr(i,2),16)); }
+function renderHeat(){
+  const k=document.getElementById("heatMetric").value.split(":")[1], r=RATIO[k];
+  const HP=SER(curP); const rows=[...B.keys()].map(b=>({b,vals:HP.map(p=>r.f(p,b))}));
+  const all=rows.flatMap(x=>x.vals).filter(x=>x!=null&&isFinite(x)&&(!r.liq||(x>=0.2&&x<=10))), lo=Math.min(...all), hi=Math.max(...all);
+  const sv=x=>{const y=x.vals[HP.length-1]; return y==null||!isFinite(y)?-1e9:y;}; rows.sort((a,b)=>sv(b)-sv(a));
+  rows.push({b:NB,vals:HP.map(p=>r.f(p,NB))});
+  const t=document.getElementById("heat");
+  t.innerHTML=`<thead><tr><th class="rowh" scope="col">Banka</th>${HP.map(p=>`<th scope="col" style="${p===curP?'color:var(--ink)':''}">${PL[p]}${p===curP?' ●':''}</th>`).join("")}<th scope="col">Son 1 yıl</th></tr></thead>
+  <tbody>${rows.map(x=>`<tr class="${x.b===NB?'total':''}"><th class="rowh" scope="row">${x.b===NB?'İlk 7 toplam':B[x.b]}</th>${x.vals.map(val=>{ if(val==null||!isFinite(val)) return `<td>–</td>`; const tt=hi>lo?Math.max(0,Math.min(1,(val-lo)/(hi-lo))):0;return `<td style="background:${mixColor(tt)};color:${tt>.55?css('--heat-ink-hi'):css('--ink')}">${pct(val,r.d)}</td>`}).join("")}
+    ${(()=>{const a=x.vals.length>1?x.vals[x.vals.length-2]:null, z=x.vals[x.vals.length-1]; if(a==null||z==null) return `<td>–</td>`; const d=z-a; return `<td style="color:${d>=0?css('--good'):css('--bad')}">${(d>=0?'+':'−')+nf1.format(Math.abs(d)*100)} puan</td>`;})()}</tr>`).join("")}</tbody>`;
+  const best=rows.slice(0,-1)[0], worst=rows.slice(0,-1).slice(-1)[0];
+  document.getElementById("heatNote").innerHTML=`${PL[curP]} döneminde en yüksek <b>${B[best.b]}</b> (${pct(best.vals[HP.length-1],r.d)}), en düşük <b>${B[worst.b]}</b> (${pct(worst.vals[HP.length-1],r.d)}). Ölçek: ${pct(lo,r.d)} – ${pct(hi,r.d)}.`;
+}
+
+/* ---------- mix ---------- */
+let mixKind="a";
+function renderMix(){
+  const box=document.getElementById("mixRows");
+  const order=[...B.keys()].sort((a,b)=>v(curP,16018,b)-v(curP,16018,a));
+  box.innerHTML=order.map(b=>`<div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:center"><span style="font-weight:600;font-size:14px">${B[b]}</span>${stackHTML(mixParts(mixKind,curP,b))}</div>`).join("")
+    + `<div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:center;margin-top:6px"><span style="font-weight:800;font-size:14px">İlk 7</span>${stackHTML(mixParts(mixKind,curP,NB))}</div>`;
+  document.getElementById("mixLegend").innerHTML=legendHTML(mixParts(mixKind,curP,NB),true).replace('<div class="legend">','').replace(/<\/div>$/,'') ;
+  document.getElementById("mixLegend").insertAdjacentHTML("afterbegin",'<span class="muted">İlk 7 ortalaması:</span>');
+}
+
+/* ---------- explorer ---------- */
+const TABS=[...new Set(ITEMS.map(x=>x[3]))];
+const parent=[], kids=ITEMS.map(()=>[]);
+ITEMS.forEach((it,i)=>{ let p=-1; for(let j=i-1;j>=0;j--){ if(ITEMS[j][3]!==it[3]) break; if(ITEMS[j][2]<it[2]){p=j;break;} } parent[i]=p; if(p>=0) kids[p].push(i); });
+const open=new Set(); let chartOpen=null;
+function xVal(i,b,mode){
+  const code=ITEMS[i][0];
+  if(mode==="amt") return code===102566? (b===NB?null:v(curP,code,b)) : mlr(get(curP,code,b));
+  if(code===102566) return null;
+  if(mode==="share"){ const T=tot(curP,code); return T? get(curP,code,b)/T : null; }
+  if(mode==="yoy"){ const yq=yoyP(curP); if(!yq) return null; const a=get(yq,code,b); return a? get(curP,code,b)/a-1 : null; }
+  if(mode==="toa"){ if(isFlowTab(ITEMS[i][3])) return null; return get(curP,code,b)/get(curP,16018,b); }
+}
+function fmtX(x,mode,code){
+  if(x==null||!isFinite(x)) return '<span class="muted">–</span>';
+  if(mode==="amt") return code===102566? nf2.format(x) : `<span class="${x<0?'neg':''}">${nf1.format(x)}</span>`;
+  if(mode==="yoy") return `<span class="${x<0?'neg':''}">${chg(x)}</span>`;
+  return pct(x);
+}
+const CARET='<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const CHARTI='<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1.5 12.5h11M3 10l3-3.5 2.5 2L12 4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+function renderExplorer(){
+  const tab=document.getElementById("xTab").value, mode=document.getElementById("xMode").value;
+  const q=document.getElementById("xSearch").value.trim().toLocaleLowerCase("tr-TR");
+  const t=document.getElementById("xtable");
+  let vis=[], hits=new Set();
+  if(q){
+    ITEMS.forEach((it,i)=>{ if((it[1].toLocaleLowerCase("tr-TR").includes(q)||String(it[0]).includes(q))){ hits.add(i); let p=parent[i]; while(p>=0){ hits.add(p); p=parent[p]; } } });
+    vis=ITEMS.map((_,i)=>i).filter(i=>hits.has(i));
+  } else {
+    ITEMS.forEach((it,i)=>{ if(tab!=="all"&&it[3]!==tab) return; let p=parent[i], ok=true; while(p>=0){ if(!open.has(p)){ok=false;break;} p=parent[p]; } if(ok) vis.push(i); });
+  }
+  const unit = mode==="amt"?"milyar TL":(mode==="yoy"?"değişim":"%");
+  let h=`<thead><tr><th scope="col">Kalem <span class="muted" style="font-weight:500">(${PL[curP]} · ${unit})</span></th>${B.map((b,i)=>`<th scope="col"><span style="color:${bcol(i)}">■</span> ${b}</th>`).join("")}<th scope="col">İlk 7</th></tr></thead><tbody>`;
+  let lastTab=null;
+  vis.forEach(i=>{
+    const [code,name,lvl,tb]=ITEMS[i];
+    if((tab==="all"||q) && tb!==lastTab){ h+=`<tr><td colspan="${NB+2}" style="background:var(--surface-2);font-weight:800;font-family:var(--display);font-size:15px">${esc(tb)}${isFlowTab(tb)?'<span class="tab-chip">kümülatif</span>':''}</td></tr>`; lastTab=tb; }
+    const hasK=kids[i].length>0, isOpen=open.has(i)||!!q;
+    h+=`<tr class="${lvl===0?'l0':''} ${q&&ITEMS[i][1].toLocaleLowerCase('tr-TR').includes(q)?'hit':''}"><td><div class="xname" style="padding-left:${lvl*16}px">${hasK?`<button type="button" class="caret" data-i="${i}" aria-expanded="${isOpen}" aria-label="${isOpen?'Alt kalemleri gizle':'Alt kalemleri göster'}: ${esc(name)}" ${q?'disabled':''}>${CARET}</button>`:'<span class="spacer"></span>'}<span class="xlabel">${esc(name)}<span class="xcode">${code}</span></span>${code!==102566?`<button type="button" class="chartbtn" data-c="${i}" aria-pressed="${chartOpen===i}" aria-label="Zaman serisi grafiği: ${esc(name)}">${CHARTI}</button>`:''}</div></td>`;
+    for(let b=0;b<=NB;b++){ h+=`<td>${fmtX(xVal(i,b,mode),mode,code)}</td>`; }
+    h+="</tr>";
+    if(chartOpen===i) h+=`<tr class="xchart"><td colspan="${NB+2}"><div class="stack"><strong>${esc(name)} · milyar TL${isFlowTab(tb)?' · kümülatif, yıllar içinde aynı çeyrek':' · {{YILLAR}}'}</strong><div class="chartbox"><canvas id="xChart" role="img" aria-label="${esc(name)} zaman serisi"></canvas></div></div></td></tr>`;
+  });
+  t.innerHTML=h+"</tbody>";
+  t.querySelectorAll(".caret").forEach(b=>b.onclick=e=>{ const i=+b.dataset.i; open.has(i)?open.delete(i):open.add(i); renderExplorer(); });
+  t.querySelectorAll(".chartbtn").forEach(b=>b.onclick=e=>{ const i=+b.dataset.c; chartOpen = chartOpen===i?null:i; renderExplorer(); });
+  if(chartOpen!=null && document.getElementById("xChart")){
+    const code=ITEMS[chartOpen][0], XP=isFlowTab(ITEMS[chartOpen][3])?SER(curP):P;
+    mkChart("xChart",{type:"line",data:{labels:XP.map(p=>PL[p]),datasets:[...B.keys()].map(b=>({label:B[b],data:XP.map(p=>mlr(v(p,code,b))),borderColor:bcol(b),backgroundColor:bcol(b),tension:.25,borderWidth:2,pointRadius:XP.map(p=>p===curP?5:(XP.length>12?0:2.5))}))},options:baseOpts(x=>nf1.format(x))});
+  }
+  document.getElementById("xCount").textContent = `${vis.length} satır gösteriliyor`+(q?` · "${q}" araması`:"");
+  document.getElementById("xModeNote").textContent = mode==="yoy" ? (yoyP(curP)?`${PL[yoyP(curP)]} ile karşılaştırılır; kümülatif kalemlerde ay sayısı aynıdır.`:"Bir yıl önceki veri yok.") : mode==="toa" ? "Yalnız bilanço ve nazım kalemleri için." : mode==="share" ? "Kalemin yedi banka toplamı içindeki payı." : "";
+}
+
+/* ---------- sector ---------- */
+const GROUPS = [...new Set(A.grp)].sort((a,b)=>asum(LASTP,16018,ALLIDX.filter(i=>A.grp[i]===b))-asum(LASTP,16018,ALLIDX.filter(i=>A.grp[i]===a)));
+const gIdx = g => ALLIDX.filter(i=>A.grp[i]===g);
+const liqFlag = x => x!=null && (x<0.2 || x>10);
+const fmtLiq = x => x==null ? '<span class="muted">–</span>' : (x>10 ? '<span class="flag" title="Olağan dışı yüksek">!</span> %'+nf0.format(x*100) : (liqFlag(x)?'<span class="flag" title="Olağan dışı düşük">!</span> ':'')+pct(x));
+function renderSector(){
+  const keys=[["aktif","Sektör toplam aktif"],["kredi","Krediler"],["mevduat","Mevduat"],["netkar","Dönem net kârı (kümülatif)"]];
+  const box=document.getElementById("secKpis");
+  box.innerHTML=keys.map(([k,l])=>{const c=STOCK[k].c, val=asum(curP,c,ALLIDX), share=tot(curP,c)/val;
+    const cmp = yoyP(curP); const ch = cmp ? val/asum(cmp,c,ALLIDX)-1 : null;
+    return `<div class="kpi" style="cursor:default"><span class="k-l">${l}</span><span class="k-v">${fmtBig(val)}</span><span class="k-u">${unitBig(val)} · ilk 7 payı ${pct(share)}</span><span class="k-c ${ch==null?'muted':(ch>=0?'up':'down')}">${ch==null?'Bir yıl önceki veri yok':chg(ch)+' <span class="muted" style="font-weight:500">bir yıl öncesine göre</span>'}</span></div>`;}).join("");
+  const sl=liq(curP,"lcr",ALLIDX), sn=liq(curP,"nsfr",ALLIDX), NAc=ALLIDX.filter(i=>has(curP,16018,i)).length;
+  document.getElementById("secInsight").innerHTML=`${PL[curP]} itibarıyla ${MODE==="kons"?"konsolide tablo yayımlayan":"TBB verisindeki"} ${NAc} bankanın toplam aktifi <b>${fmtBig(asum(curP,16018,ALLIDX))} ${unitBig(asum(curP,16018,ALLIDX))}</b>; ilk 7’nin payı <b>${pct(tot(curP,16018)/asum(curP,16018,ALLIDX))}</b>. Sektörün likidite karşılama oranı <b>${pct(sl)}</b>, net istikrarlı fonlama oranı <b>${sn==null?'yayımlanmamış (2024 öncesi)':pct(sn)}</b>.`;
+  const T=asum(curP,16018,ALLIDX), mx=Math.max(...GROUPS.map(g=>asum(curP,16018,gIdx(g))));
+  document.getElementById("grpBars").innerHTML=GROUPS.map((g,k)=>{const x=gIdx(g), val=asum(curP,16018,x), yq=yoyP(curP), ch=yq? val/asum(yq,16018,x)-1:null;
+    return `<div class="gb-row"><span>${esc(g)} <span class="gtag">(${x.length})</span></span><span class="bl-track"><span class="bl-fill" style="display:block;width:${val/mx*100}%;background:${css("--b"+(k%7))}"></span></span><span class="bl-v">${pct(val/T)}</span><span class="bl-c gb-s ${ch==null?'muted':(ch>=0?'up':'down')}">${ch==null?'–':chg(ch)}</span></div>`;}).join("");
+  const rows=[[`Sektör (${NAc} banka)`,ALLIDX],["İlk 7",T7],...GROUPS.map(g=>[g,gIdx(g)])];
+  document.getElementById("secLiq").innerHTML=`<thead><tr><th>Grup</th><th class="cur">LKO<br>${PL[curP]}</th><th>LKO<br>${yoyP(curP)?PL[yoyP(curP)]:"–"}</th><th class="cur">NİFO<br>${PL[curP]}</th><th>NİFO<br>${yoyP(curP)?PL[yoyP(curP)]:"–"}</th></tr></thead><tbody>${rows.map(([l,x])=>`<tr><td style="white-space:normal;min-width:180px">${esc(l)}</td><td class="cur">${fmtLiq(liq(curP,"lcr",x))}</td><td>${yoyP(curP)?fmtLiq(liq(yoyP(curP),"lcr",x)):"–"}</td><td class="cur">${fmtLiq(liq(curP,"nsfr",x))}</td><td>${yoyP(curP)?fmtLiq(liq(yoyP(curP),"nsfr",x)):"–"}</td></tr>`).join("")}</tbody>`;
+}
+
+/* ---------- all banks ---------- */
+let sortKey="aktif", sortDir=-1, vsAi=null, vsBi=null;
+const COLS=[
+  {k:"aktif",l:"Aktif (mlr TL)",f:(p,i)=>av(p,16018,i),fmt:x=>nf1.format(mlr(x))},
+  {k:"pay",l:"Sektör payı",f:(p,i)=>av(p,16018,i)/asum(p,16018,ALLIDX),fmt:x=>pct(x,2)},
+  {k:"kredi",l:"Kredi",f:(p,i)=>av(p,16005,i),fmt:x=>nf1.format(mlr(x))},
+  {k:"mevduat",l:"Mevduat",f:(p,i)=>av(p,102152,i),fmt:x=>nf1.format(mlr(x))},
+  {k:"ozk",l:"Özkaynak",f:(p,i)=>av(p,102170,i),fmt:x=>nf1.format(mlr(x))},
+  {k:"netkar",l:"Net kâr (küm.)",f:(p,i)=>av(p,102088,i),fmt:x=>`<span class="${x<0?'neg':''}">${nf1.format(mlr(x))}</span>`},
+  {k:"roe",l:"ROE",f:(p,i)=>GR.roe.f(p,[i]),fmt:x=>pct(x)},
+  {k:"km",l:"Kredi/mev.",f:(p,i)=>GR.km.f(p,[i]),fmt:x=>pct(x)},
+  {k:"oa",l:"Özk./aktif",f:(p,i)=>GR.oa.f(p,[i]),fmt:x=>pct(x)},
+  {k:"cfk",l:"Nakit kâr/aktif",f:(p,i)=>GR.cfk_a.f(p,[i]),fmt:x=>pct(x,2)},
+  {k:"lcr",l:"LKO",f:(p,i)=>liq(p,"lcr",[i]),fmt:fmtLiq},
+  {k:"nsfr",l:"NİFO",f:(p,i)=>liq(p,"nsfr",[i]),fmt:fmtLiq}
+];
+function initAllBanks(){
+  const s=document.getElementById("allGroup"); s.appendChild(el("option",{value:""},"Tüm gruplar"));
+  GROUPS.forEach(g=>s.appendChild(el("option",{value:g},g)));
+  s.onchange=renderAllBanks; document.getElementById("allSearch").oninput=renderAllBanks;
+}
+function setPick(which,i){ if(which==="a"){ vsAi=i; if(vsBi===i) vsBi=null; } else { vsBi=i; if(vsAi===i) vsAi=null; }
+  if(vsAi==null) vsAi=ALLIDX.find(x=>x!==vsBi); if(vsBi==null) vsBi=ALLIDX.find(x=>x!==vsAi);
+  document.getElementById("vsA").value=vsAi; document.getElementById("vsB").value=vsBi; renderAllBanks(); renderVs(); }
+function renderAllBanks(){
+  const g=document.getElementById("allGroup").value, q=document.getElementById("allSearch").value.trim().toLocaleLowerCase("tr-TR");
+  const col=COLS.find(c=>c.k===sortKey);
+  let rows=ALLIDX.filter(i=>has(curP,16018,i)&&(!g||A.grp[i]===g)&&(!q||A.names[i].toLocaleLowerCase("tr-TR").includes(q)));
+  const val=i=>{const x=col.f(curP,i); return x==null||!isFinite(x)? -Infinity*sortDir*-1 : x;};
+  rows.sort((a,b)=>{const x=col.f(curP,a), y=col.f(curP,b); const nx=x==null||!isFinite(x), ny=y==null||!isFinite(y); if(nx&&ny) return 0; if(nx) return 1; if(ny) return -1; return (x-y)*sortDir;});
+  const rank={}; ALLIDX.slice().sort((a,b)=>av(curP,16018,b)-av(curP,16018,a)).forEach((i,k)=>rank[i]=k+1);
+  const th=(c)=>`<th scope="col"><button type="button" data-k="${c.k}" aria-sort="${sortKey===c.k?(sortDir<0?'descending':'ascending'):'none'}">${c.l}${sortKey===c.k?(sortDir<0?' ↓':' ↑'):''}</button></th>`;
+  const t=document.getElementById("allTable");
+  t.innerHTML=`<thead><tr><th class="l" scope="col"><button type="button" tabindex="-1" disabled>Karşılaştır</button></th><th class="l" scope="col"><button type="button" tabindex="-1" disabled>#</button></th><th class="l" scope="col"><button type="button" tabindex="-1" disabled>Banka · ${PL[curP]}</button></th>${COLS.map(th).join("")}</tr></thead><tbody>${rows.map(i=>`<tr class="${T7.includes(i)?'t7':''} ${i===vsAi?'selA':''} ${i===vsBi?'selB':''}"><td class="l"><span class="pick"><button type="button" class="a" data-a="${i}" aria-pressed="${i===vsAi}" aria-label="${esc(A.names[i])} banka A olsun">A</button><button type="button" class="b" data-b="${i}" aria-pressed="${i===vsBi}" aria-label="${esc(A.names[i])} banka B olsun">B</button></span></td><td class="l muted">${rank[i]}</td><td class="l nm">${esc(A.short[i])}<br><span class="gtag">${esc(A.grp[i])}</span></td>${COLS.map(c=>{const x=c.f(curP,i); return `<td>${x==null||!isFinite(x)?'<span class="muted">–</span>':c.fmt(x)}</td>`;}).join("")}</tr>`).join("")}</tbody>`;
+  t.querySelectorAll("thead button[data-k]").forEach(b=>b.onclick=()=>{ const k=b.dataset.k; if(sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=-1; } renderAllBanks(); });
+  t.querySelectorAll("button[data-a]").forEach(b=>b.onclick=()=>setPick("a",+b.dataset.a));
+  t.querySelectorAll("button[data-b]").forEach(b=>b.onclick=()=>setPick("b",+b.dataset.b));
+  const T=asum(curP,16018,ALLIDX), sel=asum(curP,16018,rows);
+  document.getElementById("allNote").textContent=`${rows.length} banka · seçili bankaların sektör aktifi içindeki payı ${pct(sel/T)} · tutarlar milyar TL, net kâr yıl başından kümülatif`;
+}
+
+/* ---------- two-bank comparison ---------- */
+function initVs(){
+  const order=ALLIDX.slice().sort((a,b)=>av(LASTP,16018,b)-av(LASTP,16018,a));
+  ["vsA","vsB"].forEach(id=>{ const s=document.getElementById(id); order.forEach(i=>s.appendChild(el("option",{value:i},A.short[i]))); });
+  let a=T7[1], b=T7[4];
+  try{ const s=JSON.parse(localStorage.getItem("b7.vs")||"null"); if(s&&A.names.indexOf(s[0])>=0&&A.names.indexOf(s[1])>=0){ a=A.names.indexOf(s[0]); b=A.names.indexOf(s[1]); } }catch(e){}
+  vsAi=a; vsBi=b; document.getElementById("vsA").value=a; document.getElementById("vsB").value=b;
+  document.getElementById("vsA").onchange=e=>setPick("a",+e.target.value);
+  document.getElementById("vsB").onchange=e=>setPick("b",+e.target.value);
+  document.getElementById("vsSwap").onclick=()=>{ const x=vsAi; vsAi=vsBi; vsBi=x; document.getElementById("vsA").value=vsAi; document.getElementById("vsB").value=vsBi; renderAllBanks(); renderVs(); };
+  const m=document.getElementById("vsMetric"); metricOptions(m,true); [...m.querySelectorAll('option[value="r:pay"]')].forEach(o=>o.remove()); m.value="s:aktif"; m.onchange=renderVs;
+  const vt=document.getElementById("vsTab"); vt.appendChild(el("option",{value:"all"},"Tüm tablolar")); TABS.forEach(tb=>vt.appendChild(el("option",{value:tb},tb))); vt.value=TABS[0];
+  vt.onchange=renderVsItems; document.getElementById("vsSearch").oninput=renderVsItems;
+  document.getElementById("vsItemsWrap").addEventListener("toggle",renderVsItems);
+}
+const VSK=[["Toplam aktif",p=>i=>av(p,16018,i),"m"],["Krediler",p=>i=>av(p,16005,i),"m"],["Mevduat",p=>i=>av(p,102152,i),"m"],["Özkaynak",p=>i=>av(p,102170,i),"m"],["Net kâr (küm.)",p=>i=>av(p,102088,i),"m"],["Faaliyet nakit kârı",p=>i=>av(p,102405,i),"m"],["ROE",p=>i=>GR.roe.f(p,[i]),"p"],["Kredi / mevduat",p=>i=>GR.km.f(p,[i]),"p"],["LKO",p=>i=>liq(p,"lcr",[i]),"l"],["NİFO",p=>i=>liq(p,"nsfr",[i]),"l"]];
+function renderVs(){
+  if(vsAi==null) return;
+  try{ localStorage.setItem("b7.vs",JSON.stringify([A.names[vsAi],A.names[vsBi]])); }catch(e){}
+  const card=(i,c)=>`<div class="vs-card" style="--bc:${css(c)}"><div class="bank-top"><span class="vs-name">${esc(A.short[i])}</span><span class="bank-rank">${esc(A.grp[i])}</span></div><div class="vs-grid">${VSK.map(([l,f,t])=>{const x=f(curP)(i); const s=x==null||!isFinite(x)?'–':(t==="m"?fmtBig(x)+'<span class="muted" style="font-size:11px;font-weight:500"> '+(Math.abs(x)>=1e9?'trn':'mlr')+'</span>':(t==="l"?fmtLiq(x):pct(x))); return `<div><div class="bs-l">${l}</div><div class="bs-v">${s}</div></div>`;}).join("")}</div></div>`;
+  document.getElementById("vsCards").innerHTML=card(vsAi,"--b0")+card(vsBi,"--b1");
+  const a=av(curP,16018,vsAi), b=av(curP,16018,vsBi), ra=GR.roe.f(curP,[vsAi]), rb=GR.roe.f(curP,[vsBi]);
+  const big= a>=b ? [vsAi,vsBi,a/b] : [vsBi,vsAi,b/a];
+  document.getElementById("vsInsight").innerHTML=`${PL[curP]}: <b>${esc(A.short[big[0]])}</b>, <b>${esc(A.short[big[1]])}</b>’nın ${isFinite(big[2])?nf1.format(big[2]):'–'} katı aktif büyüklüğünde. ROE farkı ${ra!=null&&rb!=null?nf1.format(Math.abs(ra-rb)*100)+' puan ('+esc(A.short[ra>=rb?vsAi:vsBi])+' önde)':'hesaplanamadı'}. Tablodaki A/B düğmeleriyle de banka seçebilirsiniz.`;
+  const key=document.getElementById("vsMetric").value, [kt,kk]=key.split(":");
+  const sf=(p,i)=> kt==="s" ? mlr(av(p,STOCK[kk].c,i)) : (GR[kk]? (x=>x==null?null:x*100)(GR[kk].f(p,[i])) : null);
+  const isR=kt==="r", VP=(kt==="s"&&STOCK[kk].flow)?SER(curP):P;
+  mkChart("vsChart",{type:"line",data:{labels:VP.map(p=>PL[p]),datasets:[[vsAi,"--b0"],[vsBi,"--b1"]].map(([i,c])=>({label:A.short[i],data:VP.map(p=>sf(p,i)),borderColor:css(c),backgroundColor:css(c),borderWidth:2.5,tension:.25,pointRadius:VP.map(p=>p===curP?5:(VP.length>12?0:3)),spanGaps:true}))},
+    options:baseOpts(isR?(x=>"%"+nf1.format(x)):(x=>nf1.format(x)))});
+  const rk=["roe","roa","nim","km","oa","ka","kar","ypa","ucretg","cost","lcr","nsfr","cfk_a","cfo_a","cconv","ftah"]; const VT=SER(curP);
+  document.getElementById("vsRatios").innerHTML=`<thead><tr><th>Oran</th>${VT.map(p=>`<th class="${p===curP?'cur':''}">${PL[p]}</th>`).join("")}</tr></thead><tbody>${rk.map(k=>`<tr class="grp"><td colspan="${VT.length+1}">${GR[k].l}</td></tr>`+[[vsAi,"--b0"],[vsBi,"--b1"]].map(([i,c])=>`<tr><td><span style="color:${css(c)}">■</span> ${esc(A.short[i])}</td>${VT.map(p=>{const x=GR[k].f(p,[i]); return `<td class="${p===curP?'cur':''}">${GR[k].liq?fmtLiq(x):pct(x,GR[k].d)}</td>`;}).join("")}</tr>`).join("")).join("")}</tbody>`;
+  renderVsItems();
+}
+function renderVsItems(){
+  if(!document.getElementById("vsItemsWrap").open) return;
+  const tab=document.getElementById("vsTab").value, q=document.getElementById("vsSearch").value.trim().toLocaleLowerCase("tr-TR");
+  let h=`<thead><tr><th scope="col">Kalem <span class="muted" style="font-weight:500">(${PL[curP]} · milyar TL)</span></th><th scope="col"><span style="color:${css("--b0")}">■</span> ${esc(A.short[vsAi])}</th><th scope="col"><span style="color:${css("--b1")}">■</span> ${esc(A.short[vsBi])}</th><th scope="col">Fark (A − B)</th><th scope="col">A / B</th></tr></thead><tbody>`;
+  let last=null, n=0;
+  ITEMS.forEach(([code,name,lvl,tb])=>{
+    if(tab!=="all"&&tb!==tab) return;
+    if(q && !name.toLocaleLowerCase("tr-TR").includes(q)) return;
+    if(code===102566) return;
+    if(tb!==last && (tab==="all"||q)){ h+=`<tr><td colspan="5" style="background:var(--surface-2);font-weight:800;font-family:var(--display)">${esc(tb)}${isFlowTab(tb)?'<span class="tab-chip">kümülatif</span>':''}</td></tr>`; last=tb; }
+    const a=av(curP,code,vsAi), b=av(curP,code,vsBi), d=a-b, r=b? a/b : null;
+    h+=`<tr class="${lvl===0?'l0':''}"><td><div class="xname" style="padding-left:${q?0:lvl*16}px"><span class="xlabel">${esc(name)}<span class="xcode">${code}</span></span></div></td><td class="${a<0?'neg':''}">${nf1.format(mlr(a))}</td><td class="${b<0?'neg':''}">${nf1.format(mlr(b))}</td><td class="${d<0?'neg':''}">${nf1.format(mlr(d))}</td><td>${r==null||!isFinite(r)?'<span class="muted">–</span>':nf2.format(r)+'×'}</td></tr>`; n++;
+  });
+  document.getElementById("vsItems").innerHTML=h+"</tbody>";
+}
+
+/* ---------- cash generation ---------- */
+const CF = {fk:102405, deg:102418, cfo:102429, yat:102431, fin:102445, kur:102456, net:102524, bas:102526, son:16080, aF:102407, oF:102409};
+let cashScope = "t7";
+const cashIdx = s => s==="t7" ? T7 : s==="all" ? ALLIDX : [+s.slice(2)];
+const cashName = s => s==="t7" ? "İlk 7" : s==="all" ? "Sektör" : A.short[+s.slice(2)];
+const sgn = x => `<span class="${x<0?'neg':''}">${x<0?'−':''}${nf1.format(Math.abs(mlr(x)))}</span>`;
+function initCash(){
+  const s=document.getElementById("cashScope");
+  const g1=el("optgroup",{label:"Toplamlar"}); g1.appendChild(el("option",{value:"t7"},"İlk 7 toplamı")); g1.appendChild(el("option",{value:"all"},"Sektör toplamı")); s.appendChild(g1);
+  const g2=el("optgroup",{label:"Bankalar"}); ALLIDX.slice().sort((a,b)=>av(LASTP,16018,b)-av(LASTP,16018,a)).forEach(i=>g2.appendChild(el("option",{value:"b:"+i},A.short[i]))); s.appendChild(g2);
+  s.value=cashScope; s.onchange=()=>{ cashScope=s.value; renderCash(); };
+  const m=document.getElementById("cashMetric");
+  [["r:cfk_a",GR.cfk_a.l],["r:cfo_a",GR.cfo_a.l],["r:cconv",GR.cconv.l],["r:ftah",GR.ftah.l],["s:fk","Faaliyet nakit kârı (milyar TL, kümülatif)"],["s:cfo","Bankacılık faaliyetleri net nakit akışı (milyar TL, kümülatif)"]].forEach(([v,l])=>m.appendChild(el("option",{value:v},l)));
+  m.value="r:cfk_a"; m.onchange=renderCashChart;
+}
+function renderCash(){
+  const x=cashIdx(cashScope), nm=cashName(cashScope), yq=yoyP(curP);
+  const ok = x.some(i=>has(curP,CF.fk,i));
+  const card=(l,code,hint)=>{ const val=asum(curP,code,x), pv=yq?asum(yq,code,x):null;
+    return `<div class="kpi" style="cursor:default"><span class="k-l">${l}</span><span class="k-v">${ok?(val<0?'−':'')+fmtBig(Math.abs(val)):'–'}</span><span class="k-u">${ok?unitBig(val):''}${hint?' · '+hint:''}</span><span class="k-c muted" style="font-weight:500">${pv!=null&&ok?`${PL[yq]}: ${pv<0?'−':''}${fmtBig(Math.abs(pv))} ${unitBig(pv)}`:'Bir yıl önceki veri yok'}</span></div>`; };
+  document.getElementById("cashKpis").innerHTML = [
+    card("Faaliyet nakit kârı",CF.fk,"değişim öncesi"), card("Varlık ve yükümlülüklerdeki değişim",CF.deg,""),
+    card("Bankacılık faaliyetleri net nakit",CF.cfo,""), card("Yatırım faaliyetleri",CF.yat,""),
+    card("Finansman faaliyetleri",CF.fin,""), card("Kur farkının nakde etkisi",CF.kur,"")].join("");
+  const fa=GR.cfk_a.f(curP,x), cc=GR.cconv.f(curP,x), ft=GR.ftah.f(curP,x), nk=asum(curP,102088,x), fk=asum(curP,CF.fk,x);
+  document.getElementById("cashInsight").innerHTML = ok ? `${PL[curP]} itibarıyla (Ocak–${PL[curP].split(" ")[0]}, ${MON[curP]} ay) <b>${esc(nm)}</b> faaliyetlerinden, varlık ve yükümlülüklerdeki değişimden önce <b>${sgn(fk)} milyar TL</b> nakit kâr yarattı. Yıllıklaştırılmış faaliyet nakit kârı / aktif oranı <b>${pct(fa,2)}</b>. Aynı dönemde muhasebe net kârı ${sgn(nk)} milyar TL, kârın nakde dönüşüm oranı <b>${pct(cc)}</b>. Nakit olarak alınan ve ödenen faizin farkı, gelir tablosundaki net faiz gelirinin yüzde olarak <b>${pct(ft)}</b> kadarı.` : `${esc(nm)} için ${PL[curP]} döneminde nakit akış verisi yok.`;
+  // bridge
+  const steps=[["Dönem başı nakit",CF.bas,1],["Faaliyet nakit kârı",CF.fk],["Varlık ve yükümlülüklerdeki değişim",CF.deg],["Yatırım faaliyetleri",CF.yat],["Finansman faaliyetleri",CF.fin],["Kur farkı etkisi",CF.kur],["Dönem sonu nakit",CF.son,1]].map(([l,c,t])=>[l,asum(curP,c,x),t]);
+  const mx=Math.max(...steps.map(s=>Math.abs(s[1])),1); let run=0, minRun=0;
+  steps.forEach(([l,v,t])=>{ if(t) run=v; else run+=v; minRun=Math.min(minRun,run); });
+  const span=mx-Math.min(0,minRun); const pos=v=>(v-Math.min(0,minRun))/span*100; run=0;
+  document.getElementById("cashBridgeH").textContent=`${nm} · dönem başı nakitten dönem sonu nakde`;
+  document.getElementById("cashBridge").innerHTML = ok ? steps.map(([l,v,t])=>{ let left,w,col;
+    if(t){ run=v; left=pos(Math.min(0,v)); w=Math.abs(v)/span*100; col=css("--ink"); }
+    else { const a=run, b=run+v; left=pos(Math.min(a,b)); w=Math.abs(v)/span*100; col=v>=0?css("--good"):css("--bad"); run=b; }
+    return `<div class="br-row ${t?'total':''}"><span>${l}</span><span class="br-track"><span class="br-bar" style="left:${Math.max(0,left)}%;width:${Math.max(0.4,w)}%;background:${col}"></span></span><span class="br-v">${sgn(v)}</span></div>`; }).join("") : '<p class="muted">Veri yok.</p>';
+  // table
+  let rows=[...B.keys()].map(b=>({l:B[b],x:[T7[b]],c:bcol(b)}));
+  if(cashScope.startsWith("b:") && !T7.includes(+cashScope.slice(2))) rows.push({l:A.short[+cashScope.slice(2)],x:[+cashScope.slice(2)],c:css("--ink-3")});
+  rows.push({l:"İlk 7",x:T7,tot:1},{l:"Sektör",x:ALLIDX,tot:1});
+  const cols=[["Faaliyet nakit kârı",r=>sgn(asum(curP,CF.fk,r.x))],["Nakit kâr / aktif (yıllık)",r=>pct(GR.cfk_a.f(curP,r.x),2)],["Nakde dönüşüm",r=>pct(GR.cconv.f(curP,r.x))],["Faiz tahsilatı",r=>pct(GR.ftah.f(curP,r.x))],
+    ["Varlık-yükümlülük değişimi",r=>sgn(asum(curP,CF.deg,r.x))],["Bankacılık faal. net nakit",r=>sgn(asum(curP,CF.cfo,r.x))],["Yatırım",r=>sgn(asum(curP,CF.yat,r.x))],["Finansman",r=>sgn(asum(curP,CF.fin,r.x))],["Kur etkisi",r=>sgn(asum(curP,CF.kur,r.x))],["Dönem sonu nakit",r=>sgn(asum(curP,CF.son,r.x))]];
+  document.getElementById("cashTable").innerHTML=`<thead><tr><th scope="col" class="l">Banka · ${PL[curP]}</th>${cols.map(c=>`<th scope="col">${c[0]}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td>${cols.map(c=>`<td>${r.x.some(i=>has(curP,CF.fk,i))?c[1](r):'<span class="muted">–</span>'}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  document.getElementById("cashNote").textContent="Tutarlar milyar TL, Ocak’tan seçili çeyrek sonuna kümülatif. Nakde dönüşüm yalnız net kâr pozitifken hesaplanır. Oranlar yıllıklaştırılmıştır (× 12 / ay sayısı).";
+  renderCashChart();
+}
+function renderCashChart(){
+  const key=document.getElementById("cashMetric").value, [t,k]=key.split(":");
+  const idx=[...B.keys(), NB], lbl=b=>b===NB?"İlk 7":B[b];
+  const CP = t==="s" ? SER(curP) : P;
+  const f = (p,b) => t==="r" ? (x=>x==null?null:x*100)(RATIO[k].f(p,b)) : (idxOf(b).some(i=>has(p,CF[k],i)) ? mlr(asum(p,CF[k],idxOf(b))) : null);
+  const ds = (t==="s" ? idx.slice(0,-1) : idx).map(b=>({label:lbl(b),data:CP.map(p=>f(p,b)),borderColor:bcol(b),backgroundColor:bcol(b),borderWidth:b===NB?3.5:2,borderDash:b===NB?[6,4]:[],tension:.25,spanGaps:true,pointRadius:CP.map(p=>p===curP?5:(CP.length>12?0:2.5))}));
+  const yf = t==="r" ? (x=>"%"+nf1.format(x)) : (x=>nf0.format(x));
+  mkChart("cashChart",{type:"line",data:{labels:CP.map(p=>PL[p]),datasets:ds},options:baseOpts(yf,{plugins:{legend:{labels:{color:css("--ink-2"),boxWidth:10,boxHeight:10,font:{family:"Roboto",size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'–':(t==="r"?"%"+nf2.format(c.parsed.y):nf1.format(c.parsed.y)+" milyar TL")}`}}}})});
+  document.getElementById("cashChartNote").textContent = t==="s" ? "Kümülatif tutar; grafik yıllar içinde seçili çeyreği gösterir." : (k==="cconv"||k==="ftah" ? "Mart değerleri yalnız ilk çeyreğe dayanır; dalgalı olabilir." : "Yıllıklaştırılmış; kesik çizgi ilk 7 toplamı.");
+}
+
+/* ---------- wiring ---------- */
+function renderAll(){ renderPeriodBar(); renderKpis(); renderKpiPanel(); renderSector(); renderBanks(); renderCash(); renderAllBanks(); renderVs(); renderCompare(); renderHeat(); renderMix(); renderExplorer(); }
+(function init(){
+  metricOptions(document.getElementById("cmpMetric"), true);
+  document.getElementById("cmpMetric").value="r:roe";
+  metricOptions(document.getElementById("heatMetric"), false);
+  document.getElementById("heatMetric").value="r:km";
+  const xt=document.getElementById("xTab"); xt.appendChild(el("option",{value:"all"},"Tüm tablolar")); TABS.forEach(tb=>xt.appendChild(el("option",{value:tb},tb))); xt.value=TABS[0];
+  ITEMS.forEach((it,i)=>{ if(it[2]===0 && kids[i].length && it[3]===TABS[0] && [9996,102098].includes(it[0])) open.add(i); });
+  ["cmpMetric","cmpMode"].forEach(id=>document.getElementById(id).onchange=renderCompare);
+  document.getElementById("heatMetric").onchange=renderHeat;
+  ["xTab","xMode"].forEach(id=>document.getElementById(id).onchange=renderExplorer);
+  document.getElementById("xSearch").oninput=renderExplorer;
+  document.getElementById("xExpand").onclick=()=>{ ITEMS.forEach((_,i)=>{ if(kids[i].length) open.add(i); }); renderExplorer(); };
+  document.getElementById("xCollapse").onclick=()=>{ open.clear(); renderExplorer(); };
+  document.querySelectorAll("#mixSeg button").forEach(b=>b.onclick=()=>{ mixKind=b.dataset.v; document.querySelectorAll("#mixSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderMix(); });
+  initAllBanks(); initVs(); initCash();
+  renderAll();
+  const rerender=()=>{ renderAll(); };
+  let mq=null; try{ mq=matchMedia("(prefers-color-scheme: dark)"); mq.addEventListener("change",rerender); }catch(e){}
+  const mo=new MutationObserver(rerender); mo.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+  CLEAN.push(()=>{ try{ mq&&mq.removeEventListener("change",rerender); }catch(e){} mo.disconnect(); Object.values(charts).forEach(c=>{ try{c.destroy()}catch(e){} }); });
+})();
+return ()=>CLEAN.forEach(f=>f());
+}
+
+/* ---------- shell: landing + mode switch ---------- */
+(function shell(){
+  const land=document.getElementById("landing"), app=document.getElementById("app"), root=document.getElementById("appRoot"), tpl=document.getElementById("appTpl");
+  const nf=new Intl.NumberFormat("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:1});
+  let stop=null, mode=null;
+  ["solo","kons"].forEach(m=>{ const d=DATA[m], A=d.A, n=A.names.length, idx=[...Array(n).keys()];
+    const LP=d.periods[d.periods.length-1]; const ak=idx.reduce((s,i)=>s+((d.A.v[LP]["16018"]||[])[i]||0),0);
+    document.getElementById(m==="solo"?"chipsSolo":"chipsKons").innerHTML=[`${n} banka`,`${d.items.length} kalem`,`${d.periods.length} çeyrek`,`${d.plabel[LP]} aktif ${nf.format(ak/1e9)} trilyon TL`].map(x=>`<span class="chip">${x}</span>`).join(""); });
+  function start(m){
+    if(stop){ try{stop()}catch(e){} stop=null; }
+    mode=m; const d=DATA[m];
+    root.replaceChildren(tpl.content.cloneNode(true));
+    const vals=Object.assign({nbank:d.A.names.length, nitem:d.items.length}, META[m]);
+    root.querySelectorAll("[data-t]").forEach(e=>e.textContent=vals[e.dataset.t]);
+    root.querySelectorAll("[data-only]").forEach(e=>e.hidden = e.dataset.only!==m);
+    document.querySelectorAll("#modeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
+    land.hidden=true; app.hidden=false; window.scrollTo(0,0);
+    stop=boot(d,m);
+    try{ localStorage.setItem("bk.mode",m); }catch(e){}
+  }
+  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>start(b.dataset.mode));
+  document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ if(b.dataset.mode!==mode) start(b.dataset.mode); });
+  document.getElementById("homeBtn").onclick=()=>{ if(stop){ try{stop()}catch(e){} stop=null; } root.replaceChildren(); mode=null; app.hidden=true; land.hidden=false; window.scrollTo(0,0); };
+  const bar=document.getElementById("appbar"); addEventListener("scroll",()=>bar.classList.toggle("lift",scrollY>4),{passive:true});
+  let last=null; try{ last=localStorage.getItem("bk.mode"); }catch(e){}
+  if(last&&DATA[last]) document.querySelector(`.choice[data-mode="${last}"]`).setAttribute("data-last","1");
+})();
+</script>
