@@ -30,6 +30,10 @@ bash calistir.sh
 
 Gereken: Python 3.9 veya üstü ve internet bağlantısı.
 
+## Otomatik güncelleme
+
+`.github/workflows/guncelle.yml` her ayın 15'inde ve 28'inde GitHub'ın sunucusunda çalışır: veriyi TBB'den çeker, raporu üretir ve veri değiştiyse canlı raporu (`docs/index.html`) günceller. Elle çalıştırmak için depoda **Actions → TBB verisini güncelle → Run workflow**. Her çalıştırmada çekilen ham veri (`tbb_veri.csv`) çalıştırma sayfasından 90 gün indirilebilir.
+
 ## Elle kullanım
 
 ```bash
