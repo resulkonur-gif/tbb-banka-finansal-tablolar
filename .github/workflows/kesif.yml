@@ -2,7 +2,7 @@ name: Keşif (geçici)
 on:
   push:
     branches: [kesif]
-    paths: ["kesif/**", ".github/workflows/kesif.yml"]
+    paths: ["kesif/**", ".github/workflows/kesif.yml", "tbb_cek.py"]
 permissions:
   contents: write
 jobs:
@@ -16,10 +16,10 @@ jobs:
       - run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-      - run: python kesif/agac.py
+      - run: python tbb_cek.py --cikti kesif/tbb_veri.csv && gzip -9 -f kesif/tbb_veri.csv
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add kesif/agac.json
+          git add kesif/tbb_veri.csv.gz
           git commit -m "kesif: ağaç çıktısı [skip ci]" || true
           git push
