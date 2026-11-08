@@ -3,6 +3,7 @@ name: TBB verisini güncelle
 # Her ayın 15'inde ve 28'inde (TBB'nin çeyrek verisini yayımladığı dönemleri yakalamak için)
 # veriyi TBB Veri Sistemi'nden çeker, raporu üretir; veri değiştiyse docs/index.html'i günceller.
 # Elle çalıştırmak için: Actions sekmesi → "TBB verisini güncelle" → Run workflow.
+# Bu dosya değiştirilip main dalına gönderildiğinde de bir kez çalışır.
 on:
   schedule:
     - cron: "23 5 15,28 * *"   # UTC 05:23 = Türkiye 08:23
