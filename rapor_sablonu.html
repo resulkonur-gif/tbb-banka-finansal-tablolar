@@ -542,7 +542,7 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
     <ul>
       <li>Kaynak: TBB Veri Sistemi (verisistemi.tbb.org.tr), Finansal Tablolar, "TFRS9-<span data-t="kind"></span> Bankalarca Kamuya Açıklanacak Finansal Tablolar". Tablolar 1–5 ve 7 (nakit akış), {{ARALIK}} arası {{N}} çeyrek.</li>
       <li>Toplam sütunu TP + YP'dir. Değerler sitede raporlandığı işaretle aktarılmıştır (örn. Personel Giderleri pozitif raporlanır).</li>
-      <li>Gelir tablosu ve kapsamlı gelir kalemleri yıl başından kümülatiftir: Mart 3, Haziran 6, Eylül 9, Aralık 12 ay. ROE, ROA ve net faiz geliri/aktif oranları "tutar × 12 / ay sayısı" ile yıllıklaştırılmış, dönem sonu özkaynak ve aktif kullanılmıştır. Mart değerleri tek çeyreğe dayandığından mevsimsel olarak yüksek görünebilir.</li>
+      <li>Gelir tablosu ve kapsamlı gelir kalemleri yıl başından kümülatiftir: Mart 3, Haziran 6, Eylül 9, Aralık 12 ay. ROE ve ROA, bankaların açıkladığı ortalama özkaynak ve ortalama aktif kârlılığı (ROAE, ROAA) yöntemiyle hesaplandı: dönem net kârı "× 12 / ay sayısı" ile yıllıklaştırılıp önceki yıl sonu ile dönem sonu özkaynağın (aktifin) ortalamasına bölündü; önceki yıl sonu verisi olmayan dönemlerde (2018) dönem sonu tutar kullanıldı. Net faiz geliri/aktif ve öbür oranlarda dönem sonu tutarlar kullanılmıştır. Mart değerleri tek çeyreğe dayandığından mevsimsel olarak yüksek görünebilir.</li>
       <li>"Bir yıl öncesine göre değişim" seçili çeyreği bir önceki yılın aynı çeyreğiyle karşılaştırır; kümülatif kalemlerde ay sayısı aynı olduğundan karşılaştırma tutarlıdır. Tutarlar nominaldir; {{YILLAR}} arasındaki yüksek enflasyon büyüme oranlarını şişirir.</li>
       <li>Nakit akış tablosu (Tablo 7) yıl başından kümülatiftir. "Faaliyet nakit kârı", bankacılık faaliyet konusu varlık ve yükümlülüklerdeki değişim öncesi faaliyet kârıdır (alınan faizler − ödenen faizler + ücret-komisyon ve diğer tahsilatlar − personel, vergi ve diğer ödemeler). Nakde dönüşüm oranı bunun dönem net kârına bölümüdür; TÜFE’ye endeksli menkul kıymetlerin tahakkuk eden ama tahsil edilmeyen getirileri gibi nakit dışı gelirler oranı düşürür. Faiz tahsilatı oranı, nakit olarak alınan ve ödenen faizlerin farkının gelir tablosundaki net faiz gelirine oranıdır. Oranlar yıllıklaştırılmış, dönem sonu aktif kullanılmıştır.</li>
       <li>Mevduat yapısı, bankaların dipnotlarındaki "mevduatın vade yapısına ilişkin bilgiler" tablosunun cari dönem sütunundan alındı; türlere ve vade dilimlerine göre toplamlar bilançodaki mevduatla tutar. Yasal özkaynak ve sermaye yeterliliği oranları "özkaynak kalemlerine ilişkin bilgiler" dipnotundandır. Tek banka için bankanın açıkladığı oran kullanıldı; ilk 7, grup ve sektör oranları özkaynak ve risk ağırlıklı tutar toplamlarından hesaplandı.</li>
@@ -614,10 +614,13 @@ const liq = (p,key,idxs) => { // reported ratio for one bank; sum-based for grou
   return k&&sd? sn/sd : null;
 };
 const div=(a,b)=> b? a/b : null;
+// Bankaların ROAE/ROAA yöntemi: payda, önceki yıl sonu ile dönem sonunun ortalaması (önceki yıl sonu yoksa dönem sonu)
+const ybP = p => { const q=(+p.slice(0,4)-1)+"-12"; return P.includes(q)? q : null; };
+const avgYB = (p,c,x) => { const q=ybP(p); const xs=q? x.filter(i=>has(q,c,i)) : []; if(!q || !xs.length) return asum(p,c,x); return (asum(p,c,x)+asum(q,c,x))/2; };
 const capR = (p,key,num,x) => { if(!A[key]||!A[key][p]) return null; if(x.length===1){ const v=A[key][p][x[0]]; return v==null?null:v/100; } const ok=x.some(i=>has(p,159978,i)); return ok? div(asum(p,num,x), asum(p,159978,x)) : null; };
 const GR = {
-  roe:{l:"Özkaynak kârlılığı (ROE, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], asum(p,102170,x))},
-  roa:{l:"Aktif kârlılığı (ROA, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], asum(p,16018,x)), d:2},
+  roe:{l:"Ortalama özkaynak kârlılığı (ROAE, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], avgYB(p,102170,x))},
+  roa:{l:"Ortalama aktif kârlılığı (ROAA, yıllık)", f:(p,x)=>div(asum(p,102088,x)*12/MON[p], avgYB(p,16018,x)), d:2},
   nim:{l:"Net faiz geliri / aktif (yıllık)", f:(p,x)=>div(asum(p,102213,x)*12/MON[p], asum(p,16018,x)), d:2},
   km:{l:"Kredi / mevduat", f:(p,x)=>div(asum(p,16005,x), asum(p,102152,x))},
   oa:{l:"Özkaynak / aktif", f:(p,x)=>div(asum(p,102170,x), asum(p,16018,x))},
@@ -689,7 +692,7 @@ function renderKpis(){
   });
   const roeT=RATIO.roe.f(curP,NB), kmT=RATIO.km.f(curP,NB);
   const yq=yoyP(curP);
-  document.getElementById("sumInsight").innerHTML = `${PL[curP]} itibarıyla yedi bankanın toplam aktifi <b>${fmtBig(tot(curP,16018))} ${unitBig(tot(curP,16018))}</b>, kredi/mevduat oranı <b>${pct(kmT)}</b>, yıllıklaştırılmış özkaynak kârlılığı <b>${pct(roeT)}</b>. ${yq?`Bir yılda (${PL[yq]} → ${PL[curP]}) aktif <b>${chg(tot(curP,16018)/tot(yq,16018)-1)}</b> büyüdü; ilk dönemden (${PL[P[0]]}) bu yana ${nf1.format(tot(curP,16018)/tot(P[0],16018))} katına çıktı.`:''} Bir karta tıklayınca bankalara dağılımı açılır.`;
+  document.getElementById("sumInsight").innerHTML = `${PL[curP]} itibarıyla yedi bankanın toplam aktifi <b>${fmtBig(tot(curP,16018))} ${unitBig(tot(curP,16018))}</b>, kredi/mevduat oranı <b>${pct(kmT)}</b>, yıllıklaştırılmış ortalama özkaynak kârlılığı <b>${pct(roeT)}</b>. ${yq?`Bir yılda (${PL[yq]} → ${PL[curP]}) aktif <b>${chg(tot(curP,16018)/tot(yq,16018)-1)}</b> büyüdü; ilk dönemden (${PL[P[0]]}) bu yana ${nf1.format(tot(curP,16018)/tot(P[0],16018))} katına çıktı.`:''} Bir karta tıklayınca bankalara dağılımı açılır.`;
 }
 function renderKpiPanel(){
   const pan=document.getElementById("kpiPanel");
@@ -718,7 +721,7 @@ function renderBanks(){
     const b=el("button",{type:"button",class:"bank","aria-expanded":String(openBank===i),style:`--bc:${bcol(i)}`});
     b.innerHTML=`<div class="bank-top"><span class="bank-name">${B[i]}</span><span class="bank-rank">#${rank+1} · ${pct(v(curP,16018,i)/T)}</span></div>
       <div class="bank-stats"><div><div class="bs-l">Aktif</div><div class="bs-v">${fmtBig(v(curP,16018,i))}<span class="muted" style="font-size:11px;font-weight:500"> ${Math.abs(v(curP,16018,i))>=1e9?'trn':'mlr'}</span></div></div>
-      <div><div class="bs-l">ROE</div><div class="bs-v">${pct(RATIO.roe.f(curP,i))}</div></div>
+      <div><div class="bs-l">ROAE</div><div class="bs-v">${pct(RATIO.roe.f(curP,i))}</div></div>
       <div><div class="bs-l">Kredi/mev.</div><div class="bs-v">${pct(RATIO.km.f(curP,i))}</div></div></div>
       <span class="bank-more">${openBank===i?'Ayrıntıyı kapat':'Ayrıntıyı aç'}</span>`;
     b.onclick=()=>{ openBank = openBank===i?null:i; renderBanks(); };
@@ -779,7 +782,7 @@ function renderBankDetail(d,i){
     <div class="stack"><h3>${B[i]} · büyüklükler</h3><p class="muted" style="font-size:13px">milyar TL, dönem sonu, {{YILLAR}}</p><div class="chartbox"><canvas id="bankChart" role="img" aria-label="${B[i]} büyüklükler"></canvas></div></div>
     <div class="stack" style="min-width:0"><h3>Oranlar</h3><div style="overflow-x:auto"><table class="ratio-table"><thead><tr><th>Oran</th>${TC.map(p=>`<th class="${p===curP?'cur':''}">${PL[p]}</th>`).join("")}</tr></thead>
       <tbody>${rk.map(k=>`<tr><td style="white-space:normal;min-width:200px">${RATIO[k].l}</td>${TC.map(p=>`<td class="${p===curP?'cur':''}">${pct(RATIO[k].f(p,i),RATIO[k].d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
-      <p class="muted" style="font-size:12.5px">İlk 7 ROE (${PL[curP]}): ${pct(RATIO.roe.f(curP,NB))} · bu banka ${pct(RATIO.roe.f(curP,i))}</p></div>
+      <p class="muted" style="font-size:12.5px">İlk 7 ROAE (${PL[curP]}): ${pct(RATIO.roe.f(curP,NB))} · bu banka ${pct(RATIO.roe.f(curP,i))}</p></div>
   </div>
   <div class="two">
     <div class="stack"><h3>Bilanço yapısı · ${PL[curP]}</h3><span class="subhead">Aktif</span>${stackHTML(mixParts("a",curP,i))}${legendHTML(mixParts("a",curP,i),true)}<span class="subhead">Pasif</span>${stackHTML(mixParts("p",curP,i))}${legendHTML(mixParts("p",curP,i),true)}</div>
@@ -933,7 +936,7 @@ const COLS=[
   {k:"mevduat",l:"Mevduat",f:(p,i)=>av(p,102152,i),fmt:x=>nf1.format(mlr(x))},
   {k:"ozk",l:"Özkaynak",f:(p,i)=>av(p,102170,i),fmt:x=>nf1.format(mlr(x))},
   {k:"netkar",l:"Net kâr (küm.)",f:(p,i)=>av(p,102088,i),fmt:x=>`<span class="${x<0?'neg':''}">${nf1.format(mlr(x))}</span>`},
-  {k:"roe",l:"ROE",f:(p,i)=>GR.roe.f(p,[i]),fmt:x=>pct(x)},
+  {k:"roe",l:"ROAE",f:(p,i)=>GR.roe.f(p,[i]),fmt:x=>pct(x)},
   {k:"km",l:"Kredi/mev.",f:(p,i)=>GR.km.f(p,[i]),fmt:x=>pct(x)},
   {k:"oa",l:"Özk./aktif",f:(p,i)=>GR.oa.f(p,[i]),fmt:x=>pct(x)},
   {k:"cfk",l:"Nakit kâr/aktif",f:(p,i)=>GR.cfk_a.f(p,[i]),fmt:x=>pct(x,2)},
@@ -982,7 +985,7 @@ function initVs(){
   vt.onchange=renderVsItems; document.getElementById("vsSearch").oninput=renderVsItems;
   document.getElementById("vsItemsWrap").addEventListener("toggle",renderVsItems);
 }
-const VSK=[["Toplam aktif",p=>i=>av(p,16018,i),"m"],["Krediler",p=>i=>av(p,16005,i),"m"],["Mevduat",p=>i=>av(p,102152,i),"m"],["Özkaynak",p=>i=>av(p,102170,i),"m"],["Net kâr (küm.)",p=>i=>av(p,102088,i),"m"],["Faaliyet nakit kârı",p=>i=>av(p,102405,i),"m"],["ROE",p=>i=>GR.roe.f(p,[i]),"p"],["SYO",p=>i=>GR.car.f(p,[i]),"p"],["Kredi / mevduat",p=>i=>GR.km.f(p,[i]),"p"],["LKO",p=>i=>liq(p,"lcr",[i]),"l"],["NİFO",p=>i=>liq(p,"nsfr",[i]),"l"]];
+const VSK=[["Toplam aktif",p=>i=>av(p,16018,i),"m"],["Krediler",p=>i=>av(p,16005,i),"m"],["Mevduat",p=>i=>av(p,102152,i),"m"],["Özkaynak",p=>i=>av(p,102170,i),"m"],["Net kâr (küm.)",p=>i=>av(p,102088,i),"m"],["Faaliyet nakit kârı",p=>i=>av(p,102405,i),"m"],["ROAE",p=>i=>GR.roe.f(p,[i]),"p"],["SYO",p=>i=>GR.car.f(p,[i]),"p"],["Kredi / mevduat",p=>i=>GR.km.f(p,[i]),"p"],["LKO",p=>i=>liq(p,"lcr",[i]),"l"],["NİFO",p=>i=>liq(p,"nsfr",[i]),"l"]];
 function renderVs(){
   if(vsAi==null) return;
   try{ localStorage.setItem("b7.vs",JSON.stringify([A.names[vsAi],A.names[vsBi]])); }catch(e){}
@@ -990,7 +993,7 @@ function renderVs(){
   document.getElementById("vsCards").innerHTML=card(vsAi,"--b0")+card(vsBi,"--b1");
   const a=av(curP,16018,vsAi), b=av(curP,16018,vsBi), ra=GR.roe.f(curP,[vsAi]), rb=GR.roe.f(curP,[vsBi]);
   const big= a>=b ? [vsAi,vsBi,a/b] : [vsBi,vsAi,b/a];
-  document.getElementById("vsInsight").innerHTML=`${PL[curP]}: <b>${esc(A.short[big[0]])}</b>, <b>${esc(A.short[big[1]])}</b>’nın ${isFinite(big[2])?nf1.format(big[2]):'–'} katı aktif büyüklüğünde. ROE farkı ${ra!=null&&rb!=null?nf1.format(Math.abs(ra-rb)*100)+' puan ('+esc(A.short[ra>=rb?vsAi:vsBi])+' önde)':'hesaplanamadı'}. Tablodaki A/B düğmeleriyle de banka seçebilirsiniz.`;
+  document.getElementById("vsInsight").innerHTML=`${PL[curP]}: <b>${esc(A.short[big[0]])}</b>, <b>${esc(A.short[big[1]])}</b>’nın ${isFinite(big[2])?nf1.format(big[2]):'–'} katı aktif büyüklüğünde. ROAE farkı ${ra!=null&&rb!=null?nf1.format(Math.abs(ra-rb)*100)+' puan ('+esc(A.short[ra>=rb?vsAi:vsBi])+' önde)':'hesaplanamadı'}. Tablodaki A/B düğmeleriyle de banka seçebilirsiniz.`;
   const key=document.getElementById("vsMetric").value, [kt,kk]=key.split(":");
   const sf=(p,i)=> kt==="s" ? mlr(av(p,STOCK[kk].c,i)) : (GR[kk]? (x=>x==null?null:x*100)(GR[kk].f(p,[i])) : null);
   const isR=kt==="r", VP=(kt==="s"&&STOCK[kk].flow)?SER(curP):P;
