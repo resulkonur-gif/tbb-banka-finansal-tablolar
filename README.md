@@ -64,9 +64,6 @@ python rapor_olustur.py --excel tbb_veri.xlsx       # → Turk_Bankacilik_Sistem
 * Banka listesi TBB'nin bugünkü listesidir; kapanan ya da birleşen bankalar yer almaz.
 * Araç TBB sayfasının arayüzüne dayanır; site değişirse `tbb_yardimci.js` güncellenmelidir. Lütfen siteyi gereğinden sık sorgulamayın.
 
-## Kaynak ve lisans
+## Kaynak
 
-Veri: [TBB Veri Sistemi](https://verisistemi.tbb.org.tr). Verinin hakları Türkiye Bankalar Birliği'ne aittir; bu depo TBB ile bağlantılı değildir.
-Kod MIT lisanslıdır.
-
-Hazırlayan: [Resul Konur](https://www.linkedin.com/in/resulkonur/)
+Veriler [TBB Veri Sistemi](https://verisistemi.tbb.org.tr)'nden çekilmiştir.
