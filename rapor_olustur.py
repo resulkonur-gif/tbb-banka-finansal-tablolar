@@ -137,6 +137,7 @@ def veri_kur(tur, sec, banks, solo_kodlar):
     kok_eslestir = {str(int(k) + 250000): k for k in list(TABLO_ADI) + list(DIPNOT_ADI)} if tur == "kons" else {}
     kok_eslestir.update({"266039": "16039"})
     ust_of = {c: (str(u) if u is not None else None) for c, ad, u, sk in its}
+    ad_of = {c: ad.strip() for c, ad, u, sk in its}
     kalemler = []
     dipnot = []
     for c, ad, ust, sk in its:
@@ -144,8 +145,12 @@ def veri_kur(tur, sec, banks, solo_kodlar):
             continue
         # dipnot kalemleri: üst zincirini kalem listesinin dışına çıkana kadar izle
         d, a = 0, str(ust)
+        onceki = ad_of.get(c, "").startswith("Önceki Dönem")
         while kok_eslestir.get(a, a) not in DIPNOT_ADI and a in ust_of and ust_of[a] is not None:
+            onceki = onceki or ad_of.get(a, "").startswith("Önceki Dönem")
             d += 1; a = ust_of[a]
+        if onceki:      # dipnotların önceki dönem dalları (her dönemin kendi verisi zaten var)
+            continue
         a = kok_eslestir.get(a, a)
         if a in DIPNOT_ADI:
             skey = tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,)
@@ -398,7 +403,8 @@ def dipnot_kur(tur, sec, bks):
         dfs(r, 0, "")
         items, v = [], {}
         for c, n, d, ust_ad in sira:
-            seri = V.get(c, {})
+            # dipnot başlığının TBB'deki değeri alt satırların (toplamlar dahil) toplamı; anlamsız olduğu için boş bırakılır
+            seri = {} if c == r else V.get(c, {})
             tum = [abs(x) for pv in seri.values() for x in pv.values() if x]
             med = statistics.median(tum) if tum else 0
             low = _n(n)
