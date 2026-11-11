@@ -255,7 +255,8 @@ def veri_kur(tur, sec, banks, solo_kodlar):
 
 MALI_BUNYE = "102772"          # 1. Mali bünye ile ilgili dipnotlar (solo kodu; konsolidede + 250.000)
 # Sayfalarda gösterilen dipnot grupları (kök kodu, grup adı); yenisi eklenince tbb_cek.py'de de çekilmeli
-DIPNOT_KOKLERI = [("102772", "Mali bünye ile ilgili dipnotlar"), ("102776", "Pasiflerle ilgili dipnotlar")]
+DIPNOT_KOKLERI = [("102772", "Mali bünye ile ilgili dipnotlar"), ("102774", "Aktiflerle ilgili dipnotlar"),
+                  ("102776", "Pasiflerle ilgili dipnotlar")]
 DN_HARIC = {"109869"}          # özkaynak kalemleri raporda zaten "9. Yasal Özkaynak" tablosu olarak var
 
 
