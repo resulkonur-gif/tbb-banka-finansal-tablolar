@@ -10,3 +10,4 @@ with sync_playwright() as p:
         bankalar: Object.values(mlt_data_bankalar).filter(b => /ING|Fiba|Ticaret|Pasha|Freedom|Pozitif|Vakıflar|Akbank/.test(b.TR_ADI)).map(b => ({ad: b.TR_ADI.trim(), kod: b.BANKA_KODU, gruplar: b.GRUPLAR}))})""")
     b.close()
 json.dump(res, open("kesif/gruplar.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+# yeniden deneme
