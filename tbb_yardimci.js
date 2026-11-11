@@ -103,5 +103,13 @@ window.__tbb = (function () {
     return { lines, items, sum, root: d.rows[0].text.trim(), unknown: [...unknown] };
   }
 
-  return { ready, init, banks, periods, clearItems, selectItems, runBatch };
+  // Bir kökün doğrudan alt dalları ve her dalın (kendisi dahil) kalem sayısı
+  function children(root) {
+    const t = jQuery("#maliTablolarTree").dxTreeView("instance").option("items"), kids = {};
+    t.forEach(x => { (kids[x.UST_UK] = kids[x.UST_UK] || []).push(x.UNIQUE_KEY); });
+    const cnt = k => 1 + (kids[k] || []).reduce((s, c) => s + cnt(c), 0);
+    return (kids[root] || []).map(k => [k, cnt(k)]);
+  }
+
+  return { ready, init, banks, periods, clearItems, selectItems, runBatch, children };
 })();

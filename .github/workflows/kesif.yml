@@ -8,7 +8,7 @@ permissions:
 jobs:
   kesif:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -16,10 +16,16 @@ jobs:
       - run: |
           python -m pip install playwright
           python -m playwright install --with-deps chromium
-      - run: python tbb_cek.py --cikti kesif/tbb_veri.csv && gzip -9 -f kesif/tbb_veri.csv
       - run: |
+          set -o pipefail
+          python -u tbb_cek.py --cikti kesif/tbb_veri.csv 2>&1 | tee kesif/log.txt
+          gzip -9 -f kesif/tbb_veri.csv
+      - if: always()
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add kesif/tbb_veri.csv.gz
+          git add kesif/log.txt
+          [ -f kesif/tbb_veri.csv.gz ] && git add kesif/tbb_veri.csv.gz
           git commit -m "kesif: ağaç çıktısı [skip ci]" || true
+          git pull --rebase -q || true
           git push
