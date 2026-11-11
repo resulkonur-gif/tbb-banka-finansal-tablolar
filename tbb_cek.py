@@ -44,6 +44,9 @@ HERE = Path(__file__).resolve().parent
 # Dipnotlar: mevduatın vade yapısı (cari dönem, tüm alt kalemleriyle) ve yasal özkaynak / sermaye yeterliliği
 MEVDUAT_VADE = 114172
 AKTIF_DIPNOT = 102774  # "2. Aktiflerle ilgili dipnotlar": krediler, menkul değerler, bankalar, iştirakler vb.
+NAZIM_DIPNOT = 102780  # "4. Nazım hesaplarla ilgili dipnotlar"
+GELIR_DIPNOT = 102778  # "5. Gelir tablosu ile ilgili dipnotlar"
+RISK_GRUBU_DIPNOT = 102782  # "6. Risk grubuna ait dipnotlar"
 PASIF_DIPNOT = 102776  # "3. Pasiflerle ilgili dipnotlar": mevduat vade yapısı, sigorta kapsamı, alınan krediler, sermaye benzeri borçlar vb.
 MALI_BUNYE = 102772  # "1. Mali bünye ile ilgili dipnotlar": özkaynak kalemleri, risk profilleri, kur ve faiz riski,
                      # LKO, NİFO, kalan vadeye göre aktif-pasif, kaldıraç oranı, gerçeğe uygun değer (tüm alt kalemleriyle)
@@ -86,18 +89,30 @@ def main():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=not args.gorunur)
-        page = browser.new_page(viewport={"width": 1400, "height": 900}, locale="tr-TR")
-        page.set_default_timeout(240_000)
+
+        def sayfa_ac(eski=None):
+            """TBB sayfasını (yeniden) açar. Uzun çekimde sekme belleği dolup çökebildiği için
+            her parçada taze sayfa kullanılır."""
+            if eski is not None:
+                try:
+                    eski.close()
+                except Exception:
+                    pass
+            pg = browser.new_page(viewport={"width": 1400, "height": 900}, locale="tr-TR")
+            pg.set_default_timeout(240_000)
+            pg.goto(URL, wait_until="domcontentloaded")
+            pg.wait_for_function(
+                """() => { try { return window.mlt_data_donemler && Object.keys(mlt_data_donemler).length
+                     && window.mlt_data_bankalar && Object.keys(mlt_data_bankalar).length
+                     && jQuery('#maliTablolarTree').dxTreeView('instance').option('items').length; } catch(e) { return false; } }""",
+                timeout=120_000,
+            )
+            pg.add_script_tag(content=js)
+            pg.evaluate("__tbb.init()")
+            return pg
+
         log("TBB Veri Sistemi açılıyor…")
-        page.goto(URL, wait_until="domcontentloaded")
-        page.wait_for_function(
-            """() => { try { return window.mlt_data_donemler && Object.keys(mlt_data_donemler).length
-                 && window.mlt_data_bankalar && Object.keys(mlt_data_bankalar).length
-                 && jQuery('#maliTablolarTree').dxTreeView('instance').option('items').length; } catch(e) { return false; } }""",
-            timeout=120_000,
-        )
-        page.add_script_tag(content=js)
-        page.evaluate("__tbb.init()")
+        page = sayfa_ac()
 
         donemler = [d for d in page.evaluate("__tbb.periods()") if d >= args.baslangic]
         if args.bitis:
@@ -117,7 +132,9 @@ def main():
             parcalar = [(TABLOLAR[tur]["alt_kalemleriyle"], TABLOLAR[tur]["yalniz"], args.parti)]
             if not args.dipnotsuz:
                 dallar = []
-                for kok, ad_ in ((MALI_BUNYE, "mali bünye"), (AKTIF_DIPNOT, "aktiflerle ilgili"), (PASIF_DIPNOT, "pasiflerle ilgili")):
+                for kok, ad_ in ((MALI_BUNYE, "mali bünye"), (AKTIF_DIPNOT, "aktiflerle ilgili"), (PASIF_DIPNOT, "pasiflerle ilgili"),
+                                 (NAZIM_DIPNOT, "nazım hesaplarla ilgili"), (GELIR_DIPNOT, "gelir tablosu ile ilgili"),
+                                 (RISK_GRUBU_DIPNOT, "risk grubuna ait")):
                     d_ = page.evaluate("(k) => __tbb.children(k)", kok + (250000 if tur == "kons" else 0))
                     log(f"[{tur}] {ad_} dipnotları: {len(d_)} dal, {sum(n for _, n in d_)} kalem")
                     dallar += d_
@@ -130,13 +147,22 @@ def main():
                     parcalar.append((cur, [], args.parti))
             satirlar, kalemler, toplam = [], {}, 0.0
             for pi, (alt, yalniz, parti) in enumerate(parcalar, 1):
-                page.evaluate("__tbb.clearItems()")
-                n = page.evaluate("([a, b]) => __tbb.selectItems(a, b)", [alt, yalniz])
+                def sec():
+                    page.evaluate("__tbb.clearItems()")
+                    return page.evaluate("([a, b]) => __tbb.selectItems(a, b)", [alt, yalniz])
+                if pi > 1:
+                    page = sayfa_ac(page)
+                n = sec()
                 log(f"[{tur}] parça {pi}/{len(parcalar)}: {n} kalem seçildi")
                 for i in range(0, len(donemler), parti):
                     grup = donemler[i:i + parti]
                     for deneme in range(3):
-                        r = page.evaluate("(ovs) => __tbb.runBatch(ovs)", grup)
+                        try:
+                            r = page.evaluate("(ovs) => __tbb.runBatch(ovs)", grup)
+                        except Exception as e:   # sekme çöktü: yeniden aç, kalemleri yeniden seç
+                            log(f"[{tur}] {grup[0]}–{grup[-1]} sayfa hatası ({str(e)[:60]}), yeniden açılıyor ({deneme + 1}/3)")
+                            page = sayfa_ac(page); sec()
+                            continue
                         if not r.get("timeout"):
                             break
                         log(f"[{tur}] {grup[0]}–{grup[-1]} zaman aşımı, yeniden deneniyor ({deneme + 1}/3)")

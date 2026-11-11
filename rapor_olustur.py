@@ -256,7 +256,9 @@ def veri_kur(tur, sec, banks, solo_kodlar):
 MALI_BUNYE = "102772"          # 1. Mali bünye ile ilgili dipnotlar (solo kodu; konsolidede + 250.000)
 # Sayfalarda gösterilen dipnot grupları (kök kodu, grup adı); yenisi eklenince tbb_cek.py'de de çekilmeli
 DIPNOT_KOKLERI = [("102772", "Mali bünye ile ilgili dipnotlar"), ("102774", "Aktiflerle ilgili dipnotlar"),
-                  ("102776", "Pasiflerle ilgili dipnotlar")]
+                  ("102776", "Pasiflerle ilgili dipnotlar"), ("102780", "Nazım hesaplarla ilgili dipnotlar"),
+                  ("102778", "Gelir tablosu ile ilgili dipnotlar"), ("102782", "Risk grubuna ait dipnotlar")]
+DIPNOT_AKIM = {"102778"}       # yıl başından kümülatif (akım) dipnot grupları
 DN_HARIC = {"109869"}          # özkaynak kalemleri raporda zaten "9. Yasal Özkaynak" tablosu olarak var
 
 
@@ -289,6 +291,12 @@ def dipnot_kur(tur, sec, bks):
             V.setdefault(c, {}).setdefault(p, {})[bidx[b]] = sum(tv)
     num = lambda x: int(round(x)) if abs(x) >= 100 else round(x, 2)
     manifest, paketler = [], {}
+    ust_c = {c: str(u) for c, n, u, sk in its if u is not None}
+    def yol_ust(c):
+        out = set()
+        while c in ust_c and len(out) < 20:
+            c = ust_c[c]; out.add(c)
+        return out
     for r, grup in [(r_, g_) for k_, g_ in DIPNOT_KOKLERI for r_ in cocuk.get(str(int(k_) + off), [])]:
         if str(int(r) - off) in DN_HARIC or r in DN_HARIC:
             continue
@@ -432,7 +440,10 @@ def dipnot_kur(tur, sec, bks):
             continue
         key = f"{tur}_{r}"
         paketler[key] = {"items": items, "v": v}
-        manifest.append({"id": key, "ad": re.sub(r"\s+", " ", ad.get(r, r)).strip(), "n": len(items), "g": grup})
+        m_ = {"id": key, "ad": re.sub(r"\s+", " ", ad.get(r, r)).strip(), "n": len(items), "g": grup}
+        if any(str(int(k_) + off) in yol_ust(r) for k_ in DIPNOT_AKIM):
+            m_["f"] = 1
+        manifest.append(m_)
     return manifest, paketler
 
 

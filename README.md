@@ -11,7 +11,7 @@ Mart 2018'den bu yana çeyreklik olarak çeken ve tek dosyalık, etkileşimli bi
 
 * **Solo / konsolide seçimi:** Açılışta hangi tablolarla çalışılacağı seçilir, rapor içinden istenince geçilir.
 * **Banka bazlı karşılaştırma:** İstenen sayıda banka ve TBB banka grubu seçilir; özet göstergeler, finansal tablolar ve mali bünye ile ilgili dipnotların tamamı yan yana.
-* **Dipnotlar:** Mali bünye, aktiflerle ve pasiflerle ilgili dipnotların tamamı dört sayfada da (Solo/Konsolide sayfalarında üç ayrı bölüm); ağaç ya da bankaların yayımladığı tablo biçiminde (satır × vade dilimi / döviz cinsi), kur riski, faiz oranı riski ve kalan vadelerde toplam ve net satırları hesaplanmış olarak.
+* **Dipnotlar:** TBB'deki dipnotların tamamı (mali bünye, aktifler, pasifler, nazım hesaplar, gelir tablosu, risk grubu; 78 dipnot) dört sayfada da (Solo/Konsolide sayfalarında altı ayrı bölüm); ağaç ya da bankaların yayımladığı tablo biçiminde (satır × vade dilimi / döviz cinsi), kur riski, faiz oranı riski ve kalan vadelerde toplam ve net satırları hesaplanmış olarak.
 * **Tek banka görünümü:** Bir bankanın (ya da grubun) tabloları ve dipnotları geçmiş dönemlerle: son 5 çeyrek, son 5 yıl, yıl sonları ya da tüm dönemler; çeyreklik ve yıllık değişim, sektör payı, çeyreklik gelir tablosu.
 * **34 çeyrek (Mart 2018 – Haziran 2026):** Yıl ve çeyrek seçici; karşılaştırmalar bir önceki yılın aynı çeyreğine göre.
 * **İlk 7 ve sektör:** Ziraat, VakıfBank, İş Bankası, Halkbank, Garanti BBVA, Akbank, Yapı Kredi; TBB'de veri yayımlayan bankaların tamamı ve banka grupları.
@@ -25,7 +25,7 @@ Mart 2018'den bu yana çeyreklik olarak çeken ve tek dosyalık, etkileşimli bi
 
 ## Hızlı başlangıç
 
-**Windows:** `calistir.bat` dosyasına çift tıklayın. Gerekli paketleri kurar, veriyi çeker (5–10 dakika), raporu açar.
+**Windows:** `calistir.bat` dosyasına çift tıklayın. Gerekli paketleri kurar, veriyi çeker (dipnotlarla birlikte 30 dakika kadar), raporu açar.
 
 **macOS / Linux:**
 
