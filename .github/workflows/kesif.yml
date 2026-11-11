@@ -13,9 +13,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
-      - run: |
-          python -m pip install playwright
-          python -m playwright install --with-deps chromium
+      - name: Kurulum (yeniden denemeli)
+        run: |
+          set -o pipefail
+          ( python -m pip install --timeout 60 playwright
+            for i in 1 2 3; do
+              echo "== playwright kurulum denemesi $i $(date -u +%T)"
+              timeout 300 python -m playwright install --with-deps chromium && exit 0
+              echo "!! deneme $i başarısız $(date -u +%T)"; sleep 20
+            done; exit 1 ) 2>&1 | tee kesif/kurulum.txt
       - run: |
           set -o pipefail
           python -u tbb_cek.py --cikti kesif/tbb_veri.csv 2>&1 | tee kesif/log.txt
@@ -24,7 +30,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add kesif/log.txt
+          git add kesif/log.txt kesif/kurulum.txt 2>/dev/null; git add kesif/log.txt || true
           [ -f kesif/tbb_veri.csv.gz ] && git add kesif/tbb_veri.csv.gz
           git commit -m "kesif: veri çıktısı [skip ci]" || true
           git pull --rebase -q || true
