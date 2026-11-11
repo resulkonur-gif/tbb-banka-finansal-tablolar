@@ -43,6 +43,7 @@ HERE = Path(__file__).resolve().parent
 # Tablo kök kodları: alt kalemleriyle seçilenler ve yalnız kendisi seçilen likidite kalemleri
 # Dipnotlar: mevduatın vade yapısı (cari dönem, tüm alt kalemleriyle) ve yasal özkaynak / sermaye yeterliliği
 MEVDUAT_VADE = 114172
+PASIF_DIPNOT = 102776  # "3. Pasiflerle ilgili dipnotlar": mevduat vade yapısı, sigorta kapsamı, alınan krediler, sermaye benzeri borçlar vb.
 MALI_BUNYE = 102772  # "1. Mali bünye ile ilgili dipnotlar": özkaynak kalemleri, risk profilleri, kur ve faiz riski,
                      # LKO, NİFO, kalan vadeye göre aktif-pasif, kaldıraç oranı, gerçeğe uygun değer (tüm alt kalemleriyle)
 
@@ -103,6 +104,10 @@ def main():
         if not donemler:
             sys.exit("Seçilen aralıkta dönem yok.")
         bankalar = page.evaluate("__tbb.banks()")
+        grupsuz = [b[1] for b in bankalar if b[2] == "Grup bilgisi yok"]
+        if grupsuz:
+            log(f"TBB grubu bulunamayan bankalar: {grupsuz}")
+            log("  grup kayıtları: " + json.dumps(page.evaluate("""(adlar) => Object.values(mlt_data_bankalar).filter(b => adlar.includes(b.TR_ADI.trim())).map(b => [b.TR_ADI.trim(), b.GRUPLAR])""", grupsuz), ensure_ascii=False)[:3000])
         log(f"{len(donemler)} dönem ({donemler[0]}–{donemler[-1]}), {len(bankalar)} banka")
 
         bolumler = {}
@@ -110,8 +115,11 @@ def main():
             # 1. parça: finansal tablolar ve likidite kalemleri; sonra mali bünye dipnotları dallara bölünerek
             parcalar = [(TABLOLAR[tur]["alt_kalemleriyle"], TABLOLAR[tur]["yalniz"], args.parti)]
             if not args.dipnotsuz:
-                dallar = page.evaluate("(k) => __tbb.children(k)", MALI_BUNYE + (250000 if tur == "kons" else 0))
-                log(f"[{tur}] mali bünye dipnotları: {len(dallar)} dal, {sum(n for _, n in dallar)} kalem")
+                dallar = []
+                for kok, ad_ in ((MALI_BUNYE, "mali bünye"), (PASIF_DIPNOT, "pasiflerle ilgili")):
+                    d_ = page.evaluate("(k) => __tbb.children(k)", kok + (250000 if tur == "kons" else 0))
+                    log(f"[{tur}] {ad_} dipnotları: {len(d_)} dal, {sum(n for _, n in d_)} kalem")
+                    dallar += d_
                 cur, cnt = [], 0
                 for k, n in dallar:
                     if cur and cnt + n > PARCA_BOYU:
