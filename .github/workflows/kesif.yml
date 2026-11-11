@@ -19,7 +19,7 @@ jobs:
           ( python -m pip install --timeout 60 playwright
             for i in 1 2 3; do
               echo "== playwright kurulum denemesi $i $(date -u +%T)"
-              timeout 300 python -m playwright install --with-deps chromium && exit 0
+              timeout 300 python -m playwright install chromium && exit 0   # sistem kütüphaneleri GitHub sunucusunda hazır; apt deposu (azure.archive.ubuntu.com) erişilemiyor
               echo "!! deneme $i başarısız $(date -u +%T)"; sleep 20
             done; exit 1 ) 2>&1 | tee kesif/kurulum.txt
       - run: |
