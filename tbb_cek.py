@@ -6,7 +6,7 @@ TBB Veri Sistemi'nden TFRS 9 solo ve konsolide finansal tabloları çeker.
   1. Varlıklar, 2. Yükümlülükler, 3. Nazım hesaplar, 4. Gelir-gider tablosu,
   5. Kâr veya zarar ve diğer kapsamlı gelir tablosu, 7. Nakit akış tablosu
   + likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO) kalemleri
-  + dipnotlardan mevduatın vade yapısı ile yasal özkaynak ve sermaye yeterliliği
+  + dipnotlardan mevduatın vade yapısı ile yasal özkaynak kalemlerinin tamamı ve sermaye yeterliliği
 
 Yöntem: https://verisistemi.tbb.org.tr sayfası Playwright ile açılır, sitenin kendi
 seçim ve "Rapor Al" fonksiyonları çağrılır, sonuç pivot tablosundan okunur.
@@ -42,16 +42,16 @@ HERE = Path(__file__).resolve().parent
 # Tablo kök kodları: alt kalemleriyle seçilenler ve yalnız kendisi seçilen likidite kalemleri
 # Dipnotlar: mevduatın vade yapısı (cari dönem, tüm alt kalemleriyle) ve yasal özkaynak / sermaye yeterliliği
 MEVDUAT_VADE = 114172
-OZKAYNAK = [159909, 159935, 159952, 159953, 159966, 159977, 159978, 159980, 159981, 159982, 159984]
+OZKAYNAK = 109865   # "Tutar": özkaynak kalemleri tablosunun tüm satırları (çekirdek, ilave ana, katkı sermaye, indirimler, oranlar, tamponlar)
 
 TABLOLAR = {
     "solo": {
-        "alt_kalemleriyle": [102087, 102086, 102519, 102567, 16039, 102404, MEVDUAT_VADE],
-        "yalniz": [109460, 109463, 109466, 109467, 17130, 17131, 17144] + OZKAYNAK,
+        "alt_kalemleriyle": [102087, 102086, 102519, 102567, 16039, 102404, MEVDUAT_VADE, OZKAYNAK],
+        "yalniz": [109460, 109463, 109466, 109467, 17130, 17131, 17144],
     },
     "kons": {
-        "alt_kalemleriyle": [352087, 352086, 352519, 352567, 266039, 352404, MEVDUAT_VADE + 250000],
-        "yalniz": [359460, 359463, 359466, 359467, 487130, 487131, 487144] + [k + 250000 for k in OZKAYNAK],
+        "alt_kalemleriyle": [352087, 352086, 352519, 352567, 266039, 352404, MEVDUAT_VADE + 250000, OZKAYNAK + 250000],
+        "yalniz": [359460, 359463, 359466, 359467, 487130, 487131, 487144],
     },
 }
 
