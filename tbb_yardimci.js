@@ -43,10 +43,13 @@ window.__tbb = (function () {
     return selected.maliTablolarArr.length;
   }
 
+  // Sepette zaten olan kalem yeniden seçilmez (alt kalemleriyle seçilen bir dalın içindekiler)
+  const inBasket = k => selected.maliTablolarArr.some(x => +x.UNIQUE_KEY === +k);
+  async function settle() { let n = -1; for (let i = 0; i < 40 && n !== selected.maliTablolarArr.length; i++) { n = selected.maliTablolarArr.length; await sleep(500); } }
   async function selectItems(withChildren, onlyThis) {
-    for (const k of withChildren) { maliTablolar_select(1, k, dummy()); await sleep(400); }
-    for (const k of onlyThis) { maliTablolar_select(0, k, dummy()); await sleep(250); }
-    await sleep(500);
+    for (const k of withChildren) { if (inBasket(k)) continue; maliTablolar_select(1, k, dummy()); await sleep(400); await settle(); }
+    for (const k of onlyThis) { if (inBasket(k)) continue; maliTablolar_select(0, k, dummy()); await sleep(250); }
+    await settle();
     return selected.maliTablolarArr.length;
   }
 

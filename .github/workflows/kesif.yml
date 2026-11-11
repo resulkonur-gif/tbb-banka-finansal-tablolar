@@ -2,13 +2,13 @@ name: Keşif (geçici)
 on:
   push:
     branches: [kesif]
-    paths: ["kesif/**", ".github/workflows/kesif.yml", "tbb_cek.py"]
+    paths: ["kesif/**", ".github/workflows/kesif.yml", "tbb_cek.py", "tbb_yardimci.js"]
 permissions:
   contents: write
 jobs:
   kesif:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
