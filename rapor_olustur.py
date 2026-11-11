@@ -249,6 +249,8 @@ def veri_kur(tur, sec, banks, solo_kodlar):
 
 
 MALI_BUNYE = "102772"          # 1. Mali bünye ile ilgili dipnotlar (solo kodu; konsolidede + 250.000)
+# Sayfalarda gösterilen dipnot grupları (kök kodu, grup adı); yenisi eklenince tbb_cek.py'de de çekilmeli
+DIPNOT_KOKLERI = [("102772", "Mali bünye ile ilgili dipnotlar"), ("102776", "Pasiflerle ilgili dipnotlar")]
 DN_HARIC = {"109869"}          # özkaynak kalemleri raporda zaten "9. Yasal Özkaynak" tablosu olarak var
 
 
@@ -266,7 +268,6 @@ def dipnot_kur(tur, sec, bks):
     - Kaldıraç, LKO ve NİFO oranlarına, grup toplamlarında kullanılacak pay/payda kalemleri eklenir."""
     val, its = sec[tur]["val"], sec[tur]["items"]
     off = 250000 if tur == "kons" else 0
-    kok = str(int(MALI_BUNYE) + off)
     ad = {c: re.sub(r"\s*\(\d+\)\s*$", "", n).strip() for c, n, u, sk in its}
     sk_of = {c: tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,) for c, n, u, sk in its}
     cocuk = {}
@@ -282,7 +283,7 @@ def dipnot_kur(tur, sec, bks):
             V.setdefault(c, {}).setdefault(p, {})[bidx[b]] = sum(tv)
     num = lambda x: int(round(x)) if abs(x) >= 100 else round(x, 2)
     manifest, paketler = [], {}
-    for r in cocuk.get(kok, []):
+    for r, grup in [(r_, g_) for k_, g_ in DIPNOT_KOKLERI for r_ in cocuk.get(str(int(k_) + off), [])]:
         if str(int(r) - off) in DN_HARIC or r in DN_HARIC:
             continue
         # ağaç (Önceki Dönem dalları hariç)
@@ -424,7 +425,7 @@ def dipnot_kur(tur, sec, bks):
             continue
         key = f"{tur}_{r}"
         paketler[key] = {"items": items, "v": v}
-        manifest.append({"id": key, "ad": re.sub(r"\s+", " ", ad.get(r, r)).strip(), "n": len(items)})
+        manifest.append({"id": key, "ad": re.sub(r"\s+", " ", ad.get(r, r)).strip(), "n": len(items), "g": grup})
     return manifest, paketler
 
 

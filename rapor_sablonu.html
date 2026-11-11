@@ -397,7 +397,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <div class="land fade-in">
     <span class="land-kicker">TBB Veri Sistemi · TFRS 9 · {{ARALIK}}</span>
     <h1>Türk Bankacılık Sistemi<br><span class="land-h1b">Finansal Tabloları Karşılaştırması</span></h1>
-    <p class="land-sub">TBB’de veri yayımlayan {{NBANKA}} bankanın {{ARALIK_DEN_YA}} {{N}} çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Banka bazlı karşılaştırma ve tek banka görünümünde istediğiniz bankaları ve grupları seçip mali bünye dipnotlarına (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç, gerçeğe uygun değer) kadar inebilirsiniz.</p>
+    <p class="land-sub">TBB’de veri yayımlayan {{NBANKA}} bankanın {{ARALIK_DEN_YA}} {{N}} çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Dört sayfada da mali bünye dipnotları (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç, gerçeğe uygun değer) ve pasiflerle ilgili dipnotlar (mevduat, sigorta kapsamı, alınan krediler, sermaye benzeri borçlanmalar) var; banka bazlı karşılaştırmada istediğiniz bankaları ve grupları seçin, tek banka görünümünde bir bankayı geçmiş dönemleriyle karşılaştırın.</p>
     <p class="land-q">Nereden başlayalım?</p>
     <div class="choices">
       <button type="button" class="choice" data-mode="solo">
@@ -417,7 +417,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
       <button type="button" class="choice v" data-view="kars">
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h6V3zm4 0v18h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-6zm-6 14H5v-2h3v2zm0-4H5v-2h3v2zm0-4H5V7h3v2zm11 8h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V7h3v2z"/></svg></span>
         <span class="ch-t">Banka bazlı karşılaştırma</span>
-        <span class="ch-d">İstediğiniz sayıda banka ve TBB banka grubunu seçin; özet göstergeleri, finansal tabloları ve mali bünye dipnotlarını yan yana görün.</span>
+        <span class="ch-d">İstediğiniz sayıda banka ve TBB banka grubunu seçin; özet göstergeleri, finansal tabloları, mali bünye ve pasiflerle ilgili dipnotları yan yana görün.</span>
         <span class="chips" id="chipsKars"></span>
         <span class="ch-go">Karşılaştırmayı aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
       </button>
@@ -642,6 +642,19 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="xfoot"><span id="xCount"></span><span id="xModeNote"></span></div>
   </section>
 
+  <section aria-labelledby="h-nvtab">
+    <div class="sec-head"><h2 id="h-nvtab">Dipnotlar</h2><p class="insight">Mali bünye ve pasiflerle ilgili dipnotların tamamı; ilk 7 banka, ilk 7 toplamı ve sektör yan yana. Tablo görünümü dipnotları bankaların yayımladığı biçimde (satır × vade dilimi ya da döviz cinsi) gösterir. <span id="nvTabNote"></span></p></div>
+    <div class="controls">
+      <label class="field" for="nvTab" style="flex:1 1 360px;min-width:0">Dipnot<select id="nvTab" style="width:100%"></select></label>
+      <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button><button type="button" data-v="yoy" aria-pressed="false">Yıllık değişim</button></div></div>
+    </div>
+    <div class="controls"><div class="field">Görünüm<div class="seg" id="nvGv" role="group" aria-label="Görünüm"><button type="button" data-v="agac" aria-pressed="true">Ağaç</button><button type="button" data-v="tablo" aria-pressed="false">Tablo (dipnot formatı)</button></div></div><label class="field" id="nvMxEntW" for="nvMxEnt" hidden>Kurum<select id="nvMxEnt"></select></label></div>
+    <div class="panel" id="nvRowPanel" hidden><h3 class="nv-h3" id="nvRowH"></h3><div class="chartbox tall"><canvas id="nvRowChart" role="img" aria-label="Seçilen kalemin dönemlere göre seyri"></canvas></div></div>
+    <div class="controls nv-tools" id="nvTreeTools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
+    <div class="scroll nv-scroll"><table class="xtable nv-t" id="nvTable"></table></div>
+    <p class="muted nv-foot" id="nvFoot"></p>
+  </section>
+
   <details class="notes">
     <summary>Yöntem ve notlar</summary>
     <ul>
@@ -670,7 +683,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <header class="hdr">
     <div class="hdr-top"><span class="eyebrow">TBB Veri Sistemi · TFRS 9 <span data-t="kindlow"></span> finansal tablolar</span><span class="mode-chip" data-t="kind"></span></div>
     <h1>Banka bazlı karşılaştırma</h1>
-    <p class="lede">İstediğiniz bankaları ve TBB banka gruplarını seçip özet göstergeleri, finansal tabloları ve mali bünye dipnotlarını yan yana karşılaştırın. Bir satıra tıklayınca kalemin {{YILLAR}} seyri grafikte açılır.</p>
+    <p class="lede">İstediğiniz bankaları ve TBB banka gruplarını seçip özet göstergeleri, finansal tabloları, mali bünye ve pasiflerle ilgili dipnotları yan yana karşılaştırın. Bir satıra tıklayınca kalemin {{YILLAR}} seyri grafikte açılır.</p>
     <div class="hdr-meta"><span>Birim: milyar TL (aksi belirtilmedikçe)</span><span>Veri: <span data-t="date"></span> tarihinde alındı</span><span>Tutarlar nominaldir</span></div>
   </header>
   <div class="pbar" role="group" aria-label="Dönem seçimi">
@@ -696,7 +709,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="panel"><div class="controls"><label class="field" for="nvMet">Gösterge<select id="nvMet"></select></label></div><div class="chartbox tall"><canvas id="nvMetChart" role="img" aria-label="Seçilen göstergenin dönemlere göre seyri"></canvas></div></div>
   </section>
   <section aria-labelledby="h-nvtab">
-    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve mali bünye dipnotları</h2><p class="insight" id="nvTabNote"></p></div>
+    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve dipnotlar</h2><p class="insight" id="nvTabNote"></p></div>
     <div class="controls">
       <label class="field" for="nvTab" style="flex:1 1 360px;min-width:0">Tablo<select id="nvTab" style="width:100%"></select></label>
       <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button><button type="button" data-v="yoy" aria-pressed="false">Yıllık değişim</button></div></div>
@@ -715,7 +728,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <header class="hdr">
     <div class="hdr-top"><span class="eyebrow">TBB Veri Sistemi · TFRS 9 <span data-t="kindlow"></span> finansal tablolar</span><span class="mode-chip" data-t="kind"></span></div>
     <h1>Tek banka görünümü</h1>
-    <p class="lede">Bir bankanın (ya da banka grubunun) finansal tablolarını ve mali bünye dipnotlarını geçmiş dönemlerle karşılaştırın: son çeyrekler, son yıllar ya da yıl sonları; çeyreklik ve yıllık değişim ve sektör içindeki payı.</p>
+    <p class="lede">Bir bankanın (ya da banka grubunun) finansal tablolarını, mali bünye ve pasiflerle ilgili dipnotlarını geçmiş dönemlerle karşılaştırın: son çeyrekler, son yıllar ya da yıl sonları; çeyreklik ve yıllık değişim ve sektör içindeki payı.</p>
     <div class="hdr-meta"><span>Birim: milyar TL (aksi belirtilmedikçe)</span><span>Veri: <span data-t="date"></span> tarihinde alındı</span><span>Tutarlar nominaldir</span></div>
   </header>
   <div class="pbar" role="group" aria-label="Dönem seçimi">
@@ -737,7 +750,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="panel"><div class="controls"><label class="field" for="nvTekMet">Oran<select id="nvTekMet"></select></label></div><div class="chartbox tall"><canvas id="nvTekMetChart" role="img" aria-label="Seçilen oranın dönemlere göre seyri, sektörle birlikte"></canvas></div></div>
   </section>
   <section aria-labelledby="h-nvtab">
-    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve mali bünye dipnotları</h2><p class="insight" id="nvTabNote"></p></div>
+    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve dipnotlar</h2><p class="insight" id="nvTabNote"></p></div>
     <div class="controls">
       <label class="field" for="nvTab" style="flex:1 1 360px;min-width:0">Tablo<select id="nvTab" style="width:100%"></select></label>
       <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button></div></div><div class="field">Gelir ve nakit akışı<div class="seg" id="nvFlow" role="group" aria-label="Gelir ve nakit akışı"><button type="button" data-v="cum" aria-pressed="true">Kümülatif</button><button type="button" data-v="q" aria-pressed="false">Çeyreklik</button></div></div>
@@ -859,7 +872,7 @@ const el = (tag, attrs={}, html="") => { const e=document.createElement(tag); fo
 const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ---------- period bar ---------- */
-function setP(p){ curP=p; try{localStorage.setItem("b7.period",p)}catch(e){} renderAll(); }
+function setP(p){ curP=p; try{localStorage.setItem("b7.period",p)}catch(e){} renderAll(); document.dispatchEvent(new CustomEvent("b7period",{detail:p})); }
 function renderPeriodBar(){
   const box=document.getElementById("periodSeg"); box.innerHTML="";
   const i=P.indexOf(curP), y=curP.slice(0,4);
@@ -1561,12 +1574,14 @@ const metFmt=(m,v)=>m[2]==="a"?fA(v):fP(v,m[4]||1);
 /* tablo kaynakları: finansal tablolar (sayfada) ve mali bünye dipnotları (istenince yüklenir) */
 const FS=[...new Set(D.items.map(x=>x[3]))];
 const DNL=D.DN||[];
+const TABKEY = VIEW==="dn" ? "dtab" : "tab";
 function tabOptions(sel){
   sel.innerHTML="";
-  const g1=el("optgroup",{label:"Finansal tablolar ve dipnotlar"}); FS.forEach(t=>g1.appendChild(el("option",{value:"fs:"+t},esc(t)))); sel.appendChild(g1);
-  if(DNL.length){ const g2=el("optgroup",{label:"Mali bünye ile ilgili dipnotlar"}); DNL.forEach(d=>g2.appendChild(el("option",{value:"dn:"+d.id.split("_")[1]},esc(d.ad)+" · "+d.n+" kalem"))); sel.appendChild(g2); }
-  const want=NVS.tab && [...sel.querySelectorAll("option")].some(o=>o.value===NVS.tab) ? NVS.tab : "fs:"+FS[0];
-  sel.value=want; NVS.tab=want;
+  if(VIEW!=="dn"){ const g1=el("optgroup",{label:"Finansal tablolar ve dipnotlar"}); FS.forEach(t=>g1.appendChild(el("option",{value:"fs:"+t},esc(t)))); sel.appendChild(g1); }
+  [...new Set(DNL.map(d=>d.g||"Mali bünye ile ilgili dipnotlar"))].forEach(g=>{ const og=el("optgroup",{label:g}); DNL.filter(d=>(d.g||"Mali bünye ile ilgili dipnotlar")===g).forEach(d=>og.appendChild(el("option",{value:"dn:"+d.id.split("_")[1]},esc(d.ad)+" · "+d.n+" kalem"))); sel.appendChild(og); });
+  const opts=[...sel.querySelectorAll("option")].map(o=>o.value);
+  const want=NVS[TABKEY] && opts.includes(NVS[TABKEY]) ? NVS[TABKEY] : opts[0];
+  sel.value=want; NVS[TABKEY]=want;
 }
 function buildRows(list){ // [{c,n,lv,r}] -> ebeveyn ve çocuk bilgisi
   const rows=list.map(r=>Object.assign({},r)); const st=[];
@@ -1586,7 +1601,7 @@ const qVal=(row,p,e)=>{ // gelir/nakit akış: çeyreklik tutar (kümülatiften 
   const v=eVal(row,p,e); if(v==null||row.r||!SRC.flow||NVS.flow!=="q"||MON[p]===3) return v;
   const pp=prevP(p); if(!pp||pp.slice(0,4)!==p.slice(0,4)) return null; const w=eVal(row,pp,e); return w==null?v:v-w; };
 function setTab(v){
-  NVS.tab=v; nvSave(); SEL=null; Q=""; if($("nvQ")) $("nvQ").value="";
+  NVS[TABKEY]=v; nvSave(); SEL=null; Q=""; if($("nvQ")) $("nvQ").value="";
   if(v.startsWith("fs:")){ SRC=srcFS(v.slice(3)); SRCKEY=v; resetOpen(); renderTable(); return; }
   const id=MODE+"_"+v.slice(3), d=DNL.find(x=>x.id===id);
   SRC=null; SRCKEY=v; $("nvTable").innerHTML=`<tbody><tr><td class="muted">${esc(d?d.ad:"Dipnot")} yükleniyor…</td></tr></tbody>`; $("nvRowPanel").hidden=true;
@@ -1598,7 +1613,7 @@ const CARET='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
 
 /* tablo: sütunlar (karşılaştırmada kurumlar, tek bankada dönemler) */
 function colsSpec(){
-  if(VIEW==="kars"){
+  if(VIEW!=="tek"){
     const ents=ENTS();
     return {head:ents.map((e,k)=>`<th scope="col"><span class="nv-sw" style="background:${NV_PAL[k%NV_PAL.length]}"></span>${esc(e.l)}</th>`).join(""),
       vals:row=>ents.map(e=>{ const v=eVal(row,curP,e);
@@ -1634,7 +1649,7 @@ function renderTable(){
   const body=vis.map(i=>{ const r=rows[i], lv=r.lv-base, isO=OPEN.has(i)||!!q;
     return `<tr data-i="${i}" class="lv${Math.min(lv,3)} ${r.h?'calc':''} ${SEL===i?'sel':''}"><td class="l"><div class="nv-name" style="padding-left:${lv*16}px">${r.kids?`<button type="button" class="nv-car" data-t="${i}" aria-expanded="${isO}" aria-label="${isO?'Alt kalemleri gizle':'Alt kalemleri göster'}" ${q?'disabled':''}><span style="display:inline-flex;transform:rotate(${isO?90:0}deg)">${CARET}</span></button>`:'<span class="nv-sp"></span>'}<span>${esc(r.n)}${r.r?' <span class="nv-tag">%</span>':''}${r.h?' <span class="nv-tag nv-calc">hesaplanan</span>':`<span class="nv-code">${r.c}</span>`}</span></div></td>${vals[i].map(x=>`<td>${x.h}</td>`).join("")}</tr>`; }).join("");
   $("nvTable").innerHTML=`<thead><tr><th scope="col" class="l">Kalem</th>${spec.head}</tr></thead><tbody>${body||`<tr><td class="muted" colspan="40">Bu dönem için gösterilecek kalem yok.</td></tr>`}</tbody>`;
-  const unit = VIEW==="kars" ? ({amt:"Tutarlar milyar TL",ta:"Tutarlar her kurumun toplam aktifine oran olarak",yoy:"Bir önceki yılın aynı çeyreğine göre değişim"})[NVS.vm] : (NVS.vm==="ta"?"Tutarlar toplam aktife oran olarak":"Tutarlar milyar TL")+(SRC.flow?(NVS.flow==="q"?"; gelir ve nakit akışı çeyreklik":"; gelir ve nakit akışı yıl başından kümülatif"):"");
+  const unit = VIEW!=="tek" ? ({amt:"Tutarlar milyar TL",ta:"Tutarlar her kurumun toplam aktifine oran olarak",yoy:"Bir önceki yılın aynı çeyreğine göre değişim"})[NVS.vm] : (NVS.vm==="ta"?"Tutarlar toplam aktife oran olarak":"Tutarlar milyar TL")+(SRC.flow?(NVS.flow==="q"?"; gelir ve nakit akışı çeyreklik":"; gelir ve nakit akışı yıl başından kümülatif"):"");
   $("nvFoot").textContent=`${unit}. % işaretli satırlar TBB’nin oran olarak yayımladığı kalemlerdir; gruplar için yalnızca pay ve paydası bilinen oranlar (kaldıraç, LKO, NİFO) toplamlardan hesaplanır. “Hesaplanan” satırlar bankaların dipnotlarındaki toplam ve net satırlarıdır; TBB’de sütun bazında olmadığı için kalemlerden hesaplandı. Satıra tıklayınca kalemin seyri tablonun üstündeki grafikte açılır.`;
   $("nvTabNote").textContent=`${SRC.name} · ${rows.length} kalem · ${PL[curP]}`;
   renderRowChart();
@@ -1651,7 +1666,7 @@ const hasMatrix=()=>SRC && mxInfo().n>=2 && mxInfo().cols.length>=2;
 function mxEnt(){ if(VIEW==="tek") return TEK(); const es=ENTS(); return es.find(e=>e.id===NVS.mxe)||es[0]||ent("all"); }
 function renderMatrix(){
   const {kids,isM,cols}=mxInfo(), rows=SRC.rows, e=mxEnt();
-  if(VIEW==="kars"){ const sel=$("nvMxEnt"); const es=ENTS(); sel.innerHTML=es.map(x=>`<option value="${esc(x.id)}">${esc(x.l)}</option>`).join(""); sel.value=e.id; }
+  if(VIEW!=="tek"){ const sel=$("nvMxEnt"); const es=ENTS(); sel.innerHTML=es.map(x=>`<option value="${esc(x.id)}">${esc(x.l)}</option>`).join(""); sel.value=e.id; }
   const out=[]; let anyRatio=false;
   // TBB yükümlülükleri ve borçları eksi işaretli tutuyor; tablo görünümünde bankaların dipnotlarındaki gibi pozitif
   const liab=i=>{ const n=nk(rows[i].n); if(n.startsWith("toplam yükümlülükler")||/^türev finansal araçlardan borçlar/.test(n)) return true; let p=rows[i].par; while(p>=0){ if(nk(rows[p].n)==="yükümlülükler") return true; p=rows[p].par; } return false; };
@@ -1687,7 +1702,7 @@ function renderRowChart(){
   const conv=(row,p,e)=>{ const v=VIEW==="tek"?qVal(row,p,e):eVal(row,p,e); if(v==null) return null; if(row.r) return v; if(NVS.vm==="ta"){ const t=div(v,asum(p,16018,e.x)); return t==null?null:t*100; }
     if(NVS.vm==="yoy"){ const q=yoyP(p), w=q?(VIEW==="tek"?qVal(row,q,e):eVal(row,q,e)):null; return w? (v/Math.abs(w)-(w<0?-1:1))*100 : null; } return mlr(v); };
   const fmt=isPct?(v=>"%"+nf1.format(v)):(v=>nf1.format(v));
-  if(VIEW==="kars"){
+  if(VIEW!=="tek"){
     const ents=ENTS();
     mk("nvRowChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:ents.map((e,k)=>({label:e.l,data:P.map(p=>conv(r,p,e)),borderColor:NV_PAL[k%NV_PAL.length],backgroundColor:NV_PAL[k%NV_PAL.length],borderWidth:2,tension:.25,spanGaps:true,pointRadius:P.map(p=>p===curP?4:0)}))},options:opts(fmt)});
   } else {
@@ -1711,11 +1726,11 @@ function wireTable(){
     const tr=ev.target.closest("tr[data-i]"); if(!tr) return; const i=+tr.dataset.i; SEL=(SEL===i?null:i); renderTable();
     if(SEL!=null) $("nvRowPanel").scrollIntoView({behavior:"smooth",block:"nearest"});
   });
-  setTab(NVS.tab);
+  setTab(NVS[TABKEY]);
 }
 
 /* ---------- banka bazlı karşılaştırma ---------- */
-function ENTS(){ return (NVS.ents||[]).map(ent).filter(Boolean); }
+function ENTS(){ if(VIEW==="dn") return [...T7.map(i=>"b:"+A.codes[i]),"t7","all"].map(ent).filter(Boolean); return (NVS.ents||[]).map(ent).filter(Boolean); }
 function renderChips(){
   const ents=ENTS();
   $("nvChips").innerHTML=ents.length? ents.map((e,k)=>`<span class="nv-chip" title="${esc(e.full)}"><i style="background:${NV_PAL[k%NV_PAL.length]}"></i>${esc(e.l)}<button type="button" data-x="${esc(e.id)}" aria-label="${esc(e.l)} karşılaştırmadan çıkar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></span>`).join("") : '<span class="muted">Henüz seçim yok. Aşağıdan banka ya da grup ekleyin.</span>';
@@ -1790,8 +1805,13 @@ function initTek(){
   wireTable();
 }
 
-function renderAll(){ renderPeriod(); if(VIEW==="kars"){ renderSum(); renderTable(); } else renderTek(); }
-if(VIEW==="kars") initKars(); else initTek();
+function renderAll(){ if(VIEW==="dn"){ renderTable(); return; } renderPeriod(); if(VIEW==="kars"){ renderSum(); renderTable(); } else renderTek(); }
+if(VIEW==="dn"){
+  if(!DNL.length){ const sec=$("h-nvtab"); if(sec) sec.closest("section").hidden=true; return ()=>{}; }
+  wireTable();
+  const onP=e=>{ if(P.includes(e.detail)){ curP=e.detail; renderTable(); } };
+  document.addEventListener("b7period",onP); CLEAN.push(()=>document.removeEventListener("b7period",onP));
+} else if(VIEW==="kars") initKars(); else initTek();
 renderAll();
 const onTheme=()=>renderAll(); const mq=matchMedia("(prefers-color-scheme: dark)"); mq.addEventListener("change",onTheme); CLEAN.push(()=>mq.removeEventListener("change",onTheme));
 return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
@@ -1804,7 +1824,7 @@ return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
   let stop=null, mode=null, view="rapor";
   const TITLE={rapor:"Türk Bankacılık Sistemi · Finansal Tablolar", kars:"Banka bazlı karşılaştırma", tek:"Tek banka görünümü"};
   { const d=DATA.solo||DATA.kons; const dn=["solo","kons"].reduce((s,m)=>s+((DATA[m].DN||[]).reduce((a,x)=>a+x.n,0)),0);
-    document.getElementById("chipsKars").innerHTML=["Banka ve TBB grupları","Solo ve konsolide",dn?`${(DATA.solo.DN||[]).length} mali bünye dipnotu`:null].filter(Boolean).map(x=>`<span class="chip">${x}</span>`).join("");
+    document.getElementById("chipsKars").innerHTML=["Banka ve TBB grupları","Solo ve konsolide",dn?`${(DATA.solo.DN||[]).length} dipnot (mali bünye, pasifler)`:null].filter(Boolean).map(x=>`<span class="chip">${x}</span>`).join("");
     document.getElementById("chipsTek").innerHTML=[`${d.periods.length} çeyrek`,"Çeyreklik ve yıllık değişim","Sektör payı"].map(x=>`<span class="chip">${x}</span>`).join(""); }
   ["solo","kons"].forEach(m=>{ const d=DATA[m], A=d.A, n=A.names.length, idx=[...Array(n).keys()];
     const LP=d.periods[d.periods.length-1]; const ak=idx.reduce((s,i)=>s+((d.A.v[LP]["16018"]||[])[i]||0),0);
@@ -1821,7 +1841,8 @@ return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
     root.querySelectorAll("[data-only]").forEach(e=>e.hidden = e.dataset.only!==m);
     document.querySelectorAll("#modeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
     land.hidden=true; app.hidden=false; window.scrollTo(0,0);
-    stop = view==="rapor" ? boot(d,m) : bootNV(d,m,view);
+    if(view==="rapor"){ const s1=boot(d,m); let s2=null; try{ s2=bootNV(d,m,"dn"); }catch(e){ console.error(e); } stop=()=>{ try{s1&&s1()}catch(e){} try{s2&&s2()}catch(e){} }; }
+    else stop=bootNV(d,m,view);
     try{ localStorage.setItem("bk.mode",m); }catch(e){}
   }
   document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ if(b.dataset.view){ let m="solo"; try{ m=localStorage.getItem("bk.mode")||"solo"; }catch(e){} start(DATA[m]?m:"solo", b.dataset.view); } else start(b.dataset.mode,"rapor"); });
