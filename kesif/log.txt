@@ -1,152 +1,145 @@
-17:45:05 TBB Veri Sistemi açılıyor…
-17:45:13 34 dönem (201803–202606), 56 banka
-17:45:13 [solo] mali bünye dipnotları: 17 dal, 2502 kalem
-17:45:13 [solo] aktiflerle ilgili dipnotları: 31 dal, 655 kalem
-17:45:13 [solo] pasiflerle ilgili dipnotları: 12 dal, 370 kalem
-17:45:13 [solo] nazım hesaplarla ilgili dipnotları: 3 dal, 69 kalem
-17:45:13 [solo] gelir tablosu ile ilgili dipnotları: 13 dal, 271 kalem
-17:45:13 [solo] risk grubuna ait dipnotları: 3 dal, 153 kalem
-17:45:22 [solo] parça 1/9: 430 kalem seçildi
-17:45:34 [solo] parça 1: 201803–201906: 52,098 değer
-17:45:46 [solo] parça 1: 201909–202012: 53,156 değer
-17:45:59 [solo] parça 1: 202103–202206: 54,380 değer
-17:46:12 [solo] parça 1: 202209–202312: 56,447 değer
-17:46:26 [solo] parça 1: 202403–202506: 60,237 değer
-17:46:38 [solo] parça 1: 202509–202606: 42,265 değer
-17:46:48 [solo] parça 2/9: 479 kalem seçildi
-17:47:01 [solo] parça 2: 201803–201906: 10,294 değer
-17:47:15 [solo] parça 2: 201909–202012: 13,469 değer
-17:47:29 [solo] parça 2: 202103–202206: 11,368 değer
-17:47:44 [solo] parça 2: 202209–202312: 14,378 değer
-17:47:59 [solo] parça 2: 202403–202506: 12,957 değer
-17:48:12 [solo] parça 2: 202509–202606: 10,201 değer
-17:48:24 [solo] parça 3/9: 588 kalem seçildi
-17:48:38 [solo] parça 3: 201803–201906: 7,581 değer
-17:48:53 [solo] parça 3: 201909–202012: 15,471 değer
-17:49:09 [solo] parça 3: 202103–202206: 7,688 değer
-17:49:26 [solo] parça 3: 202209–202312: 15,405 değer
-17:49:44 [solo] parça 3: 202403–202506: 8,118 değer
-17:49:58 [solo] parça 3: 202509–202606: 8,827 değer
-17:50:09 [solo] parça 4/9: 535 kalem seçildi
-17:50:24 [solo] parça 4: 201803–201906: 57,451 değer
-17:50:39 [solo] parça 4: 201909–202012: 61,991 değer
-17:50:54 [solo] parça 4: 202103–202206: 63,240 değer
-17:51:09 [solo] parça 4: 202209–202312: 64,551 değer
-17:51:25 [solo] parça 4: 202403–202506: 67,937 değer
-17:51:39 [solo] parça 4: 202509–202606: 47,538 değer
-17:51:47 [solo] parça 5/9: 448 kalem seçildi
-17:52:01 [solo] parça 5: 201803–201906: 62,506 değer
-17:52:15 [solo] parça 5: 201909–202012: 65,657 değer
-17:52:30 [solo] parça 5: 202103–202206: 66,138 değer
-17:52:45 [solo] parça 5: 202209–202312: 68,236 değer
-17:53:01 [solo] parça 5: 202403–202506: 70,043 değer
-17:53:14 [solo] parça 5: 202509–202606: 49,393 değer
-17:53:32 [solo] parça 6/9: 565 kalem seçildi
-17:53:41 [solo] parça 6: 201803–201906: 20,832 değer
-17:53:50 [solo] parça 6: 201909–202012: 25,358 değer
-17:54:00 [solo] parça 6: 202103–202206: 23,553 değer
-17:54:10 [solo] parça 6: 202209–202312: 26,967 değer
-17:54:27 [solo] parça 6: 202403–202506: 60,014 değer
-17:54:41 [solo] parça 6: 202509–202606: 43,490 değer
-17:55:15 [solo] parça 7/9: 542 kalem seçildi
-17:55:31 [solo] parça 7: 201803–201906: 39,178 değer
-17:55:47 [solo] parça 7: 201909–202012: 43,765 değer
-17:56:03 [solo] parça 7: 202103–202206: 42,746 değer
-17:56:20 [solo] parça 7: 202209–202312: 42,651 değer
-17:56:37 [solo] parça 7: 202403–202506: 42,704 değer
-17:56:52 [solo] parça 7: 202509–202606: 30,417 değer
-17:57:27 [solo] parça 8/9: 596 kalem seçildi
-17:57:42 [solo] parça 8: 201803–201906: 52,373 değer
-17:57:58 [solo] parça 8: 201909–202012: 57,836 değer
-17:58:15 [solo] parça 8: 202103–202206: 56,711 değer
-17:58:33 [solo] parça 8: 202209–202312: 59,303 değer
-17:58:52 [solo] parça 8: 202403–202506: 59,643 değer
-17:59:07 [solo] parça 8: 202509–202606: 41,956 değer
-17:59:28 [solo] parça 9/9: 267 kalem seçildi
-17:59:38 [solo] parça 9: 201803–201906: 25,670 değer
-17:59:48 [solo] parça 9: 201909–202012: 27,916 değer
-17:59:59 [solo] parça 9: 202103–202206: 28,258 değer
-18:00:10 [solo] parça 9: 202209–202312: 29,302 değer
-18:00:21 [solo] parça 9: 202403–202506: 30,664 değer
-18:00:32 [solo] parça 9: 202509–202606: 20,955 değer
-18:00:32 [solo] tamam: 2,131,283 değer, 4332 kalem, kontrol toplamı 69,786,975,735,583
-18:00:32 [kons] mali bünye dipnotları: 17 dal, 2506 kalem
-18:00:32 [kons] aktiflerle ilgili dipnotları: 31 dal, 655 kalem
-18:00:32 [kons] pasiflerle ilgili dipnotları: 12 dal, 370 kalem
-18:00:32 [kons] nazım hesaplarla ilgili dipnotları: 3 dal, 69 kalem
-18:00:32 [kons] gelir tablosu ile ilgili dipnotları: 14 dal, 274 kalem
-18:00:32 [kons] risk grubuna ait dipnotları: 3 dal, 153 kalem
-18:00:44 [kons] parça 1/9: 433 kalem seçildi
-18:00:54 [kons] parça 1: 201803–201906: 35,919 değer
-18:01:03 [kons] parça 1: 201909–202012: 36,605 değer
-18:01:13 [kons] parça 1: 202103–202206: 36,969 değer
-18:01:24 [kons] parça 1: 202209–202312: 38,279 değer
-18:01:35 [kons] parça 1: 202403–202506: 39,194 değer
-18:01:43 [kons] parça 1: 202509–202606: 26,860 değer
-18:01:58 [kons] parça 2/9: 483 kalem seçildi
-18:02:08 [kons] parça 2: 201803–201906: 6,639 değer
-18:02:18 [kons] parça 2: 201909–202012: 9,038 değer
-18:02:29 [kons] parça 2: 202103–202206: 7,121 değer
-18:02:40 [kons] parça 2: 202209–202312: 9,405 değer
-18:02:51 [kons] parça 2: 202403–202506: 7,822 değer
-18:03:02 [kons] parça 2: 202509–202606: 6,279 değer
-18:03:18 [kons] parça 3/9: 588 kalem seçildi
-18:03:29 [kons] parça 3: 201803–201906: 5,614 değer
-18:03:40 [kons] parça 3: 201909–202012: 11,455 değer
-18:03:52 [kons] parça 3: 202103–202206: 5,420 değer
-18:04:04 [kons] parça 3: 202209–202312: 11,484 değer
-18:04:15 [kons] parça 3: 202403–202506: 5,953 değer
-18:04:26 [kons] parça 3: 202509–202606: 6,590 değer
-18:04:44 [kons] parça 4/9: 535 kalem seçildi
-18:04:54 [kons] parça 4: 201803–201906: 40,418 değer
-18:05:04 [kons] parça 4: 201909–202012: 43,248 değer
-18:05:15 [kons] parça 4: 202103–202206: 43,758 değer
-18:05:27 [kons] parça 4: 202209–202312: 44,595 değer
-18:05:39 [kons] parça 4: 202403–202506: 45,905 değer
-18:05:49 [kons] parça 4: 202509–202606: 31,454 değer
-18:06:04 [kons] parça 5/9: 448 kalem seçildi
-18:06:15 [kons] parça 5: 201803–201906: 41,631 değer
-18:06:25 [kons] parça 5: 201909–202012: 43,444 değer
-18:06:36 [kons] parça 5: 202103–202206: 42,643 değer
-18:06:47 [kons] parça 5: 202209–202312: 44,586 değer
-18:06:59 [kons] parça 5: 202403–202506: 45,063 değer
-18:07:09 [kons] parça 5: 202509–202606: 30,503 değer
-18:07:35 [kons] parça 6/9: 565 kalem seçildi
-18:07:43 [kons] parça 6: 201803–201906: 14,225 değer
-18:07:51 [kons] parça 6: 201909–202012: 17,221 değer
-18:07:58 [kons] parça 6: 202103–202206: 16,026 değer
-18:08:09 [kons] parça 6: 202209–202312: 18,154 değer
-18:08:25 [kons] parça 6: 202403–202506: 40,350 değer
-18:08:39 [kons] parça 6: 202509–202606: 28,188 değer
-18:09:25 [kons] parça 7/9: 542 kalem seçildi
-18:09:41 [kons] parça 7: 201803–201906: 33,090 değer
-18:10:05 [kons] parça 7: 201909–202012: 36,575 değer
-Traceback (most recent call last):
-  File "/home/runner/work/tbb-banka-finansal-tablolar/tbb-banka-finansal-tablolar/tbb_cek.py", line 178, in <module>
-    main()
-  File "/home/runner/work/tbb-banka-finansal-tablolar/tbb-banka-finansal-tablolar/tbb_cek.py", line 144, in main
-    r = page.evaluate("(ovs) => __tbb.runBatch(ovs)", grup)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/sync_api/_generated.py", line 16876, in evaluate
-    self._sync(
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/_sync_base.py", line 124, in _sync
-    return task.result()
-           ^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/page.py", line 894, in evaluate
-    return await self._main_frame.evaluate(expression=expression, arg=arg)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/frame.py", line 380, in evaluate
-    result = await self._channel.evaluateExpression(
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/channel_owner.py", line 398, in _mapped
-    return mapper(await awaitable)
-                  ^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/channel_owner.py", line 387, in finish
-    raise e from None
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/channel_owner.py", line 352, in finish
-    result = await zone.run_async(lambda: awaitable)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/playwright/_impl/utils/zones.py", line 58, in run_async
-    return await func()
-           ^^^^^^^^^^^^
-playwright._impl._errors.Error: Page.evaluate: Target crashed 
+18:12:18 TBB Veri Sistemi açılıyor…
+18:12:23 34 dönem (201803–202606), 56 banka
+18:12:23 [solo] mali bünye dipnotları: 17 dal, 2502 kalem
+18:12:23 [solo] aktiflerle ilgili dipnotları: 31 dal, 655 kalem
+18:12:23 [solo] pasiflerle ilgili dipnotları: 12 dal, 370 kalem
+18:12:23 [solo] nazım hesaplarla ilgili dipnotları: 3 dal, 69 kalem
+18:12:23 [solo] gelir tablosu ile ilgili dipnotları: 13 dal, 271 kalem
+18:12:23 [solo] risk grubuna ait dipnotları: 3 dal, 153 kalem
+18:12:33 [solo] parça 1/9: 430 kalem seçildi
+18:12:43 [solo] parça 1: 201803–201906: 52,098 değer
+18:12:56 [solo] parça 1: 201909–202012: 53,156 değer
+18:13:07 [solo] parça 1: 202103–202206: 54,380 değer
+18:13:20 [solo] parça 1: 202209–202312: 56,447 değer
+18:13:32 [solo] parça 1: 202403–202506: 60,237 değer
+18:13:43 [solo] parça 1: 202509–202606: 42,265 değer
+18:13:51 [solo] parça 2/9: 479 kalem seçildi
+18:14:01 [solo] parça 2: 201803–201906: 10,294 değer
+18:14:13 [solo] parça 2: 201909–202012: 13,469 değer
+18:14:25 [solo] parça 2: 202103–202206: 11,368 değer
+18:14:38 [solo] parça 2: 202209–202312: 14,378 değer
+18:14:51 [solo] parça 2: 202403–202506: 12,957 değer
+18:15:02 [solo] parça 2: 202509–202606: 10,201 değer
+18:15:14 [solo] parça 3/9: 588 kalem seçildi
+18:15:26 [solo] parça 3: 201803–201906: 7,581 değer
+18:15:38 [solo] parça 3: 201909–202012: 15,471 değer
+18:15:51 [solo] parça 3: 202103–202206: 7,688 değer
+18:16:05 [solo] parça 3: 202209–202312: 15,405 değer
+18:16:20 [solo] parça 3: 202403–202506: 8,118 değer
+18:16:33 [solo] parça 3: 202509–202606: 8,827 değer
+18:16:42 [solo] parça 4/9: 535 kalem seçildi
+18:16:54 [solo] parça 4: 201803–201906: 57,451 değer
+18:17:09 [solo] parça 4: 201909–202012: 61,991 değer
+18:17:22 [solo] parça 4: 202103–202206: 63,240 değer
+18:17:36 [solo] parça 4: 202209–202312: 64,551 değer
+18:17:50 [solo] parça 4: 202403–202506: 67,937 değer
+18:18:03 [solo] parça 4: 202509–202606: 47,538 değer
+18:18:10 [solo] parça 5/9: 448 kalem seçildi
+18:18:21 [solo] parça 5: 201803–201906: 62,506 değer
+18:18:32 [solo] parça 5: 201909–202012: 65,657 değer
+18:18:44 [solo] parça 5: 202103–202206: 66,138 değer
+18:18:56 [solo] parça 5: 202209–202312: 68,236 değer
+18:19:09 [solo] parça 5: 202403–202506: 70,043 değer
+18:19:20 [solo] parça 5: 202509–202606: 49,393 değer
+18:19:36 [solo] parça 6/9: 565 kalem seçildi
+18:19:44 [solo] parça 6: 201803–201906: 20,832 değer
+18:19:52 [solo] parça 6: 201909–202012: 25,358 değer
+18:20:00 [solo] parça 6: 202103–202206: 23,553 değer
+18:20:09 [solo] parça 6: 202209–202312: 26,967 değer
+18:20:24 [solo] parça 6: 202403–202506: 60,014 değer
+18:20:37 [solo] parça 6: 202509–202606: 43,490 değer
+18:21:05 [solo] parça 7/9: 542 kalem seçildi
+18:21:16 [solo] parça 7: 201803–201906: 39,178 değer
+18:21:30 [solo] parça 7: 201909–202012: 43,765 değer
+18:21:43 [solo] parça 7: 202103–202206: 42,746 değer
+18:21:58 [solo] parça 7: 202209–202312: 42,651 değer
+18:22:14 [solo] parça 7: 202403–202506: 42,704 değer
+18:22:27 [solo] parça 7: 202509–202606: 30,417 değer
+18:22:55 [solo] parça 8/9: 596 kalem seçildi
+18:23:08 [solo] parça 8: 201803–201906: 52,373 değer
+18:23:22 [solo] parça 8: 201909–202012: 57,836 değer
+18:23:37 [solo] parça 8: 202103–202206: 56,711 değer
+18:23:51 [solo] parça 8: 202209–202312: 59,303 değer
+18:24:07 [solo] parça 8: 202403–202506: 59,643 değer
+18:24:20 [solo] parça 8: 202509–202606: 41,956 değer
+18:24:31 [solo] parça 9/9: 267 kalem seçildi
+18:24:39 [solo] parça 9: 201803–201906: 25,670 değer
+18:24:47 [solo] parça 9: 201909–202012: 27,916 değer
+18:24:56 [solo] parça 9: 202103–202206: 28,258 değer
+18:25:05 [solo] parça 9: 202209–202312: 29,302 değer
+18:25:15 [solo] parça 9: 202403–202506: 30,664 değer
+18:25:23 [solo] parça 9: 202509–202606: 20,955 değer
+18:25:23 [solo] tamam: 2,131,283 değer, 4332 kalem, kontrol toplamı 69,786,975,735,583
+18:25:23 [kons] mali bünye dipnotları: 17 dal, 2506 kalem
+18:25:23 [kons] aktiflerle ilgili dipnotları: 31 dal, 655 kalem
+18:25:23 [kons] pasiflerle ilgili dipnotları: 12 dal, 370 kalem
+18:25:23 [kons] nazım hesaplarla ilgili dipnotları: 3 dal, 69 kalem
+18:25:23 [kons] gelir tablosu ile ilgili dipnotları: 14 dal, 274 kalem
+18:25:23 [kons] risk grubuna ait dipnotları: 3 dal, 153 kalem
+18:25:36 [kons] parça 1/9: 433 kalem seçildi
+18:25:43 [kons] parça 1: 201803–201906: 35,919 değer
+18:25:52 [kons] parça 1: 201909–202012: 36,605 değer
+18:26:00 [kons] parça 1: 202103–202206: 36,969 değer
+18:26:08 [kons] parça 1: 202209–202312: 38,279 değer
+18:26:16 [kons] parça 1: 202403–202506: 39,194 değer
+18:26:24 [kons] parça 1: 202509–202606: 26,860 değer
+18:26:32 [kons] parça 2/9: 483 kalem seçildi
+18:26:40 [kons] parça 2: 201803–201906: 6,639 değer
+18:26:48 [kons] parça 2: 201909–202012: 9,038 değer
+18:26:56 [kons] parça 2: 202103–202206: 7,121 değer
+18:27:05 [kons] parça 2: 202209–202312: 9,405 değer
+18:27:13 [kons] parça 2: 202403–202506: 7,822 değer
+18:27:21 [kons] parça 2: 202509–202606: 6,279 değer
+18:27:32 [kons] parça 3/9: 588 kalem seçildi
+18:27:40 [kons] parça 3: 201803–201906: 5,614 değer
+18:27:49 [kons] parça 3: 201909–202012: 11,455 değer
+18:27:59 [kons] parça 3: 202103–202206: 5,420 değer
+18:28:08 [kons] parça 3: 202209–202312: 11,484 değer
+18:28:18 [kons] parça 3: 202403–202506: 5,953 değer
+18:28:27 [kons] parça 3: 202509–202606: 6,590 değer
+18:28:35 [kons] parça 4/9: 535 kalem seçildi
+18:28:44 [kons] parça 4: 201803–201906: 40,418 değer
+18:28:53 [kons] parça 4: 201909–202012: 43,248 değer
+18:29:01 [kons] parça 4: 202103–202206: 43,758 değer
+18:29:10 [kons] parça 4: 202209–202312: 44,595 değer
+18:29:20 [kons] parça 4: 202403–202506: 45,905 değer
+18:29:29 [kons] parça 4: 202509–202606: 31,454 değer
+18:29:36 [kons] parça 5/9: 448 kalem seçildi
+18:29:44 [kons] parça 5: 201803–201906: 41,631 değer
+18:29:52 [kons] parça 5: 201909–202012: 43,444 değer
+18:30:00 [kons] parça 5: 202103–202206: 42,643 değer
+18:30:08 [kons] parça 5: 202209–202312: 44,586 değer
+18:30:17 [kons] parça 5: 202403–202506: 45,063 değer
+18:30:24 [kons] parça 5: 202509–202606: 30,503 değer
+18:30:40 [kons] parça 6/9: 565 kalem seçildi
+18:30:46 [kons] parça 6: 201803–201906: 14,225 değer
+18:30:52 [kons] parça 6: 201909–202012: 17,221 değer
+18:30:59 [kons] parça 6: 202103–202206: 16,026 değer
+18:31:06 [kons] parça 6: 202209–202312: 18,154 değer
+18:31:16 [kons] parça 6: 202403–202506: 40,350 değer
+18:31:25 [kons] parça 6: 202509–202606: 28,188 değer
+18:31:54 [kons] parça 7/9: 542 kalem seçildi
+18:32:03 [kons] parça 7: 201803–201906: 33,090 değer
+18:32:12 [kons] parça 7: 201909–202012: 36,575 değer
+18:32:21 [kons] parça 7: 202103–202206: 36,289 değer
+18:32:31 [kons] parça 7: 202209–202312: 36,891 değer
+18:32:41 [kons] parça 7: 202403–202506: 36,959 değer
+18:32:49 [kons] parça 7: 202509–202606: 24,941 değer
+18:33:18 [kons] parça 8/9: 596 kalem seçildi
+18:33:27 [kons] parça 8: 201803–201906: 38,344 değer
+18:33:36 [kons] parça 8: 201909–202012: 42,778 değer
+18:33:45 [kons] parça 8: 202103–202206: 41,644 değer
+18:33:55 [kons] parça 8: 202209–202312: 43,685 değer
+18:34:05 [kons] parça 8: 202403–202506: 42,936 değer
+18:34:14 [kons] parça 8: 202509–202606: 29,282 değer
+18:34:27 [kons] parça 9/9: 270 kalem seçildi
+18:34:34 [kons] parça 9: 201803–201906: 15,051 değer
+18:34:40 [kons] parça 9: 201909–202012: 16,468 değer
+18:34:46 [kons] parça 9: 202103–202206: 16,675 değer
+18:34:52 [kons] parça 9: 202209–202312: 17,448 değer
+18:34:58 [kons] parça 9: 202403–202506: 18,017 değer
+18:35:04 [kons] parça 9: 202509–202606: 12,315 değer
+18:35:04 [kons] tamam: 1,477,446 değer, 4342 kalem, kontrol toplamı 74,916,227,281,986
+18:35:05 Yazıldı: kesif/tbb_veri.csv
+18:35:05   solo: kontrol toplamı (TP+YP) 69,786,975,735,582.86
+18:35:05   kons: kontrol toplamı (TP+YP) 74,916,227,281,985.59

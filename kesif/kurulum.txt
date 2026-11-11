@@ -3,16 +3,16 @@ Collecting playwright
 Collecting greenlet<4.0.0,>=3.1.1 (from playwright)
   Downloading greenlet-3.5.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
 Downloading playwright-1.65.0-py3-none-manylinux1_x86_64.whl (53.5 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 53.5/53.5 MB 81.0 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 53.5/53.5 MB 221.3 MB/s  0:00:00
 Downloading greenlet-3.5.6-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (621 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 621.4/621.4 kB 36.4 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 621.4/621.4 kB 115.6 MB/s  0:00:00
 Installing collected packages: greenlet, playwright
 
 Successfully installed greenlet-3.5.6 playwright-1.65.0
 
 [notice] A new release of pip is available: 26.2.2 -> 26.3
 [notice] To update, run: pip install --upgrade pip
-== playwright kurulum denemesi 1 17:44:55
+== playwright kurulum denemesi 1 18:12:08
 Downloading Chrome for Testing 158.0.8127.18 (playwright chromium v1254) from https://cdn.playwright.dev/builds/cft/158.0.8127.18/linux64/chrome-linux64.zip
 |                                                                                |   0% of 197.8 MiB
 |■■■■■■■■                                                                        |  10% of 197.8 MiB
