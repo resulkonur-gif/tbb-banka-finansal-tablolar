@@ -43,6 +43,10 @@ TAMPON = {"buf": 6, "ccb": 6, "ccyb": 6, "bufR": 100}            # yüzde olarak
 ORANLAR = ("lcr", "lcrYp", "nsfr", "cet1", "t1", "car", "buf", "ccb", "ccyb", "sib", "bufR")
 YENI_AD = {"114172": "Toplam Mevduat", "109865": "Özkaynak kalemleri", "159909": "İndirimler Öncesi Çekirdek Sermaye", "159953": "Ana Sermaye Toplamı (Çekirdek + İlave Ana Sermaye)",
            "159977": "Yasal Özkaynak (Ana Sermaye + Katkı Sermaye)", "159978": "Toplam Risk Ağırlıklı Tutarlar"}
+# TBB kayıtlarından grubu doğru okunamayan bankalar için elle düzeltme (banka kodu -> TBB grubu)
+GRUP_DUZELTME = {26: "Özel Sermayeli Mevduat Bankaları",   # ING Bank
+                 92: "Özel Sermayeli Mevduat Bankaları",   # Fibabanka
+                 29: "Özel Sermayeli Mevduat Bankaları"}   # Türk Ticaret Bankası
 ILK7 = [3, 6, 32, 5, 30, 8, 37]  # Ziraat, VakıfBank, İş, Halkbank, Garanti BBVA, Akbank, Yapı Kredi
 KISA = {3: "Ziraat", 6: "VakıfBank", 32: "İş Bankası", 5: "Halkbank", 30: "Garanti BBVA", 8: "Akbank", 37: "Yapı Kredi"}
 AY = {"03": ("Mar", "Mart", 3), "06": ("Haz", "Haziran", 6), "09": ("Eyl", "Eylül", 9), "12": ("Ara", "Aralık", 12)}
@@ -198,7 +202,7 @@ def veri_kur(tur, sec, banks, solo_kodlar):
     A = {"codes": bks,
          "names": [meta[b][1] if b in meta else str(b) for b in bks],
          "short": [KISA.get(b) or kisa_ad(meta[b][1] if b in meta else str(b)) for b in bks],
-         "grp": [(meta[b][2] if b in meta and len(meta[b]) > 2 else "Grup bilgisi yok") for b in bks],
+         "grp": [GRUP_DUZELTME.get(b) or (meta[b][2] if b in meta and len(meta[b]) > 2 else "Grup bilgisi yok") for b in bks],
          "v": {}, "yp": {}, **{k: {} for k in liq.values()}, **{k: {} for k in SERMAYE_ORAN.values()}}
     num = lambda x: int(round(x)) if abs(x) >= 100 or float(x).is_integer() else round(x, 2)
     olcekli = olcek_tespit(val, [k for k, v in liq.items() if v == "lcr"][0], P)
