@@ -248,9 +248,18 @@ MALI_BUNYE = "102772"          # 1. Mali bünye ile ilgili dipnotlar (solo kodu;
 DN_HARIC = {"109869"}          # özkaynak kalemleri raporda zaten "9. Yasal Özkaynak" tablosu olarak var
 
 
+def _n(s):
+    """Türkçe küçük harf, sade boşluk (ad eşleştirmek için)."""
+    return re.sub(r"\s+", " ", s.replace("İ", "i").replace("I", "ı").lower()).strip()
+
+
 def dipnot_kur(tur, sec, bks):
     """Mali bünye dipnotlarını ayrı veri paketleri olarak hazırlar (sayfada istenince yüklenir).
-    Paket: {"items": [[kod, ad, düzey, oran_mı]], "v": {dönem: {kod: [banka_sırası, değer, ...]}}}"""
+    Paket: {"items": [[kod, ad, düzey, oran_mı, (pay, payda)?]], "v": {dönem: {kod: [banka_sırası, değer, ...]}}}
+    - "Önceki Dönem" dalları alınmaz (her dönemin kendi verisi zaten var); "Cari Dönem-" öneki atılır.
+    - Bankaların dipnotlarında yer alan toplam ve net satırları (TBB'de sütun bazında yok) hesaplanarak eklenir;
+      bu satırların kodu 9.500.000'den başlar.
+    - Kaldıraç, LKO ve NİFO oranlarına, grup toplamlarında kullanılacak pay/payda kalemleri eklenir."""
     val, its = sec[tur]["val"], sec[tur]["items"]
     off = 250000 if tur == "kons" else 0
     kok = str(int(MALI_BUNYE) + off)
@@ -263,44 +272,150 @@ def dipnot_kur(tur, sec, bks):
     for k in cocuk:
         cocuk[k].sort(key=lambda c: sk_of[c])
     bidx = {b: i for i, b in enumerate(bks)}
-    by_code = {}
+    V = {}   # kod -> dönem -> {banka_sırası: değer}
     for (c, b, p), tv in val.items():
         if b in bidx:
-            by_code.setdefault(c, {}).setdefault(p, []).append((bidx[b], sum(tv)))
+            V.setdefault(c, {}).setdefault(p, {})[bidx[b]] = sum(tv)
     num = lambda x: int(round(x)) if abs(x) >= 100 else round(x, 2)
     manifest, paketler = [], {}
     for r in cocuk.get(kok, []):
         if str(int(r) - off) in DN_HARIC or r in DN_HARIC:
             continue
+        # ağaç (Önceki Dönem dalları hariç)
+        N = {}
+        def kur(c):
+            n = ad.get(c, c)
+            N[c] = {"c": c, "n": re.sub(r"^Cari Dönem\s*-\s*", "", n).strip(), "k": [k for k in cocuk.get(c, []) if not _n(ad.get(k, "")).startswith("önceki dönem")]}
+            for k in N[c]["k"]:
+                kur(k)
+        kur(r)
+        sayac = [9500000]
+        def yeni(n, kids=None):
+            sayac[0] += 1; c = str(sayac[0]); N[c] = {"c": c, "n": n, "k": kids or [], "h": 1}; return c
+        bul = lambda ust, kosul: next((k for k in N[ust]["k"] if kosul(_n(N[k]["n"]))), None)
+        def ara(kosul):
+            return [c for c in N if kosul(_n(N[c]["n"]))]
+        yaprak = lambda c: not N[c]["k"]
+        matris = lambda c: N[c]["k"] and all(yaprak(k) for k in N[c]["k"])
+        def sutunlar(satir):
+            return {_n(N[k]["n"]): k for k in N[satir]["k"]}
+        def topla(satirlar, isim, isaretler=None):
+            """satırların sütun bazında (işaretli) toplamı olan yeni bir matris satırı"""
+            isaretler = isaretler or [1] * len(satirlar)
+            sira, etiket = [], {}
+            for s_ in satirlar:
+                for k in N[s_]["k"]:
+                    key = _n(N[k]["n"])
+                    if key not in etiket:
+                        etiket[key] = N[k]["n"]; sira.append(key)
+            yeni_satir = yeni(isim)
+            for key in sira:
+                yc = yeni(etiket[key])
+                N[yeni_satir]["k"].append(yc)
+                for p in {p for s_ in satirlar for k in N[s_]["k"] for p in V.get(k, {})}:
+                    acc = {}
+                    for s_, sg in zip(satirlar, isaretler):
+                        k = sutunlar(s_).get(key)
+                        for i, x in V.get(k, {}).get(p, {}).items():
+                            # "fark": TBB yükümlülükleri ve borçları eksi işaretli tutuyor; işaretten bağımsız A − |B|
+                            acc[i] = acc.get(i, 0) + (-abs(x) if sg == "fark" else sg * x)
+                    if acc:
+                        V.setdefault(yc, {})[p] = acc
+                        tot = V.setdefault(yeni_satir, {}).setdefault(p, {})
+                        for i, x in acc.items():
+                            tot[i] = tot.get(i, 0) + x
+            return yeni_satir
+        def toplam_ekle(kap, isim):
+            satirlar = [k for k in N[kap]["k"] if matris(k)]
+            if not satirlar:
+                return None
+            t = topla(satirlar, isim); N[kap]["k"].append(t); return t
+        rn = _n(ad.get(r, ""))
+        if rn.startswith("kur riskine"):
+            for nb in ara(lambda n: n == "net bilanço pozisyonu"):
+                va, yu = bul(nb, lambda n: n == "varlıklar"), bul(nb, lambda n: n == "yükümlülükler")
+                tv = toplam_ekle(va, "Toplam Varlıklar") if va else None
+                ty = toplam_ekle(yu, "Toplam Yükümlülükler") if yu else None
+                if tv and ty:
+                    N[nb]["k"].append(topla([tv, ty], "Net Bilanço Pozisyonu (varlıklar − yükümlülükler)", [1, "fark"]))
+            for nn in ara(lambda n: n == "net nazım hesap pozisyonu"):
+                al, bo = bul(nn, lambda n: "türev" in n and "alacak" in n), bul(nn, lambda n: "türev" in n and "borç" in n)
+                if al and bo:
+                    N[nn]["k"].append(topla([al, bo], "Net Nazım Hesap Pozisyonu (alacaklar − borçlar)", [1, "fark"]))
+        elif rn == "faiz oranı riski":
+            for vy in ara(lambda n: "faiz riski-varlık-yüküm" in n):
+                for isim, kos in (("Toplam Varlıklar", "varlıklar"), ("Toplam Yükümlülükler", "yükümlülükler")):
+                    k = bul(vy, lambda n, kos=kos: n == kos)
+                    if k:
+                        toplam_ekle(k, isim)
+            for tp in ara(lambda n: n.endswith("toplam pozisyon") and "faiz" in n):
+                satirlar = [k for k in N[tp]["k"] if matris(k)]
+                if satirlar:
+                    N[tp]["k"].append(topla(satirlar, "Toplam Pozisyon"))
+        elif "kalan vadelerine" in rn:
+            for la in ara(lambda n: n == "likidite açığı"):
+                va, yu = bul(la, lambda n: n == "varlıklar"), bul(la, lambda n: n == "yükümlülükler")
+                tv = toplam_ekle(va, "Toplam Varlıklar") if va else None
+                ty = toplam_ekle(yu, "Toplam Yükümlülükler") if yu else None
+                if tv and ty:
+                    N[la]["k"].append(topla([tv, ty], "Net Likidite Açığı (varlıklar − yükümlülükler)", [1, "fark"]))
+            for bd in ara(lambda n: n == "net bilanço dışı pozisyonu"):
+                al, bo = bul(bd, lambda n: "türev" in n and "alacak" in n), bul(bd, lambda n: "türev" in n and "borç" in n)
+                if al and bo:
+                    N[bd]["k"].append(topla([al, bo], "Net Bilanço Dışı Pozisyonu (alacaklar − borçlar)", [1, "fark"]))
+        # oran kalemlerinin grup toplamı için pay / payda
+        formul = {}
+        for c in list(N):
+            n = _n(N[c]["n"])
+            par = next((q for q in N if c in N[q]["k"]), None)
+            if n.startswith("kaldıraç oranı") and par:
+                a_, t_ = bul(par, lambda m: m == "ana sermaye"), bul(par, lambda m: m == "toplam risk tutarı")
+                if a_ and t_:
+                    formul[c] = (a_, t_)
+            if "net istikrarlı fonlama oranı (%)" in n and par:
+                m_, g_ = bul(par, lambda m: "mevcut istikrarlı fon toplamı" in m), bul(par, lambda m: "gerekli istikrarlı fon toplamı" in m)
+                if m_ and g_:
+                    formul[c] = (m_, g_)
+            if n.startswith("likidite karşılama oranı (%)") and par:
+                h_, o_ = bul(par, lambda m: m.startswith("toplam yüksek kaliteli likit varlık")), bul(par, lambda m: m.startswith("toplam net nakit çıkış"))
+                if h_ and o_:
+                    for k in N[c]["k"]:
+                        key = _n(N[k]["n"])
+                        hk, ok = sutunlar(h_).get(key), sutunlar(o_).get(key)
+                        if hk and ok:
+                            formul[k] = (hk, ok)
+        # düzleştir
         sira = []
         def dfs(c, d, ust_ad):
-            n = ad.get(c, c)
-            sira.append((c, n, d, ust_ad))
-            for k in cocuk.get(c, []):
-                dfs(k, d + 1, ust_ad + " " + n)
+            sira.append((c, N[c]["n"], d, ust_ad))
+            for k in N[c]["k"]:
+                dfs(k, d + 1, ust_ad + " " + N[c]["n"])
         dfs(r, 0, "")
         items, v = [], {}
         for c, n, d, ust_ad in sira:
-            seri = by_code.get(c, {})
-            tum = [abs(x) for lst in seri.values() for _, x in lst if x]
+            seri = V.get(c, {})
+            tum = [abs(x) for pv in seri.values() for x in pv.values() if x]
             med = statistics.median(tum) if tum else 0
-            low = n.lower().replace("İ", "i")
-            oran = ("%" in n) or ("(%)" in ust_ad) or ("oran" in low and "tutar" not in low and tum and med < 500)
-            # oran kalemlerinde 1.000 ile çarpılmış yayımlanan dönemleri düzelt
-            olc = set()
+            low = _n(n)
+            oran = ("(%)" in n) or ("(%)" in ust_ad) or (c in formul) or ("oran" in low and "tutar" not in low and tum and med < 500)
+            olc = set()   # oran kalemlerinde 1.000 ile çarpılmış yayımlanan dönemler
             if oran and len(seri) > 2:
-                meds = {p: statistics.median([abs(x) for _, x in lst if x] or [0]) for p, lst in seri.items()}
+                meds = {p: statistics.median([abs(x) for x in pv.values() if x] or [0]) for p, pv in seri.items()}
                 for p, m in meds.items():
                     digerleri = [mm for q, mm in meds.items() if q != p and mm]
                     if m and digerleri and m > 300 * statistics.median(digerleri):
                         olc.add(p)
-            items.append([int(c), n, d, 1 if oran else 0])
-            for p, lst in seri.items():
+            it = [int(c), n, d, 1 if oran else 0]
+            if c in formul:
+                it.append([int(formul[c][0]), int(formul[c][1])])
+            items.append(it)
+            for p, pv in seri.items():
                 sc = 1000 if p in olc else 1
                 flat = []
-                for i, x in sorted(lst):
+                for i, x in sorted(pv.items()):
                     flat += [i, num(x / sc)]
-                v.setdefault(p, {})[c] = flat
+                if flat:
+                    v.setdefault(p, {})[c] = flat
         if len(items) <= 1 and not v:
             continue
         key = f"{tur}_{r}"

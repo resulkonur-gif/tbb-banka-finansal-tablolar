@@ -356,6 +356,11 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
 .nv-code{font-size:11px;color:var(--ink-3);margin-left:6px;font-weight:400}
 .nv-tag{font-size:10.5px;font-weight:700;color:var(--warm);background:var(--warm-soft);border-radius:4px;padding:0 5px;margin-left:4px}
 .nv-tools input[type=search]{flex:1 1 240px;min-width:0}
+.nv-calc{color:var(--m-primary);background:color-mix(in srgb, var(--m-primary) 12%, transparent)}
+.nv-t tbody tr.calc td{font-weight:600;border-top:1px solid var(--m-outline)}
+.nv-t tbody tr.mx-h td{font-weight:700;background:var(--m-sch);font-size:13px}
+.nv-t td.mx-t{font-weight:600}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
 .nv-chk{display:flex;gap:8px;align-items:center;font-size:14px}
 .nv-h3{margin:0;font-size:15px;font-weight:600}
 .nv-scroll{max-height:78vh;overflow:auto}
@@ -697,7 +702,8 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
       <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button><button type="button" data-v="yoy" aria-pressed="false">Yıllık değişim</button></div></div>
     </div>
     <div class="panel" id="nvRowPanel" hidden><h3 class="nv-h3" id="nvRowH"></h3><div class="chartbox tall"><canvas id="nvRowChart" role="img" aria-label="Seçilen kalemin dönemlere göre seyri"></canvas></div></div>
-    <div class="controls nv-tools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
+    <div class="controls"><div class="field">Görünüm<div class="seg" id="nvGv" role="group" aria-label="Görünüm"><button type="button" data-v="agac" aria-pressed="true">Ağaç</button><button type="button" data-v="tablo" aria-pressed="false">Tablo (dipnot formatı)</button></div></div><label class="field" id="nvMxEntW" for="nvMxEnt" hidden>Kurum<select id="nvMxEnt"></select></label></div>
+    <div class="controls nv-tools" id="nvTreeTools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
     <div class="scroll nv-scroll"><table class="xtable nv-t" id="nvTable"></table></div>
     <p class="muted nv-foot" id="nvFoot"></p>
   </section>
@@ -737,7 +743,8 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
       <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button></div></div><div class="field">Gelir ve nakit akışı<div class="seg" id="nvFlow" role="group" aria-label="Gelir ve nakit akışı"><button type="button" data-v="cum" aria-pressed="true">Kümülatif</button><button type="button" data-v="q" aria-pressed="false">Çeyreklik</button></div></div>
     </div>
     <div class="panel" id="nvRowPanel" hidden><h3 class="nv-h3" id="nvRowH"></h3><div class="chartbox tall"><canvas id="nvRowChart" role="img" aria-label="Seçilen kalemin dönemlere göre seyri"></canvas></div></div>
-    <div class="controls nv-tools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
+    <div class="controls"><div class="field">Görünüm<div class="seg" id="nvGv" role="group" aria-label="Görünüm"><button type="button" data-v="agac" aria-pressed="true">Ağaç</button><button type="button" data-v="tablo" aria-pressed="false">Tablo (dipnot formatı)</button></div></div></div>
+    <div class="controls nv-tools" id="nvTreeTools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
     <div class="scroll nv-scroll"><table class="xtable nv-t" id="nvTable"></table></div>
     <p class="muted nv-foot" id="nvFoot"></p>
   </section>
@@ -1464,7 +1471,7 @@ function dnLoad(key){
       .catch(viaScript);
   });
 }
-const NVS={ents:null, tek:null, tab:null, vm:"amt", tk:"q5", flow:"cum", hide:true, met:"aktif", tmet:"roe"};
+const NVS={ents:null, tek:null, tab:null, vm:"amt", tk:"q5", flow:"cum", hide:true, met:"aktif", tmet:"roe", gv:"agac", mxe:null};
 try{ Object.assign(NVS, JSON.parse(localStorage.getItem("nv.state")||"{}")); }catch(e){}
 const nvSave=()=>{ try{ localStorage.setItem("nv.state", JSON.stringify(NVS)); }catch(e){} };
 
@@ -1569,9 +1576,12 @@ function buildRows(list){ // [{c,n,lv,r}] -> ebeveyn ve çocuk bilgisi
 let SRC=null, SRCKEY=null, OPEN=new Set(), SEL=null, Q="";
 function srcFS(tab){ const rows=buildRows(D.items.filter(x=>x[3]===tab).map(x=>({c:x[0],n:x[1],lv:x[2],r:0})));
   return {rows, flow:isFlowTab(tab), val:(p,c,i)=>{ const r=A.v[p]&&A.v[p][c]; return r&&r[i]!=null?r[i]:null; }, name:tab}; }
-function srcDN(pk,name){ const rows=buildRows(pk.items.map(([c,n,lv,r])=>({c,n,lv,r})));
+function srcDN(pk,name){ const rows=buildRows(pk.items.map(([c,n,lv,r,f])=>({c,n,lv,r,f:f||null,h:c>=9500000})));
   return {rows, flow:false, val:(p,c,i)=>{ const r=pk.v[p]&&pk.v[p][c]; return r&&r[i]!=null?r[i]:null; }, name}; }
-const eVal=(row,p,e)=>{ if(row.r) return e.x.length===1? SRC.val(p,row.c,e.x[0]) : null; let s=0,k=0; for(const i of e.x){ const v=SRC.val(p,row.c,i); if(v!=null){ s+=v; k++; } } return k?s:null; };
+const eVal=(row,p,e)=>{
+  if(row.r){ if(e.x.length===1) return SRC.val(p,row.c,e.x[0]); if(!row.f) return null;
+    // grup: pay ve payda kalemlerinin toplamından (ikisini de açıklayan bankalar)
+    let a=0,b=0,k=0; for(const i of e.x){ const x=SRC.val(p,row.f[0],i), y=SRC.val(p,row.f[1],i); if(x!=null&&y){ a+=x; b+=y; k++; } } return k&&b? a/b*100 : null; } let s=0,k=0; for(const i of e.x){ const v=SRC.val(p,row.c,i); if(v!=null){ s+=v; k++; } } return k?s:null; };
 const qVal=(row,p,e)=>{ // gelir/nakit akış: çeyreklik tutar (kümülatiften arındırılmış)
   const v=eVal(row,p,e); if(v==null||row.r||!SRC.flow||NVS.flow!=="q"||MON[p]===3) return v;
   const pp=prevP(p); if(!pp||pp.slice(0,4)!==p.slice(0,4)) return null; const w=eVal(row,pp,e); return w==null?v:v-w; };
@@ -1608,6 +1618,11 @@ function colsSpec(){
 }
 function renderTable(){
   if(!SRC){ return; }
+  const mxOk=hasMatrix(); $("nvGv").querySelector('button[data-v="tablo"]').disabled=!mxOk;
+  $("nvGv").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===(mxOk?NVS.gv:"agac"))));
+  const mxe=$("nvMxEntW"); if(mxe) mxe.hidden=!(mxOk&&NVS.gv==="tablo");
+  $("nvTreeTools").hidden=(mxOk&&NVS.gv==="tablo");
+  if(mxOk && NVS.gv==="tablo"){ renderMatrix(); return; }
   const spec=colsSpec(), rows=SRC.rows, n=rows.length;
   const vals=rows.map(r=>spec.vals(r)), nz=rows.map((r,i)=>vals[i].some(x=>x.v!=null&&x.v!==0));
   for(let i=n-1;i>=0;i--) if(nz[i] && rows[i].par>=0) nz[rows[i].par]=true;
@@ -1617,11 +1632,52 @@ function renderTable(){
   if(NVS.hide) vis=vis.filter(i=>nz[i]);
   const base=Math.min(...rows.map(r=>r.lv));
   const body=vis.map(i=>{ const r=rows[i], lv=r.lv-base, isO=OPEN.has(i)||!!q;
-    return `<tr data-i="${i}" class="lv${Math.min(lv,3)} ${SEL===i?'sel':''}"><td class="l"><div class="nv-name" style="padding-left:${lv*16}px">${r.kids?`<button type="button" class="nv-car" data-t="${i}" aria-expanded="${isO}" aria-label="${isO?'Alt kalemleri gizle':'Alt kalemleri göster'}" ${q?'disabled':''}><span style="display:inline-flex;transform:rotate(${isO?90:0}deg)">${CARET}</span></button>`:'<span class="nv-sp"></span>'}<span>${esc(r.n)}${r.r?' <span class="nv-tag">%</span>':''}<span class="nv-code">${r.c}</span></span></div></td>${vals[i].map(x=>`<td>${x.h}</td>`).join("")}</tr>`; }).join("");
+    return `<tr data-i="${i}" class="lv${Math.min(lv,3)} ${r.h?'calc':''} ${SEL===i?'sel':''}"><td class="l"><div class="nv-name" style="padding-left:${lv*16}px">${r.kids?`<button type="button" class="nv-car" data-t="${i}" aria-expanded="${isO}" aria-label="${isO?'Alt kalemleri gizle':'Alt kalemleri göster'}" ${q?'disabled':''}><span style="display:inline-flex;transform:rotate(${isO?90:0}deg)">${CARET}</span></button>`:'<span class="nv-sp"></span>'}<span>${esc(r.n)}${r.r?' <span class="nv-tag">%</span>':''}${r.h?' <span class="nv-tag nv-calc">hesaplanan</span>':`<span class="nv-code">${r.c}</span>`}</span></div></td>${vals[i].map(x=>`<td>${x.h}</td>`).join("")}</tr>`; }).join("");
   $("nvTable").innerHTML=`<thead><tr><th scope="col" class="l">Kalem</th>${spec.head}</tr></thead><tbody>${body||`<tr><td class="muted" colspan="40">Bu dönem için gösterilecek kalem yok.</td></tr>`}</tbody>`;
   const unit = VIEW==="kars" ? ({amt:"Tutarlar milyar TL",ta:"Tutarlar her kurumun toplam aktifine oran olarak",yoy:"Bir önceki yılın aynı çeyreğine göre değişim"})[NVS.vm] : (NVS.vm==="ta"?"Tutarlar toplam aktife oran olarak":"Tutarlar milyar TL")+(SRC.flow?(NVS.flow==="q"?"; gelir ve nakit akışı çeyreklik":"; gelir ve nakit akışı yıl başından kümülatif"):"");
-  $("nvFoot").textContent=`${unit}. % işaretli satırlar TBB’nin oran olarak yayımladığı kalemlerdir; gruplar için toplanamadıklarından gösterilmez. Satıra tıklayınca kalemin seyri tablonun üstündeki grafikte açılır.`;
+  $("nvFoot").textContent=`${unit}. % işaretli satırlar TBB’nin oran olarak yayımladığı kalemlerdir; gruplar için yalnızca pay ve paydası bilinen oranlar (kaldıraç, LKO, NİFO) toplamlardan hesaplanır. “Hesaplanan” satırlar bankaların dipnotlarındaki toplam ve net satırlarıdır; TBB’de sütun bazında olmadığı için kalemlerden hesaplandı. Satıra tıklayınca kalemin seyri tablonun üstündeki grafikte açılır.`;
   $("nvTabNote").textContent=`${SRC.name} · ${rows.length} kalem · ${PL[curP]}`;
+  renderRowChart();
+}
+/* tablo görünümü: bankaların dipnotlarındaki gibi satır × sütun (vade dilimi, döviz cinsi vb.) */
+const nk=s=>s.toLocaleLowerCase("tr-TR").replace(/\s+/g," ").trim();
+function mxInfo(){
+  if(SRC.mx) return SRC.mx; const rows=SRC.rows, kids=rows.map(()=>[]); rows.forEach((r,i)=>{ if(r.par>=0) kids[r.par].push(i); });
+  const isM=i=>kids[i].length>0 && kids[i].every(j=>rows[j].kids===0);
+  const cols=[], ck={}; rows.forEach((r,i)=>{ if(isM(i)) kids[i].forEach(j=>{ const k=nk(rows[j].n); if(!(k in ck)){ ck[k]=cols.length; cols.push({k,l:rows[j].n}); } }); });
+  return SRC.mx={kids,isM,cols,n:rows.filter((r,i)=>isM(i)).length};
+}
+const hasMatrix=()=>SRC && mxInfo().n>=2 && mxInfo().cols.length>=2;
+function mxEnt(){ if(VIEW==="tek") return TEK(); const es=ENTS(); return es.find(e=>e.id===NVS.mxe)||es[0]||ent("all"); }
+function renderMatrix(){
+  const {kids,isM,cols}=mxInfo(), rows=SRC.rows, e=mxEnt();
+  if(VIEW==="kars"){ const sel=$("nvMxEnt"); const es=ENTS(); sel.innerHTML=es.map(x=>`<option value="${esc(x.id)}">${esc(x.l)}</option>`).join(""); sel.value=e.id; }
+  const out=[]; let anyRatio=false;
+  // TBB yükümlülükleri ve borçları eksi işaretli tutuyor; tablo görünümünde bankaların dipnotlarındaki gibi pozitif
+  const liab=i=>{ const n=nk(rows[i].n); if(n.startsWith("toplam yükümlülükler")||/^türev finansal araçlardan borçlar/.test(n)) return true; let p=rows[i].par; while(p>=0){ if(nk(rows[p].n)==="yükümlülükler") return true; p=rows[p].par; } return false; };
+  rows.forEach((r,i)=>{
+    if(r.par>=0 && isM(r.par)) return;                       // sütun hücresi
+    const lv=r.lv-rows[0].lv;
+    if(isM(i)){ const cell={}; let rat=false; kids[i].forEach(j=>{ cell[nk(rows[j].n)]=eVal(rows[j],curP,e); if(rows[j].r) rat=true; });
+      if(rat) anyRatio=true; const sg=(!rat&&liab(i))?-1:1; const vs=cols.map(c=>c.k in cell&&cell[c.k]!=null?sg*cell[c.k]:null);
+      const tot = rat? null : (vs.some(v=>v!=null)? vs.reduce((a,v)=>a+(v||0),0) : null);
+      out.push({i,lv,r,vs,tot,rat,m:1}); return; }
+    if(r.kids) { out.push({i,lv,r,hdr:1}); return; }
+    const v=eVal(r,curP,e); out.push({i,lv,r,vs:cols.map(()=>null),tot:r.r?null:v,one:r.r?v:null,rat:r.r});
+  });
+  const hide=NVS.hide, showCol=cols.map((c,ci)=>out.some(o=>o.vs&&o.vs[ci]!=null&&o.vs[ci]!==0));
+  const vis=out.filter(o=>o.hdr || !hide || (o.vs&&o.vs.some(v=>v!=null&&v!==0)) || (o.tot!=null&&o.tot!==0) || o.one!=null);
+  // içi boş başlıkları at
+  const keep=vis.filter((o,k)=>{ if(!o.hdr) return true; for(let m=k+1;m<vis.length;m++){ if(vis[m].lv<=o.lv) return false; if(!vis[m].hdr) return true; } return false; });
+  const f=(v,rat)=>rat?fR(v):fA(v); const cc=cols.filter((c,ci)=>showCol[ci]);
+  const head=`<thead><tr><th scope="col" class="l">${esc(e.l)} · ${PL[curP]}</th>${cc.map(c=>`<th scope="col">${esc(c.l)}</th>`).join("")}${anyRatio&&!out.some(o=>o.m&&!o.rat)?'':'<th scope="col">Toplam</th>'}</tr></thead>`;
+  const withTot=!(anyRatio&&!out.some(o=>o.m&&!o.rat));
+  const body=keep.map(o=>{ const pad=`style="padding-left:${8+o.lv*14}px"`;
+    if(o.hdr) return `<tr class="mx-h"><td class="l" ${pad} colspan="${cc.length+1+(withTot?1:0)}">${esc(o.r.n)}</td></tr>`;
+    return `<tr data-i="${o.i}" class="${o.r.h?'calc':''} ${SEL===o.i?'sel':''}"><td class="l" ${pad}>${esc(o.r.n)}${o.r.h?' <span class="nv-tag nv-calc">hesaplanan</span>':''}${o.r.r&&!o.m?' <span class="nv-tag">%</span>':''}</td>${cols.map((c,ci)=>showCol[ci]?`<td>${o.one!=null&&ci===0?f(o.one,1):f(o.vs[ci],o.rat)}</td>`:'').join("")}${withTot?`<td class="mx-t">${o.rat?'<span class="muted">–</span>':fA(o.tot)}</td>`:''}</tr>`; }).join("");
+  $("nvTable").innerHTML=head+`<tbody>${body}</tbody>`;
+  $("nvFoot").textContent=`Tablo görünümü: ${e.full||e.l}, ${PL[curP]}, milyar TL. Sütunlar TBB’deki alt kalemlerden (vade dilimi, döviz cinsi vb.) kuruldu; “Toplam” sütunu satırdaki hücrelerin toplamıdır. Yükümlülükler ve türev borçları, TBB’de eksi işaretli olsa da bankaların dipnotlarındaki gibi pozitif gösterilir. “Hesaplanan” satırlar bankaların dipnotlarındaki toplam ve net satırlarıdır. Oran satırları (%) gruplar için gösterilmez.`;
+  $("nvTabNote").textContent=`${SRC.name} · tablo görünümü · ${PL[curP]}`;
   renderRowChart();
 }
 function renderRowChart(){
@@ -1644,6 +1700,8 @@ function wireTable(){
   $("nvVm").querySelectorAll("button").forEach(b=>{ b.setAttribute("aria-pressed",String(b.dataset.v===NVS.vm)); b.onclick=()=>{ NVS.vm=b.dataset.v; nvSave(); $("nvVm").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderTable(); }; });
   if(!$("nvVm").querySelector(`button[data-v="${NVS.vm}"]`)){ NVS.vm="amt"; $("nvVm").querySelector('button[data-v="amt"]').setAttribute("aria-pressed","true"); }
   const fl=$("nvFlow"); if(fl) fl.querySelectorAll("button").forEach(b=>{ b.setAttribute("aria-pressed",String(b.dataset.v===NVS.flow)); b.onclick=()=>{ NVS.flow=b.dataset.v; nvSave(); fl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderTable(); }; });
+  $("nvGv").querySelectorAll("button").forEach(b=>b.onclick=()=>{ if(b.disabled) return; NVS.gv=b.dataset.v; nvSave(); renderTable(); });
+  if($("nvMxEnt")) $("nvMxEnt").onchange=()=>{ NVS.mxe=$("nvMxEnt").value; nvSave(); renderTable(); };
   $("nvHide").checked=NVS.hide; $("nvHide").onchange=()=>{ NVS.hide=$("nvHide").checked; nvSave(); renderTable(); };
   let tq; $("nvQ").oninput=()=>{ clearTimeout(tq); tq=setTimeout(()=>{ Q=$("nvQ").value; renderTable(); },150); };
   $("nvOpen").onclick=()=>{ if(!SRC) return; SRC.rows.forEach((r,i)=>{ if(r.kids) OPEN.add(i); }); renderTable(); };
