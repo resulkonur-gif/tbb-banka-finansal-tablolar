@@ -30,7 +30,7 @@ LIKIDITE = {
     "kons": {"359460": "hqla", "359463": "out", "359466": "lcr", "359467": "lcrYp", "487130": "asf", "487131": "rsf", "487144": "nsfr"},
 }
 # Dipnot kökleri (solo kodları): mevduat vade yapısı ve özkaynak kalemleri
-DIPNOT_ADI = {"114171": "8. Mevduat Vade Yapısı", "109869": "9. Yasal Özkaynak"}
+DIPNOT_ADI = {"114171": "8. Mevduat Vade Yapısı", "109865": "9. Yasal Özkaynak"}   # 109865: özkaynak tablosunun "Tutar" sütunu
 # Sermaye yeterliliği oranları (yüzde); kalem listesine girmez, ayrı dizi olarak tutulur
 SERMAYE_ORAN = {"159980": "cet1", "159981": "t1", "159982": "car", "159984": "buf",
                 "159985": "ccb", "159986": "ccyb", "109885": "sib", "159987": "bufR"}
@@ -140,7 +140,7 @@ def veri_kur(tur, sec, banks, solo_kodlar):
             continue
         # dipnot kalemleri: üst zincirini kalem listesinin dışına çıkana kadar izle
         d, a = 0, str(ust)
-        while a in ust_of and ust_of[a] is not None:
+        while kok_eslestir.get(a, a) not in DIPNOT_ADI and a in ust_of and ust_of[a] is not None:
             d += 1; a = ust_of[a]
         a = kok_eslestir.get(a, a)
         if a in DIPNOT_ADI:
@@ -244,6 +244,84 @@ def veri_kur(tur, sec, banks, solo_kodlar):
     return {"periods": P, "plabel": plabel, "months": months, "items": items, "A": A, "T7": T7, "MV": MV}, olcekli | olcekli_syo
 
 
+MALI_BUNYE = "102772"          # 1. Mali bünye ile ilgili dipnotlar (solo kodu; konsolidede + 250.000)
+DN_HARIC = {"109869"}          # özkaynak kalemleri raporda zaten "9. Yasal Özkaynak" tablosu olarak var
+
+
+def dipnot_kur(tur, sec, bks):
+    """Mali bünye dipnotlarını ayrı veri paketleri olarak hazırlar (sayfada istenince yüklenir).
+    Paket: {"items": [[kod, ad, düzey, oran_mı]], "v": {dönem: {kod: [banka_sırası, değer, ...]}}}"""
+    val, its = sec[tur]["val"], sec[tur]["items"]
+    off = 250000 if tur == "kons" else 0
+    kok = str(int(MALI_BUNYE) + off)
+    ad = {c: re.sub(r"\s*\(\d+\)\s*$", "", n).strip() for c, n, u, sk in its}
+    sk_of = {c: tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,) for c, n, u, sk in its}
+    cocuk = {}
+    for c, n, u, sk in its:
+        if u is not None:
+            cocuk.setdefault(str(u), []).append(c)
+    for k in cocuk:
+        cocuk[k].sort(key=lambda c: sk_of[c])
+    bidx = {b: i for i, b in enumerate(bks)}
+    by_code = {}
+    for (c, b, p), tv in val.items():
+        if b in bidx:
+            by_code.setdefault(c, {}).setdefault(p, []).append((bidx[b], sum(tv)))
+    num = lambda x: int(round(x)) if abs(x) >= 100 else round(x, 2)
+    manifest, paketler = [], {}
+    for r in cocuk.get(kok, []):
+        if str(int(r) - off) in DN_HARIC or r in DN_HARIC:
+            continue
+        sira = []
+        def dfs(c, d, ust_ad):
+            n = ad.get(c, c)
+            sira.append((c, n, d, ust_ad))
+            for k in cocuk.get(c, []):
+                dfs(k, d + 1, ust_ad + " " + n)
+        dfs(r, 0, "")
+        items, v = [], {}
+        for c, n, d, ust_ad in sira:
+            seri = by_code.get(c, {})
+            tum = [abs(x) for lst in seri.values() for _, x in lst if x]
+            med = statistics.median(tum) if tum else 0
+            low = n.lower().replace("İ", "i")
+            oran = ("%" in n) or ("(%)" in ust_ad) or ("oran" in low and "tutar" not in low and tum and med < 500)
+            # oran kalemlerinde 1.000 ile çarpılmış yayımlanan dönemleri düzelt
+            olc = set()
+            if oran and len(seri) > 2:
+                meds = {p: statistics.median([abs(x) for _, x in lst if x] or [0]) for p, lst in seri.items()}
+                for p, m in meds.items():
+                    digerleri = [mm for q, mm in meds.items() if q != p and mm]
+                    if m and digerleri and m > 300 * statistics.median(digerleri):
+                        olc.add(p)
+            items.append([int(c), n, d, 1 if oran else 0])
+            for p, lst in seri.items():
+                sc = 1000 if p in olc else 1
+                flat = []
+                for i, x in sorted(lst):
+                    flat += [i, num(x / sc)]
+                v.setdefault(p, {})[c] = flat
+        if len(items) <= 1 and not v:
+            continue
+        key = f"{tur}_{r}"
+        paketler[key] = {"items": items, "v": v}
+        manifest.append({"id": key, "ad": re.sub(r"\s+", " ", ad.get(r, r)).strip(), "n": len(items)})
+    return manifest, paketler
+
+
+def dipnot_yaz(paketler, klasor):
+    klasor = Path(klasor)
+    klasor.mkdir(parents=True, exist_ok=True)
+    for f in klasor.glob("*.js"):
+        f.unlink()
+    toplam = 0
+    for key, pk in paketler.items():
+        t = f'__DN("{key}",' + json.dumps(pk, ensure_ascii=False, separators=(",", ":")) + ");\n"
+        (klasor / f"{key}.js").write_text(t, encoding="utf-8")
+        toplam += len(t.encode("utf-8"))
+    return toplam
+
+
 def html_yaz(D, tarih, olcekli, cikti):
     t = (HERE / "rapor_sablonu.html").read_text(encoding="utf-8")
     P = D["solo"]["periods"] if "solo" in D else D["kons"]["periods"]
@@ -276,6 +354,7 @@ def html_yaz(D, tarih, olcekli, cikti):
     html = ('<!doctype html>\n<html lang="tr">\n<head>\n<meta charset="utf-8">\n'
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             + head + css + "\n</head>\n<body>\n" + body + "\n</body>\n</html>\n")
+    Path(cikti).parent.mkdir(parents=True, exist_ok=True)
     Path(cikti).write_text(html, encoding="utf-8")
 
 
@@ -319,10 +398,12 @@ def main():
     ozet = ", ".join("{} {:,} değer".format(k, len(v["val"])) for k, v in sec.items())
     print("Okundu: " + ozet)
     solo_kodlar = {c for c, *_ in sec["solo"]["items"]} if "solo" in sec else set()
-    D, olc = {}, set()
+    D, olc, paketler = {}, set(), {}
     for tur in sec:
         D[tur], o = veri_kur(tur, sec, banks, solo_kodlar)
         olc |= o
+        D[tur]["DN"], pk = dipnot_kur(tur, sec, D[tur]["A"]["codes"])
+        paketler.update(pk)
         A = D[tur]["A"]
         print(f"[{tur}] {len(D[tur]['periods'])} dönem, {len(A['codes'])} banka, {len(D[tur]['items'])} kalem"
               + (f"; ölçeği düzeltilen oran dönemleri: {sorted(o)}" if o else ""))
@@ -332,6 +413,10 @@ def main():
     if a.html:
         html_yaz(D, tarih, olc, a.html)
         print("Yazıldı:", a.html)
+        if paketler:
+            kl = Path(a.html).resolve().parent / "dipnot"
+            mb = dipnot_yaz(paketler, kl) / 1e6
+            print(f"Yazıldı: {kl} ({len(paketler)} dipnot paketi, {mb:.1f} MB)")
     if a.uzun:
         uzun_yaz(sec, banks, a.uzun)
         print("Yazıldı:", a.uzun)

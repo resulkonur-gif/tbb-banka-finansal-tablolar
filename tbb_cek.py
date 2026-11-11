@@ -6,7 +6,8 @@ TBB Veri Sistemi'nden TFRS 9 solo ve konsolide finansal tabloları çeker.
   1. Varlıklar, 2. Yükümlülükler, 3. Nazım hesaplar, 4. Gelir-gider tablosu,
   5. Kâr veya zarar ve diğer kapsamlı gelir tablosu, 7. Nakit akış tablosu
   + likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO) kalemleri
-  + dipnotlardan mevduatın vade yapısı ile yasal özkaynak kalemlerinin tamamı ve sermaye yeterliliği
+  + dipnotlardan mevduatın vade yapısı ile mali bünye ile ilgili dipnotların tamamı (özkaynak, risk profilleri, kur ve faiz riski,
+    likidite, kalan vadeler, kaldıraç, gerçeğe uygun değer)
 
 Yöntem: https://verisistemi.tbb.org.tr sayfası Playwright ile açılır, sitenin kendi
 seçim ve "Rapor Al" fonksiyonları çağrılır, sonuç pivot tablosundan okunur.
@@ -42,15 +43,18 @@ HERE = Path(__file__).resolve().parent
 # Tablo kök kodları: alt kalemleriyle seçilenler ve yalnız kendisi seçilen likidite kalemleri
 # Dipnotlar: mevduatın vade yapısı (cari dönem, tüm alt kalemleriyle) ve yasal özkaynak / sermaye yeterliliği
 MEVDUAT_VADE = 114172
-OZKAYNAK = 109865   # "Tutar": özkaynak kalemleri tablosunun tüm satırları (çekirdek, ilave ana, katkı sermaye, indirimler, oranlar, tamponlar)
+MALI_BUNYE = 102772  # "1. Mali bünye ile ilgili dipnotlar": özkaynak kalemleri, risk profilleri, kur ve faiz riski,
+                     # LKO, NİFO, kalan vadeye göre aktif-pasif, kaldıraç oranı, gerçeğe uygun değer (tüm alt kalemleriyle)
+
+PARCA_BOYU = 600     # dipnotlar, en çok bu kadar kalemlik parçalar halinde çekilir (TBB raporu büyüyünce zaman aşımına düşüyor)
 
 TABLOLAR = {
     "solo": {
-        "alt_kalemleriyle": [102087, 102086, 102519, 102567, 16039, 102404, MEVDUAT_VADE, OZKAYNAK],
+        "alt_kalemleriyle": [102087, 102086, 102519, 102567, 16039, 102404, MEVDUAT_VADE],
         "yalniz": [109460, 109463, 109466, 109467, 17130, 17131, 17144],
     },
     "kons": {
-        "alt_kalemleriyle": [352087, 352086, 352519, 352567, 266039, 352404, MEVDUAT_VADE + 250000, OZKAYNAK + 250000],
+        "alt_kalemleriyle": [352087, 352086, 352519, 352567, 266039, 352404, MEVDUAT_VADE + 250000],
         "yalniz": [359460, 359463, 359466, 359467, 487130, 487131, 487144],
     },
 }
@@ -68,6 +72,7 @@ def main():
     ap.add_argument("--parti", type=int, default=6, help="Bir seferde çekilecek dönem sayısı (varsayılan 6)")
     ap.add_argument("--cikti", default="tbb_veri.csv", help="Çıktı dosyası")
     ap.add_argument("--gorunur", action="store_true", help="Tarayıcıyı ekranda göster")
+    ap.add_argument("--dipnotsuz", action="store_true", help="Mali bünye dipnotlarını çekme (yalnız finansal tablolar)")
     args = ap.parse_args()
 
     turler = [t.strip() for t in args.tur.split(",") if t.strip()]
@@ -102,30 +107,41 @@ def main():
 
         bolumler = {}
         for tur in turler:
-            log(f"[{tur}] kalemler seçiliyor…")
-            page.evaluate("__tbb.clearItems()")
-            n = page.evaluate("([a, b]) => __tbb.selectItems(a, b)",
-                              [TABLOLAR[tur]["alt_kalemleriyle"], TABLOLAR[tur]["yalniz"]])
-            log(f"[{tur}] {n} kalem seçildi")
+            # 1. parça: finansal tablolar ve likidite kalemleri; sonra mali bünye dipnotları dallara bölünerek
+            parcalar = [(TABLOLAR[tur]["alt_kalemleriyle"], TABLOLAR[tur]["yalniz"], args.parti)]
+            if not args.dipnotsuz:
+                dallar = page.evaluate("(k) => __tbb.children(k)", MALI_BUNYE + (250000 if tur == "kons" else 0))
+                log(f"[{tur}] mali bünye dipnotları: {len(dallar)} dal, {sum(n for _, n in dallar)} kalem")
+                cur, cnt = [], 0
+                for k, n in dallar:
+                    if cur and cnt + n > PARCA_BOYU:
+                        parcalar.append((cur, [], max(1, args.parti * PARCA_BOYU // max(cnt, 1) // 2) if cnt > PARCA_BOYU else args.parti)); cur, cnt = [], 0
+                    cur.append(k); cnt += n
+                if cur:
+                    parcalar.append((cur, [], args.parti))
             satirlar, kalemler, toplam = [], {}, 0.0
-            for i in range(0, len(donemler), args.parti):
-                grup = donemler[i:i + args.parti]
-                for deneme in range(3):
-                    r = page.evaluate("(ovs) => __tbb.runBatch(ovs)", grup)
-                    if not r.get("timeout"):
-                        break
-                    log(f"[{tur}] {grup[0]}–{grup[-1]} zaman aşımı, yeniden deneniyor ({deneme + 1}/3)")
-                else:
-                    sys.exit(f"[{tur}] {grup} çekilemedi.")
-                beklenen = "KONSOL" if tur == "kons" else "SOLO"
-                if beklenen not in r["root"].upper():
-                    sys.exit(f"[{tur}] Beklenmeyen tablo döndü: {r['root']}")
-                if r["unknown"]:
-                    log(f"[{tur}] Eşleşmeyen banka adları: {r['unknown']}")
-                satirlar += r["lines"]
-                kalemler.update(r["items"])
-                toplam += r["sum"]
-                log(f"[{tur}] {grup[0]}–{grup[-1]}: {len(r['lines']):,} değer")
+            for pi, (alt, yalniz, parti) in enumerate(parcalar, 1):
+                page.evaluate("__tbb.clearItems()")
+                n = page.evaluate("([a, b]) => __tbb.selectItems(a, b)", [alt, yalniz])
+                log(f"[{tur}] parça {pi}/{len(parcalar)}: {n} kalem seçildi")
+                for i in range(0, len(donemler), parti):
+                    grup = donemler[i:i + parti]
+                    for deneme in range(3):
+                        r = page.evaluate("(ovs) => __tbb.runBatch(ovs)", grup)
+                        if not r.get("timeout"):
+                            break
+                        log(f"[{tur}] {grup[0]}–{grup[-1]} zaman aşımı, yeniden deneniyor ({deneme + 1}/3)")
+                    else:
+                        sys.exit(f"[{tur}] {grup} çekilemedi.")
+                    beklenen = "KONSOL" if tur == "kons" else "SOLO"
+                    if beklenen not in r["root"].upper():
+                        sys.exit(f"[{tur}] Beklenmeyen tablo döndü: {r['root']}")
+                    if r["unknown"]:
+                        log(f"[{tur}] Eşleşmeyen banka adları: {r['unknown']}")
+                    satirlar += r["lines"]
+                    kalemler.update(r["items"])
+                    toplam += r["sum"]
+                    log(f"[{tur}] parça {pi}: {grup[0]}–{grup[-1]}: {len(r['lines']):,} değer")
             bolumler[tur] = {"satirlar": satirlar, "kalemler": kalemler, "toplam": toplam}
             log(f"[{tur}] tamam: {len(satirlar):,} değer, {len(kalemler)} kalem, kontrol toplamı {toplam:,.0f}")
         browser.close()

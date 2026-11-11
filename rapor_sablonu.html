@@ -327,6 +327,42 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
 #mvTable tr.tot td,#ozTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
 #mvTable thead th:first-child,#ozTable thead th:first-child{min-width:170px}
 #ozTable thead th{white-space:normal;vertical-align:bottom}
+/* yeni sayfalar */
+.nv-chips{display:flex;flex-wrap:wrap;gap:8px}
+.nv-chip{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--m-ov);background:var(--m-surface);font-size:13px;font-weight:500;color:var(--m-on-surface);max-width:100%}
+.nv-chip i{width:10px;height:10px;border-radius:2px;flex:none}
+.nv-chip button{all:unset;cursor:pointer;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:var(--m-osv);flex:none}
+.nv-chip button:hover{background:var(--m-state)}
+.nv-chip button:focus-visible{outline:2px solid var(--m-primary)}
+.nv-sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.nv-t thead th{white-space:normal;vertical-align:bottom;min-width:92px}
+.nv-t thead th.cur{color:var(--m-primary)}
+.nv-t th.l,.nv-t td.l{text-align:left}
+.nv-t thead th:first-child,.nv-t td:first-child{position:sticky;left:0;z-index:1;background:var(--m-scl)}
+.nv-t thead th:first-child{z-index:3;background:var(--m-sch)}
+.nv-t td:first-child{min-width:300px;max-width:460px}
+.nv-t tbody tr.lv0 td{font-weight:700}
+.nv-t tbody tr[data-i],.nv-t tbody tr[data-m]{cursor:pointer}
+.nv-t tbody tr[data-i]:hover td,.nv-t tbody tr[data-m]:hover td{background:color-mix(in srgb, var(--m-primary) 6%, var(--m-scl))}
+.nv-t tbody tr.sel td{background:color-mix(in srgb, var(--m-primary) 14%, var(--m-scl))}
+.nv-t td .sub{display:block;font-size:11.5px;font-weight:400;margin-top:2px}
+.nv-name{display:flex;align-items:flex-start;gap:4px;line-height:1.35}
+.nv-car{border:0;background:transparent;cursor:pointer;width:24px;height:24px;flex:none;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;color:var(--ink-2);margin-top:-2px;padding:0}
+.nv-car:hover{background:var(--surface-2)}
+.nv-car:disabled{cursor:default;opacity:.5}
+.nv-car span{transition:transform .15s}
+@media (max-width:640px){.nv-t td:first-child{min-width:180px;max-width:220px}.nv-t thead th:first-child{min-width:180px}.nv-t thead th{min-width:80px}}
+.nv-sp{width:24px;flex:none}
+.nv-code{font-size:11px;color:var(--ink-3);margin-left:6px;font-weight:400}
+.nv-tag{font-size:10.5px;font-weight:700;color:var(--warm);background:var(--warm-soft);border-radius:4px;padding:0 5px;margin-left:4px}
+.nv-tools input[type=search]{flex:1 1 240px;min-width:0}
+.nv-chk{display:flex;gap:8px;align-items:center;font-size:14px}
+.nv-h3{margin:0;font-size:15px;font-weight:600}
+.nv-scroll{max-height:78vh;overflow:auto}
+.nv-foot{font-size:12.5px;margin:0}
+.pos{color:var(--good)}
+.choice.v .ch-ico{background:var(--m-sc);color:var(--m-on-sc)}
+.choice.t .ch-ico{background:var(--m-pc, var(--m-sc));color:var(--m-on-pc, var(--m-on-sc))}
 details.ozdet{padding:0}
 details.ozdet>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 20px;font-size:16px;font-weight:500}
 details.ozdet>summary::-webkit-details-marker{display:none}
@@ -348,7 +384,6 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 #ozItems tbody tr:not(.hdr):hover td{background:var(--m-state)}
 #ozItems tbody tr.sel td{background:color-mix(in srgb, var(--m-primary) 12%, transparent)}
 #ozItems .ic{font-size:11px;color:var(--ink-3);margin-left:6px}
-.pos{color:var(--good)}
 #cashTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -357,8 +392,8 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <div class="land fade-in">
     <span class="land-kicker">TBB Veri Sistemi · TFRS 9 · {{ARALIK}}</span>
     <h1>Türk Bankacılık Sistemi<br><span class="land-h1b">Finansal Tabloları Karşılaştırması</span></h1>
-    <p class="land-sub">TBB’de veri yayımlayan {{NBANKA}} bankanın {{ARALIK_DEN_YA}} {{N}} çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin.</p>
-    <p class="land-q">Hangi tablolarla açalım?</p>
+    <p class="land-sub">TBB’de veri yayımlayan {{NBANKA}} bankanın {{ARALIK_DEN_YA}} {{N}} çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Banka bazlı karşılaştırma ve tek banka görünümünde istediğiniz bankaları ve grupları seçip mali bünye dipnotlarına (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç, gerçeğe uygun değer) kadar inebilirsiniz.</p>
+    <p class="land-q">Nereden başlayalım?</p>
     <div class="choices">
       <button type="button" class="choice" data-mode="solo">
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h20v3H2zm15-9h3v7h-3zm-5-9L2 6v2h20V6z"/></svg></span>
@@ -374,8 +409,22 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
         <span class="chips" id="chipsKons"></span>
         <span class="ch-go">Konsolide ile aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
       </button>
+      <button type="button" class="choice v" data-view="kars">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h6V3zm4 0v18h6a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1h-6zm-6 14H5v-2h3v2zm0-4H5v-2h3v2zm0-4H5V7h3v2zm11 8h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V7h3v2z"/></svg></span>
+        <span class="ch-t">Banka bazlı karşılaştırma</span>
+        <span class="ch-d">İstediğiniz sayıda banka ve TBB banka grubunu seçin; özet göstergeleri, finansal tabloları ve mali bünye dipnotlarını yan yana görün.</span>
+        <span class="chips" id="chipsKars"></span>
+        <span class="ch-go">Karşılaştırmayı aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </button>
+      <button type="button" class="choice t" data-view="tek">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49 9.5 12.48l4 4L22 6.92 20.59 5.5l-7.09 7.97-4-4L2 16.99z"/></svg></span>
+        <span class="ch-t">Tek banka görünümü</span>
+        <span class="ch-d">Bir bankanın tablolarını ve dipnotlarını geçmiş dönemlerle karşılaştırın: son çeyrekler, son yıllar, yıl sonları; değişimler ve sektör payı.</span>
+        <span class="chips" id="chipsTek"></span>
+        <span class="ch-go">Bankayı seç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </button>
     </div>
-    <p class="land-foot">Seçiminizi raporun üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir.<br>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> (LinkedIn)</p>
+    <p class="land-foot">Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir.<br>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> (LinkedIn)</p>
   </div>
 </div>
 
@@ -611,21 +660,101 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <footer>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> · <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary)">LinkedIn</a> · Kaynak verisi TBB’ye aittir.</footer>
 </div>
 </template>
+<template id="nvKarsTpl">
+<div class="wrap gut fade-in">
+  <header class="hdr">
+    <div class="hdr-top"><span class="eyebrow">TBB Veri Sistemi · TFRS 9 <span data-t="kindlow"></span> finansal tablolar</span><span class="mode-chip" data-t="kind"></span></div>
+    <h1>Banka bazlı karşılaştırma</h1>
+    <p class="lede">İstediğiniz bankaları ve TBB banka gruplarını seçip özet göstergeleri, finansal tabloları ve mali bünye dipnotlarını yan yana karşılaştırın. Bir satıra tıklayınca kalemin {{YILLAR}} seyri grafikte açılır.</p>
+    <div class="hdr-meta"><span>Birim: milyar TL (aksi belirtilmedikçe)</span><span>Veri: <span data-t="date"></span> tarihinde alındı</span><span>Tutarlar nominaldir</span></div>
+  </header>
+  <div class="pbar" role="group" aria-label="Dönem seçimi">
+    <span class="pbar-label">Dönem</span>
+    <div class="pctl" id="nvPeriod"></div>
+    <span class="pbar-note" id="nvPNote"></span>
+  </div>
+  <section aria-labelledby="h-nvsel">
+    <div class="sec-head"><h2 id="h-nvsel">Karşılaştırılanlar</h2><p class="insight">Banka ya da grup ekleyin; çipteki × ile çıkarın. Hazır seçimler: ilk 7 bankanın her biri ya da TBB grupları.</p></div>
+    <div class="panel">
+      <div class="nv-chips" id="nvChips"></div>
+      <div class="controls">
+        <label class="field" for="nvAdd" style="flex:1 1 320px;min-width:0">Banka ya da grup ekle<select id="nvAdd" style="width:100%"></select></label>
+        <button type="button" class="btn" id="nvT7">İlk 7</button><button type="button" class="btn" id="nvGrps">TBB grupları</button><button type="button" class="btn" id="nvClr">Temizle</button>
+      </div>
+      <p class="muted" style="font-size:12.5px;margin:0"><span id="nvAddNote"></span> <span id="nvLost"></span></p>
+    </div>
+  </section>
+  <section aria-labelledby="h-nvsum">
+    <div class="sec-head"><h2 id="h-nvsum">Özet göstergeler</h2></div>
+    <div class="scroll"><table class="xtable nv-t nv-sum" id="nvSum"></table></div>
+    <p class="muted nv-foot" id="nvSumFoot"></p>
+    <div class="panel"><div class="controls"><label class="field" for="nvMet">Gösterge<select id="nvMet"></select></label></div><div class="chartbox tall"><canvas id="nvMetChart" role="img" aria-label="Seçilen göstergenin dönemlere göre seyri"></canvas></div></div>
+  </section>
+  <section aria-labelledby="h-nvtab">
+    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve mali bünye dipnotları</h2><p class="insight" id="nvTabNote"></p></div>
+    <div class="controls">
+      <label class="field" for="nvTab" style="flex:1 1 360px;min-width:0">Tablo<select id="nvTab" style="width:100%"></select></label>
+      <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button><button type="button" data-v="yoy" aria-pressed="false">Yıllık değişim</button></div></div>
+    </div>
+    <div class="panel" id="nvRowPanel" hidden><h3 class="nv-h3" id="nvRowH"></h3><div class="chartbox tall"><canvas id="nvRowChart" role="img" aria-label="Seçilen kalemin dönemlere göre seyri"></canvas></div></div>
+    <div class="controls nv-tools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
+    <div class="scroll nv-scroll"><table class="xtable nv-t" id="nvTable"></table></div>
+    <p class="muted nv-foot" id="nvFoot"></p>
+  </section>
+  <footer>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> · <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary)">LinkedIn</a> · Kaynak verisi TBB’ye aittir.</footer>
+</div>
+</template>
+<template id="nvTekTpl">
+<div class="wrap gut fade-in">
+  <header class="hdr">
+    <div class="hdr-top"><span class="eyebrow">TBB Veri Sistemi · TFRS 9 <span data-t="kindlow"></span> finansal tablolar</span><span class="mode-chip" data-t="kind"></span></div>
+    <h1>Tek banka görünümü</h1>
+    <p class="lede">Bir bankanın (ya da banka grubunun) finansal tablolarını ve mali bünye dipnotlarını geçmiş dönemlerle karşılaştırın: son çeyrekler, son yıllar ya da yıl sonları; çeyreklik ve yıllık değişim ve sektör içindeki payı.</p>
+    <div class="hdr-meta"><span>Birim: milyar TL (aksi belirtilmedikçe)</span><span>Veri: <span data-t="date"></span> tarihinde alındı</span><span>Tutarlar nominaldir</span></div>
+  </header>
+  <div class="pbar" role="group" aria-label="Dönem seçimi">
+    <span class="pbar-label">Dönem</span>
+    <div class="pctl" id="nvPeriod"></div>
+    <span class="pbar-note" id="nvPNote"></span>
+  </div>
+  <section aria-labelledby="nvTekName">
+    <div class="controls">
+      <label class="field" for="nvTek" style="flex:1 1 340px;min-width:0">Banka ya da grup<select id="nvTek" style="width:100%"></select></label>
+      <div class="field">Karşılaştırılan dönemler<div class="seg" id="nvTk" role="group" aria-label="Karşılaştırılan dönemler"><button type="button" data-v="q5">Son 5 çeyrek</button><button type="button" data-v="y5">Son 5 yıl</button><button type="button" data-v="ye">Yıl sonları</button><button type="button" data-v="all">Tüm dönemler</button></div></div>
+    </div>
+    <div class="sec-head"><h2 id="nvTekName"></h2><p class="insight" id="nvTekSub"></p></div>
+    <div class="kpis" id="nvTekKpis"></div>
+  </section>
+  <section aria-labelledby="nvTekRatH">
+    <div class="sec-head"><h2 id="nvTekRatH">Oranlar</h2><p class="insight">Sağdaki sütun seçilen dönemde sektörün oranı. Satıra tıklayınca oranın tüm dönemlerdeki seyri sektörle birlikte grafikte açılır.</p></div>
+    <div class="scroll"><table class="xtable nv-t" id="nvTekRat"></table></div>
+    <div class="panel"><div class="controls"><label class="field" for="nvTekMet">Oran<select id="nvTekMet"></select></label></div><div class="chartbox tall"><canvas id="nvTekMetChart" role="img" aria-label="Seçilen oranın dönemlere göre seyri, sektörle birlikte"></canvas></div></div>
+  </section>
+  <section aria-labelledby="h-nvtab">
+    <div class="sec-head"><h2 id="h-nvtab">Finansal tablolar ve mali bünye dipnotları</h2><p class="insight" id="nvTabNote"></p></div>
+    <div class="controls">
+      <label class="field" for="nvTab" style="flex:1 1 360px;min-width:0">Tablo<select id="nvTab" style="width:100%"></select></label>
+      <div class="field">Gösterim<div class="seg" id="nvVm" role="group" aria-label="Gösterim"><button type="button" data-v="amt" aria-pressed="true">Tutar</button><button type="button" data-v="ta" aria-pressed="false">Aktife oran</button></div></div><div class="field">Gelir ve nakit akışı<div class="seg" id="nvFlow" role="group" aria-label="Gelir ve nakit akışı"><button type="button" data-v="cum" aria-pressed="true">Kümülatif</button><button type="button" data-v="q" aria-pressed="false">Çeyreklik</button></div></div>
+    </div>
+    <div class="panel" id="nvRowPanel" hidden><h3 class="nv-h3" id="nvRowH"></h3><div class="chartbox tall"><canvas id="nvRowChart" role="img" aria-label="Seçilen kalemin dönemlere göre seyri"></canvas></div></div>
+    <div class="controls nv-tools"><input type="search" id="nvQ" placeholder="Kalem ara (ad ya da kod)" aria-label="Kalem ara"><button class="btn" type="button" id="nvOpen">Tümünü aç</button><button class="btn" type="button" id="nvClose">Tümünü kapat</button><label class="nv-chk"><input type="checkbox" id="nvHide" checked> Değeri olmayan kalemleri gizle</label></div>
+    <div class="scroll nv-scroll"><table class="xtable nv-t" id="nvTable"></table></div>
+    <p class="muted nv-foot" id="nvFoot"></p>
+  </section>
+  <footer>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> · <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary)">LinkedIn</a> · Kaynak verisi TBB’ye aittir.</footer>
+</div>
+</template>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
 const DATA = __DATA__;
 const META = {solo:{kind:"Solo",kindlow:"solo",date:"{{TARIH}}"}, kons:{kind:"Konsolide",kindlow:"konsolide",date:"{{TARIH}}"}};
-function boot(D, MODE){
-const CLEAN=[];
+/* ---------- ortak hesap çekirdeği: dört sayfa da kullanır ---------- */
+function core(D){
 const A = D.A, T7 = D.T7, NA = A.names.length;
 const P = D.periods, B = T7.map(i=>A.short[i]), NB = B.length;
 const PL = D.plabel, MON = D.months;
-const ITEMS = D.items; // [code,name,level,tab]
-const byCode = {}; ITEMS.forEach((it,i)=>byCode[it[0]]=i);
-let curP = P[P.length-1];
-try { const s = localStorage.getItem("b7.period"); if (s && P.includes(s)) curP = s; } catch(e) {}
-
 const nf1 = new Intl.NumberFormat("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:1});
 const nf0 = new Intl.NumberFormat("tr-TR",{maximumFractionDigits:0});
 const nf2 = new Intl.NumberFormat("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -691,6 +820,19 @@ const GR = {
   cet1:{l:"Çekirdek sermaye yeterliliği oranı", f:(p,x)=>capR(p,"cet1",159935,x), cap:1},
   vadesiz:{l:"Vadesiz mevduat payı", f:(p,x)=>{ const M=D.MV; if(!M) return null; const t=asum(p,M.top,x); return t && x.some(i=>has(p,M.top,i)) ? M.vade[0][1].reduce((s,c)=>s+asum(p,c,x),0)/t : null; }}
 };
+return {nf1,nf0,nf2,css,bcol,ALLIDX,av,has,asum,idxOf,v,tot,get,mlr,fmtM,fmtBig,unitBig,pct,chg,isFlowTab,prevP,yoyP,SER,LASTP,absSum,STOCK,ypS,liq,div,ybP,avgYB,capR,GR};
+}
+function boot(D, MODE){
+const CLEAN=[];
+const A = D.A, T7 = D.T7, NA = A.names.length;
+const P = D.periods, B = T7.map(i=>A.short[i]), NB = B.length;
+const PL = D.plabel, MON = D.months;
+const ITEMS = D.items; // [code,name,level,tab]
+const byCode = {}; ITEMS.forEach((it,i)=>byCode[it[0]]=i);
+let curP = P[P.length-1];
+try { const s = localStorage.getItem("b7.period"); if (s && P.includes(s)) curP = s; } catch(e) {}
+
+const {nf1,nf0,nf2,css,bcol,ALLIDX,av,has,asum,idxOf,v,tot,get,mlr,fmtM,fmtBig,unitBig,pct,chg,isFlowTab,prevP,yoyP,SER,LASTP,absSum,STOCK,ypS,liq,div,ybP,avgYB,capR,GR} = core(D);
 const RATIO = {};
 Object.entries(GR).forEach(([k,r])=>RATIO[k]={l:r.l,d:r.d,liq:r.liq,f:(p,b)=>r.f(p,idxOf(b))});
 RATIO.pay={l:"Aktif payı (ilk 7 içinde)", f:(p,b)=>get(p,16018,b)/tot(p,16018)};
@@ -1209,7 +1351,7 @@ const ozRat=(p,k,x)=>{ if(!A[k]||!A[k][p]) return null; if(k==="cet1"||k==="t1"|
   if(x.length===1){ const v=A[k][p][x[0]]; return v==null?null:v/100; }
   let s=0,w=0; x.forEach(i=>{ const v=A[k][p][i], r=av(p,159978,i); if(v!=null&&r){ s+=v*r; w+=r; } }); return w? s/w/100 : null; };
 function ozRows(){ if(OZROWS) return OZROWS;
-  const its=ITEMS.filter(it=>it[3]===OZ_TAB && it[2]>0);
+  const its=ITEMS.filter(it=>it[3]===OZ_TAB);
   const HDR=new Set([159900,159936,159954,159976,159979,159983,159988,159993,109871]);
   const rows=its.map(it=>({t:"amt",c:it[0],n:it[1],hdr:HDR.has(it[0])}));
   const ins=(after,keys)=>{ let j=rows.findIndex(r=>r.c===after); const add=keys.filter(k=>A[k]).map(k=>({t:"rat",k,n:OZ_RAT[k]})); if(j<0) rows.push(...add); else rows.splice(j+1,0,...add); };
@@ -1299,31 +1441,336 @@ function renderAll(){ renderPeriodBar(); renderKpis(); renderKpiPanel(); renderS
 return ()=>CLEAN.forEach(f=>f());
 }
 
+/* ---------- yeni sayfalar: banka bazlı karşılaştırma ve tek banka görünümü ---------- */
+const NV_PAL=["#3B6FB6","#E07B39","#3A9A5B","#D1495B","#7A5CA8","#2A9D8F","#C9A227","#9A6A48","#E36FA4","#6B7F91","#16A0B5","#A23E48"];
+const NV_MAX=12;
+const DN_CACHE={}, DN_WAIT={};
+window.__DN=(k,o)=>{
+  // paket: v[dönem][kod] = [banka_sırası, değer, ...] -> seyrek diziye açılır
+  Object.values(o.v).forEach(pv=>Object.keys(pv).forEach(c=>{ const f=pv[c], a=[]; for(let j=0;j<f.length;j+=2) a[f[j]]=f[j+1]; pv[c]=a; }));
+  DN_CACHE[k]=o; (DN_WAIT[k]||[]).forEach(w=>w.res(o)); delete DN_WAIT[k];
+};
+function dnLoad(key){
+  if(DN_CACHE[key]) return Promise.resolve(DN_CACHE[key]);
+  return new Promise((res,rej)=>{
+    const first=!DN_WAIT[key]; (DN_WAIT[key]=DN_WAIT[key]||[]).push({res,rej});
+    if(!first) return;
+    const url="dipnot/"+key+".js";
+    const fail=()=>{ (DN_WAIT[key]||[]).forEach(w=>w.rej(new Error("yüklenemedi"))); delete DN_WAIT[key]; };
+    const viaScript=()=>{ const s=document.createElement("script"); s.src=url; s.onerror=fail; document.head.appendChild(s); };
+    if(location.protocol==="file:"){ viaScript(); return; }
+    fetch(url).then(r=>{ if(!r.ok) throw new Error(r.status); return r.text(); })
+      .then(t=>window.__DN(key, JSON.parse(t.slice(t.indexOf(",")+1, t.lastIndexOf(")")))))
+      .catch(viaScript);
+  });
+}
+const NVS={ents:null, tek:null, tab:null, vm:"amt", tk:"q5", flow:"cum", hide:true, met:"aktif", tmet:"roe"};
+try{ Object.assign(NVS, JSON.parse(localStorage.getItem("nv.state")||"{}")); }catch(e){}
+const nvSave=()=>{ try{ localStorage.setItem("nv.state", JSON.stringify(NVS)); }catch(e){} };
+
+function bootNV(D, MODE, VIEW){
+const CLEAN=[];
+const A=D.A, P=D.periods, PL=D.plabel, MON=D.months, NA=A.names.length, T7=D.T7;
+const {nf1,nf0,nf2,css,ALLIDX,av,has,asum,mlr,pct,chg,isFlowTab,prevP,yoyP,div,GR,LASTP}=core(D);
+const ALL=ALLIDX;
+const $=id=>document.getElementById(id);
+const el=(tag,attrs={},html="")=>{ const e=document.createElement(tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(html) e.innerHTML=html; return e; };
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let curP=P[P.length-1];
+try{ const s=localStorage.getItem("b7.period"); if(s&&P.includes(s)) curP=s; }catch(e){}
+
+/* grafik */
+const CH={};
+const mk=(id,cfg)=>{ if(CH[id]) CH[id].destroy(); const e=$(id); if(!e||!window.Chart) return; CH[id]=new Chart(e,cfg); };
+CLEAN.push(()=>Object.values(CH).forEach(c=>{ try{c.destroy()}catch(e){} }));
+const opts=(yfmt,extra={})=>{ const ink=css("--ink-2"), grid=css("--line");
+  return Object.assign({responsive:true,maintainAspectRatio:false,animation:{duration:250},interaction:{mode:"index",intersect:false},
+    plugins:{legend:{labels:{color:ink,boxWidth:12,boxHeight:12,font:{family:"Roboto",size:12}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y==null?'–':yfmt(c.parsed.y)}`}}},
+    scales:{x:{ticks:{color:ink,font:{family:"Roboto",size:12}},grid:{color:grid,drawTicks:false}},y:{ticks:{color:ink,font:{family:"Roboto",size:12},callback:yfmt},grid:{color:grid}}}},extra); };
+
+/* biçim */
+const fA=v=>{ if(v==null) return '<span class="muted">–</span>'; const m=v/1e6, a=Math.abs(m); const t=a>=10?nf1.format(a):a>=0.005?nf2.format(a):(v===0?"0,0":"<0,01"); return `<span class="${m<0?'neg':''}">${m<0?'−':''}${t}</span>`; };
+const fR=v=>v==null?'<span class="muted">–</span>':`<span class="${v<0?'neg':''}">${v<0?'−':''}%${nf2.format(Math.abs(v))}</span>`;   // TBB'nin yüzde olarak verdiği oran
+const fP=(v,d=1)=>v==null||!isFinite(v)?'<span class="muted">–</span>':`<span class="${v<0?'neg':''}">${pct(v,d)}</span>`;
+const fC=v=>v==null||!isFinite(v)?'<span class="muted">–</span>':`<span class="${v<0?'neg':'pos'}">${chg(v)}</span>`;
+const fPt=v=>v==null||!isFinite(v)?'<span class="muted">–</span>':`<span class="${v<0?'neg':'pos'}">${v>=0?'+':'−'}${nf2.format(Math.abs(v))} puan</span>`;
+
+/* banka ve gruplar */
+const codeIdx={}; A.codes.forEach((c,i)=>codeIdx[c]=i);
+const aSum=x=>asum(LASTP,16018,x);
+const byA=ALL.slice().sort((a,b)=>av(LASTP,16018,b)-av(LASTP,16018,a));
+const GL={"Grup bilgisi yok":"TBB grubu olmayan bankalar","Türkiye´de Şube Açan Yabancı Sermayeli Bankalar":"Türkiye’de şube açan yabancı bankalar","Tasarruf Mevduatı Sigorta Fonuna Devredilen Bankalar":"TMSF’ye devredilen bankalar"};
+const GRP=[...new Set(A.grp)].sort((a,b)=>aSum(ALL.filter(i=>A.grp[i]===b))-aSum(ALL.filter(i=>A.grp[i]===a)));
+const UST={ "G:mevduat":["Mevduat bankaları (tümü)", g=>/Mevduat Bankaları|Yabancı Sermayeli Bankalar|Şube Açan|Tasarruf Mevduatı/.test(g) && !/Kalkınma/.test(g)],
+            "G:kalk":["Kalkınma ve yatırım bankaları (tümü)", g=>/Kalkınma/.test(g)] };
+function ent(id){
+  if(id==="all") return {id,l:"Sektör",full:"Sektör toplamı ("+NA+" banka)",x:ALL,k:"t"};
+  if(id==="t7") return {id,l:"İlk 7",full:"İlk 7 toplamı",x:T7,k:"t"};
+  if(UST[id]){ const x=ALL.filter(i=>UST[id][1](A.grp[i])); return x.length?{id,l:UST[id][0],full:UST[id][0]+" ("+x.length+" banka)",x,k:"t"}:null; }
+  if(id.startsWith("g:")){ const g=id.slice(2), x=ALL.filter(i=>A.grp[i]===g); return x.length?{id,l:GL[g]||g,full:(GL[g]||g)+" ("+x.length+" banka)",x,k:"t"}:null; }
+  if(id.startsWith("b:")){ const i=codeIdx[+id.slice(2)]; return i==null?null:{id,l:A.short[i],full:A.names[i],x:[i],k:"b",grp:A.grp[i]}; }
+  return null;
+}
+function fillPicker(sel, withPlaceholder){
+  sel.innerHTML="";
+  if(withPlaceholder) sel.appendChild(el("option",{value:""},"Seçin…"));
+  const g0=el("optgroup",{label:"Toplamlar ve TBB grupları"});
+  ["all","t7",...Object.keys(UST),...GRP.map(g=>"g:"+g)].forEach(id=>{ const e=ent(id); if(e) g0.appendChild(el("option",{value:id},esc(e.full))); });
+  sel.appendChild(g0);
+  GRP.forEach(g=>{ const og=el("optgroup",{label:GL[g]||g}); byA.filter(i=>A.grp[i]===g).forEach(i=>og.appendChild(el("option",{value:"b:"+A.codes[i]},esc(A.short[i])))); sel.appendChild(og); });
+}
+
+/* dönem çubuğu */
+function setP(p){ curP=p; try{ localStorage.setItem("b7.period",p); }catch(e){} renderAll(); }
+function renderPeriod(){
+  const box=$("nvPeriod"); box.innerHTML="";
+  const i=P.indexOf(curP), y=curP.slice(0,4);
+  const prev=el("button",{type:"button",class:"icon-btn","aria-label":"Önceki çeyrek",title:"Önceki çeyrek"},'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>');
+  const next=el("button",{type:"button",class:"icon-btn","aria-label":"Sonraki çeyrek",title:"Sonraki çeyrek"},'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>');
+  if(i<=0) prev.disabled=true; if(i>=P.length-1) next.disabled=true;
+  prev.onclick=()=>setP(P[i-1]); next.onclick=()=>setP(P[i+1]);
+  const ys=el("select",{"aria-label":"Yıl"}); [...new Set(P.map(p=>p.slice(0,4)))].forEach(v=>ys.appendChild(el("option",{value:v},v))); ys.value=y;
+  ys.onchange=()=>{ let p=ys.value+curP.slice(4); if(!P.includes(p)) p=P.filter(q=>q.startsWith(ys.value)).pop(); setP(p); };
+  const qs=el("div",{class:"seg",role:"group","aria-label":"Çeyrek"});
+  [["03","Mar"],["06","Haz"],["09","Eyl"],["12","Ara"]].forEach(([m,l])=>{ const p=y+"-"+m; const b=el("button",{type:"button","aria-pressed":String(p===curP)},l); if(!P.includes(p)) b.disabled=true; b.onclick=()=>setP(p); qs.appendChild(b); });
+  box.append(prev,ys,qs,next);
+  $("nvPNote").textContent=`Gelir ve nakit akış tabloları: Ocak–${PL[curP].split(" ")[0]} ${curP.slice(0,4)} kümülatif (${MON[curP]} ay)`;
+}
+
+/* özet göstergeler */
+const okP=(p,x)=>x.some(i=>has(p,16018,i));
+const MET=[
+  ["aktif","Toplam aktif","a",(p,x)=>asum(p,16018,x)],
+  ["kredi","Krediler","a",(p,x)=>asum(p,16005,x)],
+  ["mevduat","Mevduat","a",(p,x)=>asum(p,102152,x)],
+  ["ozk","Özkaynaklar","a",(p,x)=>asum(p,102170,x)],
+  ["netkar","Dönem net kârı (yıl başından)","a",(p,x)=>asum(p,102088,x)],
+  ["pay","Sektör içindeki aktif payı","p",(p,x)=>div(asum(p,16018,x),asum(p,16018,ALL))],
+  ...["roe","roa","nim","km","oa","ka","kar","ypa","cost","car","cet1","lcr","nsfr","vadesiz","cfk_a"].filter(k=>GR[k]).map(k=>[k,GR[k].l,"p",GR[k].f,GR[k].d||1])
+];
+const metVal=(m,p,x)=>okP(p,x)?m[3](p,x):null;
+const metFmt=(m,v)=>m[2]==="a"?fA(v):fP(v,m[4]||1);
+
+/* tablo kaynakları: finansal tablolar (sayfada) ve mali bünye dipnotları (istenince yüklenir) */
+const FS=[...new Set(D.items.map(x=>x[3]))];
+const DNL=D.DN||[];
+function tabOptions(sel){
+  sel.innerHTML="";
+  const g1=el("optgroup",{label:"Finansal tablolar ve dipnotlar"}); FS.forEach(t=>g1.appendChild(el("option",{value:"fs:"+t},esc(t)))); sel.appendChild(g1);
+  if(DNL.length){ const g2=el("optgroup",{label:"Mali bünye ile ilgili dipnotlar"}); DNL.forEach(d=>g2.appendChild(el("option",{value:"dn:"+d.id.split("_")[1]},esc(d.ad)+" · "+d.n+" kalem"))); sel.appendChild(g2); }
+  const want=NVS.tab && [...sel.querySelectorAll("option")].some(o=>o.value===NVS.tab) ? NVS.tab : "fs:"+FS[0];
+  sel.value=want; NVS.tab=want;
+}
+function buildRows(list){ // [{c,n,lv,r}] -> ebeveyn ve çocuk bilgisi
+  const rows=list.map(r=>Object.assign({},r)); const st=[];
+  rows.forEach((r,i)=>{ while(st.length && rows[st[st.length-1]].lv>=r.lv) st.pop(); r.par=st.length?st[st.length-1]:-1; r.kids=0; if(r.par>=0) rows[r.par].kids++; st.push(i); });
+  return rows;
+}
+let SRC=null, SRCKEY=null, OPEN=new Set(), SEL=null, Q="";
+function srcFS(tab){ const rows=buildRows(D.items.filter(x=>x[3]===tab).map(x=>({c:x[0],n:x[1],lv:x[2],r:0})));
+  return {rows, flow:isFlowTab(tab), val:(p,c,i)=>{ const r=A.v[p]&&A.v[p][c]; return r&&r[i]!=null?r[i]:null; }, name:tab}; }
+function srcDN(pk,name){ const rows=buildRows(pk.items.map(([c,n,lv,r])=>({c,n,lv,r})));
+  return {rows, flow:false, val:(p,c,i)=>{ const r=pk.v[p]&&pk.v[p][c]; return r&&r[i]!=null?r[i]:null; }, name}; }
+const eVal=(row,p,e)=>{ if(row.r) return e.x.length===1? SRC.val(p,row.c,e.x[0]) : null; let s=0,k=0; for(const i of e.x){ const v=SRC.val(p,row.c,i); if(v!=null){ s+=v; k++; } } return k?s:null; };
+const qVal=(row,p,e)=>{ // gelir/nakit akış: çeyreklik tutar (kümülatiften arındırılmış)
+  const v=eVal(row,p,e); if(v==null||row.r||!SRC.flow||NVS.flow!=="q"||MON[p]===3) return v;
+  const pp=prevP(p); if(!pp||pp.slice(0,4)!==p.slice(0,4)) return null; const w=eVal(row,pp,e); return w==null?v:v-w; };
+function setTab(v){
+  NVS.tab=v; nvSave(); SEL=null; Q=""; if($("nvQ")) $("nvQ").value="";
+  if(v.startsWith("fs:")){ SRC=srcFS(v.slice(3)); SRCKEY=v; resetOpen(); renderTable(); return; }
+  const id=MODE+"_"+v.slice(3), d=DNL.find(x=>x.id===id);
+  SRC=null; SRCKEY=v; $("nvTable").innerHTML=`<tbody><tr><td class="muted">${esc(d?d.ad:"Dipnot")} yükleniyor…</td></tr></tbody>`; $("nvRowPanel").hidden=true;
+  dnLoad(id).then(pk=>{ if(SRCKEY!==v) return; SRC=srcDN(pk,d.ad); resetOpen(); renderTable(); })
+    .catch(()=>{ if(SRCKEY!==v) return; $("nvTable").innerHTML=`<tbody><tr><td class="muted">Dipnot verisi yüklenemedi. Rapor yerel bir dosyadan açıldıysa <code>dipnot</code> klasörünün HTML dosyasıyla aynı yerde olduğundan emin olun.</td></tr></tbody>`; });
+}
+function resetOpen(){ OPEN=new Set(); if(!SRC) return; const depth=SRC.rows.length>120?1:2; SRC.rows.forEach((r,i)=>{ if(r.kids && r.lv<depth) OPEN.add(i); }); }
+const CARET='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
+
+/* tablo: sütunlar (karşılaştırmada kurumlar, tek bankada dönemler) */
+function colsSpec(){
+  if(VIEW==="kars"){
+    const ents=ENTS();
+    return {head:ents.map((e,k)=>`<th scope="col"><span class="nv-sw" style="background:${NV_PAL[k%NV_PAL.length]}"></span>${esc(e.l)}</th>`).join(""),
+      vals:row=>ents.map(e=>{ const v=eVal(row,curP,e);
+        if(row.r) return {v, h:fR(v)};
+        if(NVS.vm==="ta"){ const t=div(v,asum(curP,16018,e.x)); return {v:t, h:fP(t,2)}; }
+        if(NVS.vm==="yoy"){ const q=yoyP(curP), w=q?eVal(row,q,e):null; const t=(v!=null&&w)? v/Math.abs(w)-(w<0?-1:1) : null; return {v:t, h:fC(t)}; }
+        return {v, h:fA(v)}; })};
+  }
+  const e=TEK(), ps=tekPeriods(), q=prevP(curP), y=yoyP(curP), all=ent("all");
+  return {head:ps.map(p=>`<th scope="col" class="${p===curP?'cur':''}">${PL[p]}</th>`).join("")+`<th scope="col">Çeyreklik değişim</th><th scope="col">Yıllık değişim</th>${e.id!=="all"?'<th scope="col">Sektör payı</th>':''}`,
+    vals:row=>{ const out=ps.map(p=>{ const v=qVal(row,p,e); if(row.r) return {v,h:fR(v)}; if(NVS.vm==="ta"){ const t=div(v,asum(p,16018,e.x)); return {v:t,h:fP(t,2)}; } return {v,h:fA(v)}; });
+      const c=qVal(row,curP,e), dq=q?qVal(row,q,e):null, dy=y?qVal(row,y,e):null;
+      const ch=w=>row.r? (c==null||w==null?null:c-w) : (c!=null&&w? c/Math.abs(w)-(w<0?-1:1) : null);
+      out.push({v:ch(dq),h:row.r?fPt(ch(dq)):fC(ch(dq))},{v:ch(dy),h:row.r?fPt(ch(dy)):fC(ch(dy))});
+      if(e.id!=="all"){ const s=row.r?null:div(c,qVal(row,curP,all)); out.push({v:s,h:fP(s,2)}); }
+      return out; }};
+}
+function renderTable(){
+  if(!SRC){ return; }
+  const spec=colsSpec(), rows=SRC.rows, n=rows.length;
+  const vals=rows.map(r=>spec.vals(r)), nz=rows.map((r,i)=>vals[i].some(x=>x.v!=null&&x.v!==0));
+  for(let i=n-1;i>=0;i--) if(nz[i] && rows[i].par>=0) nz[rows[i].par]=true;
+  const q=Q.trim().toLocaleLowerCase("tr-TR"); let vis;
+  if(q){ const hit=new Set(); rows.forEach((r,i)=>{ if(r.n.toLocaleLowerCase("tr-TR").includes(q)||String(r.c).includes(q)){ let j=i; while(j>=0&&!hit.has(j)){ hit.add(j); j=rows[j].par; } } }); vis=rows.map((_,i)=>i).filter(i=>hit.has(i)); }
+  else { vis=[]; rows.forEach((r,i)=>{ let p=r.par, ok=true; while(p>=0){ if(!OPEN.has(p)){ ok=false; break; } p=rows[p].par; } if(ok) vis.push(i); }); }
+  if(NVS.hide) vis=vis.filter(i=>nz[i]);
+  const base=Math.min(...rows.map(r=>r.lv));
+  const body=vis.map(i=>{ const r=rows[i], lv=r.lv-base, isO=OPEN.has(i)||!!q;
+    return `<tr data-i="${i}" class="lv${Math.min(lv,3)} ${SEL===i?'sel':''}"><td class="l"><div class="nv-name" style="padding-left:${lv*16}px">${r.kids?`<button type="button" class="nv-car" data-t="${i}" aria-expanded="${isO}" aria-label="${isO?'Alt kalemleri gizle':'Alt kalemleri göster'}" ${q?'disabled':''}><span style="display:inline-flex;transform:rotate(${isO?90:0}deg)">${CARET}</span></button>`:'<span class="nv-sp"></span>'}<span>${esc(r.n)}${r.r?' <span class="nv-tag">%</span>':''}<span class="nv-code">${r.c}</span></span></div></td>${vals[i].map(x=>`<td>${x.h}</td>`).join("")}</tr>`; }).join("");
+  $("nvTable").innerHTML=`<thead><tr><th scope="col" class="l">Kalem</th>${spec.head}</tr></thead><tbody>${body||`<tr><td class="muted" colspan="40">Bu dönem için gösterilecek kalem yok.</td></tr>`}</tbody>`;
+  const unit = VIEW==="kars" ? ({amt:"Tutarlar milyar TL",ta:"Tutarlar her kurumun toplam aktifine oran olarak",yoy:"Bir önceki yılın aynı çeyreğine göre değişim"})[NVS.vm] : (NVS.vm==="ta"?"Tutarlar toplam aktife oran olarak":"Tutarlar milyar TL")+(SRC.flow?(NVS.flow==="q"?"; gelir ve nakit akışı çeyreklik":"; gelir ve nakit akışı yıl başından kümülatif"):"");
+  $("nvFoot").textContent=`${unit}. % işaretli satırlar TBB’nin oran olarak yayımladığı kalemlerdir; gruplar için toplanamadıklarından gösterilmez. Satıra tıklayınca kalemin seyri tablonun üstündeki grafikte açılır.`;
+  $("nvTabNote").textContent=`${SRC.name} · ${rows.length} kalem · ${PL[curP]}`;
+  renderRowChart();
+}
+function renderRowChart(){
+  const pan=$("nvRowPanel"); if(SEL==null||!SRC||!SRC.rows[SEL]){ pan.hidden=true; return; } pan.hidden=false;
+  const r=SRC.rows[SEL]; const isPct=r.r||NVS.vm!=="amt";
+  $("nvRowH").textContent=r.n+" · "+(r.r?"%":NVS.vm==="ta"?"toplam aktife oran, %":NVS.vm==="yoy"?"yıllık değişim, %":"milyar TL");
+  const conv=(row,p,e)=>{ const v=VIEW==="tek"?qVal(row,p,e):eVal(row,p,e); if(v==null) return null; if(row.r) return v; if(NVS.vm==="ta"){ const t=div(v,asum(p,16018,e.x)); return t==null?null:t*100; }
+    if(NVS.vm==="yoy"){ const q=yoyP(p), w=q?(VIEW==="tek"?qVal(row,q,e):eVal(row,q,e)):null; return w? (v/Math.abs(w)-(w<0?-1:1))*100 : null; } return mlr(v); };
+  const fmt=isPct?(v=>"%"+nf1.format(v)):(v=>nf1.format(v));
+  if(VIEW==="kars"){
+    const ents=ENTS();
+    mk("nvRowChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:ents.map((e,k)=>({label:e.l,data:P.map(p=>conv(r,p,e)),borderColor:NV_PAL[k%NV_PAL.length],backgroundColor:NV_PAL[k%NV_PAL.length],borderWidth:2,tension:.25,spanGaps:true,pointRadius:P.map(p=>p===curP?4:0)}))},options:opts(fmt)});
+  } else {
+    const e=TEK(), col=css("--m-primary")||NV_PAL[0];
+    mk("nvRowChart",{type:"bar",data:{labels:P.map(p=>PL[p]),datasets:[{label:e.l,data:P.map(p=>conv(r,p,e)),backgroundColor:P.map(p=>p===curP?col:col+"80"),borderRadius:3}]},options:opts(fmt,{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${e.l}: ${c.parsed.y==null?'–':fmt(c.parsed.y)}`}}}})});
+  }
+}
+function wireTable(){
+  tabOptions($("nvTab")); $("nvTab").onchange=()=>setTab($("nvTab").value);
+  $("nvVm").querySelectorAll("button").forEach(b=>{ b.setAttribute("aria-pressed",String(b.dataset.v===NVS.vm)); b.onclick=()=>{ NVS.vm=b.dataset.v; nvSave(); $("nvVm").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderTable(); }; });
+  if(!$("nvVm").querySelector(`button[data-v="${NVS.vm}"]`)){ NVS.vm="amt"; $("nvVm").querySelector('button[data-v="amt"]').setAttribute("aria-pressed","true"); }
+  const fl=$("nvFlow"); if(fl) fl.querySelectorAll("button").forEach(b=>{ b.setAttribute("aria-pressed",String(b.dataset.v===NVS.flow)); b.onclick=()=>{ NVS.flow=b.dataset.v; nvSave(); fl.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderTable(); }; });
+  $("nvHide").checked=NVS.hide; $("nvHide").onchange=()=>{ NVS.hide=$("nvHide").checked; nvSave(); renderTable(); };
+  let tq; $("nvQ").oninput=()=>{ clearTimeout(tq); tq=setTimeout(()=>{ Q=$("nvQ").value; renderTable(); },150); };
+  $("nvOpen").onclick=()=>{ if(!SRC) return; SRC.rows.forEach((r,i)=>{ if(r.kids) OPEN.add(i); }); renderTable(); };
+  $("nvClose").onclick=()=>{ OPEN=new Set(); renderTable(); };
+  $("nvTable").addEventListener("click",ev=>{
+    const t=ev.target.closest("button[data-t]"); if(t){ const i=+t.dataset.t; OPEN.has(i)?OPEN.delete(i):OPEN.add(i); renderTable(); return; }
+    const tr=ev.target.closest("tr[data-i]"); if(!tr) return; const i=+tr.dataset.i; SEL=(SEL===i?null:i); renderTable();
+    if(SEL!=null) $("nvRowPanel").scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+  setTab(NVS.tab);
+}
+
+/* ---------- banka bazlı karşılaştırma ---------- */
+function ENTS(){ return (NVS.ents||[]).map(ent).filter(Boolean); }
+function renderChips(){
+  const ents=ENTS();
+  $("nvChips").innerHTML=ents.length? ents.map((e,k)=>`<span class="nv-chip" title="${esc(e.full)}"><i style="background:${NV_PAL[k%NV_PAL.length]}"></i>${esc(e.l)}<button type="button" data-x="${esc(e.id)}" aria-label="${esc(e.l)} karşılaştırmadan çıkar"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button></span>`).join("") : '<span class="muted">Henüz seçim yok. Aşağıdan banka ya da grup ekleyin.</span>';
+  $("nvAddNote").textContent = ents.length>=NV_MAX ? `En çok ${NV_MAX} kurum seçilebilir.` : `${ents.length} / ${NV_MAX} seçili`;
+}
+function setEnts(ids){ NVS.ents=[...new Set(ids)].filter(id=>ent(id)).slice(0,NV_MAX); nvSave(); renderChips(); renderSum(); renderTable(); }
+function renderSum(){
+  const ents=ENTS(), yq=yoyP(curP);
+  $("h-nvsum").textContent=`Özet göstergeler · ${PL[curP]}`;
+  $("nvSum").innerHTML=`<thead><tr><th scope="col" class="l">Gösterge</th>${ents.map((e,k)=>`<th scope="col"><span class="nv-sw" style="background:${NV_PAL[k%NV_PAL.length]}"></span>${esc(e.l)}</th>`).join("")}</tr></thead><tbody>${MET.map(m=>`<tr data-m="${m[0]}" class="${m[0]===NVS.met?'sel':''}"><td class="l">${esc(m[1])}</td>${ents.map(e=>{ const v=metVal(m,curP,e.x); let sub="";
+      if(yq&&v!=null){ const w=metVal(m,yq,e.x); if(w!=null) sub = m[2]==="a" ? (w? fC(v/Math.abs(w)-(w<0?-1:1)) : "") : `<span class="${v-w<0?'neg':'pos'}">${v-w>=0?'+':'−'}${nf1.format(Math.abs(v-w)*100)} puan</span>`; }
+      return `<td>${metFmt(m,v)}${sub?`<span class="sub">${sub}</span>`:''}</td>`; }).join("")}</tr>`).join("")}</tbody>`;
+  $("nvSumFoot").textContent = yq ? `Küçük satırlar: ${PL[yq]}’e göre değişim (tutarlarda yüzde, oranlarda puan). Grup ve toplamların oranları toplam tutarlardan hesaplandı. Satıra tıklayınca göstergenin seyri aşağıdaki grafikte açılır.` : "";
+  renderMetChart();
+}
+function renderMetChart(){
+  const ents=ENTS(), m=MET.find(x=>x[0]===NVS.met)||MET[0]; $("nvMet").value=m[0];
+  const isA=m[2]==="a", fmt=isA?(v=>nf0.format(v)):(v=>"%"+nf1.format(v));
+  mk("nvMetChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:ents.map((e,k)=>({label:e.l,data:P.map(p=>{ const v=metVal(m,p,e.x); return v==null?null:(isA?mlr(v):v*100); }),borderColor:NV_PAL[k%NV_PAL.length],backgroundColor:NV_PAL[k%NV_PAL.length],borderWidth:2,tension:.25,spanGaps:true,pointRadius:P.map(p=>p===curP?4:0)}))},options:opts(fmt)});
+}
+function initKars(){
+  if(!NVS.ents||!NVS.ents.length) NVS.ents=["b:"+A.codes[T7[0]],"b:"+A.codes[T7[1]],"b:"+A.codes[T7[4]],"t7","all"];
+  const lost=NVS.ents.filter(id=>!ent(id)); NVS.ents=NVS.ents.filter(id=>ent(id));
+  $("nvLost").textContent = lost.length ? `${lost.length} seçim bu tablo türünde (${MODE==="kons"?"konsolide":"solo"}) veri yayımlamadığı için listeden çıkarıldı.` : "";
+  fillPicker($("nvAdd"),true);
+  $("nvAdd").onchange=()=>{ const v=$("nvAdd").value; $("nvAdd").value=""; if(v) setEnts([...(NVS.ents||[]),v]); };
+  $("nvChips").addEventListener("click",e=>{ const b=e.target.closest("button[data-x]"); if(b) setEnts(NVS.ents.filter(x=>x!==b.dataset.x)); });
+  $("nvT7").onclick=()=>setEnts([...T7.map(i=>"b:"+A.codes[i]),"t7","all"]);
+  $("nvGrps").onclick=()=>setEnts([...GRP.filter(g=>g!=="Grup bilgisi yok").map(g=>"g:"+g),"all"]);
+  $("nvClr").onclick=()=>setEnts([]);
+  const ms=$("nvMet"); MET.forEach(m=>ms.appendChild(el("option",{value:m[0]},esc(m[1])))); ms.onchange=()=>{ NVS.met=ms.value; nvSave(); renderSum(); };
+  $("nvSum").addEventListener("click",e=>{ const tr=e.target.closest("tr[data-m]"); if(!tr) return; NVS.met=tr.dataset.m; nvSave(); renderSum(); $("nvMetChart").closest(".panel").scrollIntoView({behavior:"smooth",block:"nearest"}); });
+  renderChips(); wireTable();
+}
+
+/* ---------- tek banka görünümü ---------- */
+function TEK(){ return ent(NVS.tek)||ent("b:"+A.codes[byA[0]]); }
+function tekPeriods(){ const i=P.indexOf(curP);
+  if(NVS.tk==="y5") return P.filter(q=>q.slice(5)===curP.slice(5)&&q<=curP).slice(-5);
+  if(NVS.tk==="ye") return [...P.filter(q=>q.endsWith("-12")&&q<curP).slice(-4), curP];
+  if(NVS.tk==="all") return P.slice(0,i+1);
+  return P.slice(Math.max(0,i-4),i+1); }
+const TRAT=["roe","roa","nim","km","oa","ka","kar","ypa","cost","car","t1","cet1","lcr","nsfr","vadesiz","cfk_a","cconv"].filter(k=>GR[k]);
+function renderTek(){
+  const e=TEK(); NVS.tek=e.id; $("nvTek").value=e.id;
+  const rank = e.k==="b" ? byRank(e.x[0]) : null, share=div(asum(curP,16018,e.x),asum(curP,16018,ALL));
+  $("nvTekName").textContent=e.full;
+  $("nvTekSub").textContent=[e.k==="b"?(GL[e.grp]||e.grp):(e.x.length+" banka"), rank?`Aktif büyüklüğüne göre ${rank.r}. sırada (${rank.n} banka içinde)`:null, share!=null&&e.id!=="all"?`Sektör aktif payı ${pct(share)}`:null, PL[curP]].filter(Boolean).join(" · ");
+  const yq=yoyP(curP), ok=okP(curP,e.x);
+  const card=(l,v,w,isA)=>`<div class="kpi" style="cursor:default"><span class="k-l">${l}</span><span class="k-v">${v==null?'–':(isA?(Math.abs(v)>=1e9?nf2.format(v/1e9):nf1.format(v/1e6)):pct(v))}</span><span class="k-u">${isA&&v!=null?(Math.abs(v)>=1e9?"trilyon TL":"milyar TL"):(v!=null?"":"")}</span><span class="k-c ${w==null||v==null?'muted':''}" style="font-weight:500">${w==null||v==null?'Bir yıl önceki veri yok':(isA?fC(w?v/Math.abs(w)-(w<0?-1:1):null)+' <span class="muted">bir yılda</span>':`<span class="${v-w<0?'neg':'pos'}">${v-w>=0?'+':'−'}${nf1.format(Math.abs(v-w)*100)} puan</span> <span class="muted">bir yılda</span>`)}</span></div>`;
+  const pick=k=>MET.find(m=>m[0]===k);
+  $("nvTekKpis").innerHTML = ok ? ["aktif","kredi","mevduat","ozk","netkar","roe","km","car","lcr"].map(pick).filter(Boolean).map(m=>card(m[1],metVal(m,curP,e.x),yq?metVal(m,yq,e.x):null,m[2]==="a")).join("") : '<p class="muted">Bu dönem için veri yok.</p>';
+  const ps=tekPeriods();
+  $("nvTekRatH").textContent=`Oranlar · ${ps.length>1?PL[ps[0]]+" – ":""}${PL[curP]}`;
+  $("nvTekRat").innerHTML=`<thead><tr><th scope="col" class="l">Oran</th>${ps.map(p=>`<th scope="col" class="${p===curP?'cur':''}">${PL[p]}</th>`).join("")}${e.id!=="all"?'<th scope="col">Sektör</th>':''}</tr></thead><tbody>${TRAT.map(k=>`<tr data-m="${k}" class="${k===NVS.tmet?'sel':''}"><td class="l">${esc(GR[k].l)}</td>${ps.map(p=>`<td>${fP(okP(p,e.x)?GR[k].f(p,e.x):null,GR[k].d||1)}</td>`).join("")}${e.id!=="all"?`<td class="muted">${pct(GR[k].f(curP,ALL),GR[k].d||1)}</td>`:''}</tr>`).join("")}</tbody>`;
+  renderTekChart(); renderTable();
+}
+function byRank(i){ const xs=ALL.filter(j=>has(curP,16018,j)).sort((a,b)=>av(curP,16018,b)-av(curP,16018,a)); const r=xs.indexOf(i); return r<0?null:{r:r+1,n:xs.length}; }
+function renderTekChart(){
+  const e=TEK(), k=GR[NVS.tmet]?NVS.tmet:"roe"; $("nvTekMet").value=k;
+  const all=ent("all"), col=NV_PAL[0], fmt=v=>"%"+nf1.format(v);
+  const ds=[{label:e.l,data:P.map(p=>{ const v=okP(p,e.x)?GR[k].f(p,e.x):null; return v==null?null:v*100; }),borderColor:col,backgroundColor:col,borderWidth:3,tension:.25,spanGaps:true,pointRadius:P.map(p=>p===curP?5:0)}];
+  if(e.id!=="all") ds.push({label:"Sektör",data:P.map(p=>{ const v=GR[k].f(p,all.x); return v==null?null:v*100; }),borderColor:css("--ink-3"),backgroundColor:css("--ink-3"),borderWidth:2,borderDash:[6,4],tension:.25,spanGaps:true,pointRadius:0});
+  mk("nvTekMetChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:ds},options:opts(fmt)});
+}
+function initTek(){
+  fillPicker($("nvTek"),false); $("nvTek").onchange=()=>{ NVS.tek=$("nvTek").value; nvSave(); renderTek(); };
+  if(!ent(NVS.tek||"")) NVS.tek="b:"+A.codes[byA[0]];
+  $("nvTk").querySelectorAll("button").forEach(b=>{ b.setAttribute("aria-pressed",String(b.dataset.v===NVS.tk)); b.onclick=()=>{ NVS.tk=b.dataset.v; nvSave(); $("nvTk").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderTek(); }; });
+  const ms=$("nvTekMet"); TRAT.forEach(k=>ms.appendChild(el("option",{value:k},esc(GR[k].l)))); ms.onchange=()=>{ NVS.tmet=ms.value; nvSave(); renderTek(); };
+  $("nvTekRat").addEventListener("click",ev=>{ const tr=ev.target.closest("tr[data-m]"); if(!tr) return; NVS.tmet=tr.dataset.m; nvSave(); renderTek(); });
+  wireTable();
+}
+
+function renderAll(){ renderPeriod(); if(VIEW==="kars"){ renderSum(); renderTable(); } else renderTek(); }
+if(VIEW==="kars") initKars(); else initTek();
+renderAll();
+const onTheme=()=>renderAll(); const mq=matchMedia("(prefers-color-scheme: dark)"); mq.addEventListener("change",onTheme); CLEAN.push(()=>mq.removeEventListener("change",onTheme));
+return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
+}
+
 /* ---------- shell: landing + mode switch ---------- */
 (function shell(){
   const land=document.getElementById("landing"), app=document.getElementById("app"), root=document.getElementById("appRoot"), tpl=document.getElementById("appTpl");
   const nf=new Intl.NumberFormat("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:1});
-  let stop=null, mode=null;
+  let stop=null, mode=null, view="rapor";
+  const TITLE={rapor:"Türk Bankacılık Sistemi · Finansal Tablolar", kars:"Banka bazlı karşılaştırma", tek:"Tek banka görünümü"};
+  { const d=DATA.solo||DATA.kons; const dn=["solo","kons"].reduce((s,m)=>s+((DATA[m].DN||[]).reduce((a,x)=>a+x.n,0)),0);
+    document.getElementById("chipsKars").innerHTML=["Banka ve TBB grupları","Solo ve konsolide",dn?`${(DATA.solo.DN||[]).length} mali bünye dipnotu`:null].filter(Boolean).map(x=>`<span class="chip">${x}</span>`).join("");
+    document.getElementById("chipsTek").innerHTML=[`${d.periods.length} çeyrek`,"Çeyreklik ve yıllık değişim","Sektör payı"].map(x=>`<span class="chip">${x}</span>`).join(""); }
   ["solo","kons"].forEach(m=>{ const d=DATA[m], A=d.A, n=A.names.length, idx=[...Array(n).keys()];
     const LP=d.periods[d.periods.length-1]; const ak=idx.reduce((s,i)=>s+((d.A.v[LP]["16018"]||[])[i]||0),0);
     document.getElementById(m==="solo"?"chipsSolo":"chipsKons").innerHTML=[`${n} banka`,`${d.items.length} kalem`,`${d.periods.length} çeyrek`,`${d.plabel[LP]} aktif ${nf.format(ak/1e9)} trilyon TL`].map(x=>`<span class="chip">${x}</span>`).join(""); });
-  function start(m){
+  function start(m, v){
     if(stop){ try{stop()}catch(e){} stop=null; }
-    mode=m; const d=DATA[m];
-    root.replaceChildren(tpl.content.cloneNode(true));
+    mode=m; if(v) view=v; const d=DATA[m];
+    const t = view==="kars" ? document.getElementById("nvKarsTpl") : view==="tek" ? document.getElementById("nvTekTpl") : tpl;
+    root.replaceChildren(t.content.cloneNode(true));
+    document.querySelector("#appbar .ab-long").textContent=TITLE[view];
+    document.querySelector("#appbar .ab-short").textContent={rapor:"Bankacılık Sistemi",kars:"Karşılaştırma",tek:"Tek banka"}[view];
     const vals=Object.assign({nbank:d.A.names.length, nitem:d.items.length}, META[m]);
     root.querySelectorAll("[data-t]").forEach(e=>e.textContent=vals[e.dataset.t]);
     root.querySelectorAll("[data-only]").forEach(e=>e.hidden = e.dataset.only!==m);
     document.querySelectorAll("#modeSeg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
     land.hidden=true; app.hidden=false; window.scrollTo(0,0);
-    stop=boot(d,m);
+    stop = view==="rapor" ? boot(d,m) : bootNV(d,m,view);
     try{ localStorage.setItem("bk.mode",m); }catch(e){}
   }
-  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>start(b.dataset.mode));
+  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ if(b.dataset.view){ let m="solo"; try{ m=localStorage.getItem("bk.mode")||"solo"; }catch(e){} start(DATA[m]?m:"solo", b.dataset.view); } else start(b.dataset.mode,"rapor"); });
   document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ if(b.dataset.mode!==mode) start(b.dataset.mode); });
   document.getElementById("homeBtn").onclick=()=>{ if(stop){ try{stop()}catch(e){} stop=null; } root.replaceChildren(); mode=null; app.hidden=true; land.hidden=false; window.scrollTo(0,0); };
   const bar=document.getElementById("appbar"); addEventListener("scroll",()=>bar.classList.toggle("lift",scrollY>4),{passive:true});
   let last=null; try{ last=localStorage.getItem("bk.mode"); }catch(e){}
-  if(last&&DATA[last]) document.querySelector(`.choice[data-mode="${last}"]`).setAttribute("data-last","1");
+  if(last&&DATA[last]&&document.querySelector(`.choice[data-mode="${last}"]`)) document.querySelector(`.choice[data-mode="${last}"]`).setAttribute("data-last","1");
 })();
 </script>

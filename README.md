@@ -10,6 +10,8 @@ Mart 2018'den bu yana çeyreklik olarak çeken ve tek dosyalık, etkileşimli bi
 ## Raporda neler var
 
 * **Solo / konsolide seçimi:** Açılışta hangi tablolarla çalışılacağı seçilir, rapor içinden istenince geçilir.
+* **Banka bazlı karşılaştırma:** İstenen sayıda banka ve TBB banka grubu seçilir; özet göstergeler, finansal tablolar ve mali bünye ile ilgili dipnotların tamamı yan yana.
+* **Tek banka görünümü:** Bir bankanın (ya da grubun) tabloları ve dipnotları geçmiş dönemlerle: son 5 çeyrek, son 5 yıl, yıl sonları ya da tüm dönemler; çeyreklik ve yıllık değişim, sektör payı, çeyreklik gelir tablosu.
 * **34 çeyrek (Mart 2018 – Haziran 2026):** Yıl ve çeyrek seçici; karşılaştırmalar bir önceki yılın aynı çeyreğine göre.
 * **İlk 7 ve sektör:** Ziraat, VakıfBank, İş Bankası, Halkbank, Garanti BBVA, Akbank, Yapı Kredi; TBB'de veri yayımlayan bankaların tamamı ve banka grupları.
 * **Nakit yaratma kapasitesi:** Nakit akış tablosundan faaliyet nakit kârı, kârın nakde dönüşüm oranı, faiz tahsilatı oranı ve dönem başı nakitten dönem sonu nakde köprü.
@@ -50,7 +52,7 @@ python rapor_olustur.py --excel tbb_veri.xlsx       # → Turk_Bankacilik_Sistem
 |---|---|
 | `tbb_cek.py` | TBB sayfasını Playwright ile açar, sitenin kendi seçim ve "Rapor Al" fonksiyonlarıyla tabloları çeker |
 | `tbb_yardimci.js` | Sayfaya eklenen yardımcı fonksiyonlar (kalem/dönem seçimi, pivot tablodan okuma) |
-| `rapor_olustur.py` | CSV'den HTML rapor, düz CSV (`--uzun`), Excel (`--excel`) ve JSON (`--json`) üretir |
+| `rapor_olustur.py` | CSV'den HTML rapor (yanında `dipnot/` klasörü), düz CSV (`--uzun`), Excel (`--excel`) ve JSON (`--json`) üretir |
 | `rapor_sablonu.html` | Rapor şablonu (Material Design, açık/koyu tema, telefona uyumlu) |
 
 `tbb_cek.py` seçenekleri: `--baslangic 201803`, `--bitis 202606`, `--tur solo,kons`, `--parti 6`, `--gorunur`, `--cikti`.

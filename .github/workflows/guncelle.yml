@@ -22,7 +22,7 @@ concurrency:
 jobs:
   guncelle:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +40,7 @@ jobs:
         run: python tbb_cek.py --cikti tbb_veri.csv
 
       - name: Raporu üret
-        run: python rapor_olustur.py --girdi tbb_veri.csv --html yeni_rapor.html
+        run: python rapor_olustur.py --girdi tbb_veri.csv --html cikti/index.html
 
       - name: Veri değiştiyse raporu yayınla
         run: |
@@ -52,11 +52,12 @@ jobs:
             echo "Veri değişmemiş, rapor güncellenmedi." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          mv yeni_rapor.html docs/index.html
+          mv cikti/index.html docs/index.html
+          rm -rf docs/dipnot && mv cikti/dipnot docs/dipnot
           echo "$yeni" > docs/veri_ozeti.txt
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html docs/veri_ozeti.txt
+          git add -A docs/index.html docs/veri_ozeti.txt docs/dipnot
           git commit -m "Rapor güncellendi: $(head -1 tbb_veri.csv | sed 's/^\xEF\xBB\xBF//; s/^# //')"
           git pull --rebase origin main   # çalışma sırasında depoya başka değişiklik geldiyse
           git push
