@@ -44,6 +44,9 @@ HERE = Path(__file__).resolve().parent
 # Dipnotlar: mevduatın vade yapısı (cari dönem, tüm alt kalemleriyle) ve yasal özkaynak / sermaye yeterliliği
 MEVDUAT_VADE = 114172
 AKTIF_DIPNOT = 102774  # "2. Aktiflerle ilgili dipnotlar": krediler, menkul değerler, bankalar, iştirakler vb.
+NAZIM_DIPNOT = 102780  # "4. Nazım hesaplarla ilgili dipnotlar"
+GELIR_DIPNOT = 102778  # "5. Gelir tablosu ile ilgili dipnotlar"
+RISK_GRUBU_DIPNOT = 102782  # "6. Risk grubuna ait dipnotlar"
 PASIF_DIPNOT = 102776  # "3. Pasiflerle ilgili dipnotlar": mevduat vade yapısı, sigorta kapsamı, alınan krediler, sermaye benzeri borçlar vb.
 MALI_BUNYE = 102772  # "1. Mali bünye ile ilgili dipnotlar": özkaynak kalemleri, risk profilleri, kur ve faiz riski,
                      # LKO, NİFO, kalan vadeye göre aktif-pasif, kaldıraç oranı, gerçeğe uygun değer (tüm alt kalemleriyle)
@@ -117,7 +120,9 @@ def main():
             parcalar = [(TABLOLAR[tur]["alt_kalemleriyle"], TABLOLAR[tur]["yalniz"], args.parti)]
             if not args.dipnotsuz:
                 dallar = []
-                for kok, ad_ in ((MALI_BUNYE, "mali bünye"), (AKTIF_DIPNOT, "aktiflerle ilgili"), (PASIF_DIPNOT, "pasiflerle ilgili")):
+                for kok, ad_ in ((MALI_BUNYE, "mali bünye"), (AKTIF_DIPNOT, "aktiflerle ilgili"), (PASIF_DIPNOT, "pasiflerle ilgili"),
+                                 (NAZIM_DIPNOT, "nazım hesaplarla ilgili"), (GELIR_DIPNOT, "gelir tablosu ile ilgili"),
+                                 (RISK_GRUBU_DIPNOT, "risk grubuna ait")):
                     d_ = page.evaluate("(k) => __tbb.children(k)", kok + (250000 if tur == "kons" else 0))
                     log(f"[{tur}] {ad_} dipnotları: {len(d_)} dal, {sum(n for _, n in d_)} kalem")
                     dallar += d_
