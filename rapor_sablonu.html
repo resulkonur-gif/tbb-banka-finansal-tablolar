@@ -438,6 +438,7 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
       <div class="panel" style="min-width:0"><h3 id="mvTurH">Mevduat türleri</h3><div class="stack" id="mvTur"></div></div>
       <div class="panel" style="min-width:0"><h3 id="mvVadeH">Vade dağılımı</h3><div class="stack" id="mvVade"></div></div>
     </div>
+    <div class="controls"><div class="seg" id="mvSeg" role="group" aria-label="Vade tablosunda gösterim"><button type="button" data-v="pay" aria-pressed="true">Oransal</button><button type="button" data-v="bak" aria-pressed="false">Bakiye</button></div><span class="muted" id="mvUnit">Vade dilimlerinin mevduat içindeki payı</span></div>
     <div class="scroll"><table class="xtable" id="mvTable" style="min-width:1000px"></table></div>
     <div class="panel"><div class="controls"><label class="field" for="mvMetric">Grafikteki pay<select id="mvMetric"></select></label></div><div class="chartbox tall"><canvas id="mvChart" role="img" aria-label="Mevduat payları, 2018–2026"></canvas></div></div>
   </section>
@@ -1081,7 +1082,7 @@ const MV = D.MV || null;
 const sumCodes = (p,codes,idxs) => codes.reduce((s,c)=>s+asum(p,c,idxs),0);
 const hasMV = (p,idxs) => !!MV && idxs.some(i=>has(p,MV.top,i));
 const MVC = ["--b0","--b1","--b3","--b2","--b5","--b4","--b6","--ink-3"];
-let mvScope="t7", ozScope="t7";
+let mvScope="t7", ozScope="t7", mvMode="pay";
 const scIdx = s => s==="t7" ? T7 : s==="all" ? ALLIDX : [+s.slice(2)];
 const scName = s => s==="t7" ? "İlk 7" : s==="all" ? "Sektör" : A.short[+s.slice(2)];
 function scopeOptions(sel, cur, onch){
@@ -1097,7 +1098,8 @@ function partsHTML(parts){
   return stackHTML(ps)+`<div class="legend">${ps.map(x=>`<span><i style="background:${x.c}"></i>${esc(x.l)} ${pct(x.s)}</span>`).join("")}</div>`;
 }
 function initMv(){ if(!MV) return; scopeOptions(document.getElementById("mvScope"), mvScope, v=>{mvScope=v; renderMv();});
-  const m=document.getElementById("mvMetric"); [["vadesiz","Vadesiz mevduat payı"],["kisa","1 aya kadar vadeli payı (vadesiz hariç)"],["uzun","3 aydan uzun vadeli payı"],["dth","Döviz tevdiat payı"],["tas","Tasarruf mevduatı payı"]].forEach(([v,l])=>m.appendChild(el("option",{value:v},l))); m.onchange=renderMvChart; }
+  const m=document.getElementById("mvMetric"); [["vadesiz","Vadesiz mevduat payı"],["kisa","1 aya kadar vadeli payı (vadesiz hariç)"],["uzun","3 aydan uzun vadeli payı"],["dth","Döviz tevdiat payı"],["tas","Tasarruf mevduatı payı"]].forEach(([v,l])=>m.appendChild(el("option",{value:v},l))); m.onchange=renderMvChart;
+  document.querySelectorAll("#mvSeg button").forEach(b=>b.onclick=()=>{ mvMode=b.dataset.v; document.querySelectorAll("#mvSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderMv(); }); }
 const MVM = {
   vadesiz:(p,x)=>mvShare(p,MV.vade[0][1],x),
   kisa:(p,x)=>mvShare(p,[...MV.vade[1][1],...MV.vade[2][1]],x),
@@ -1119,7 +1121,8 @@ function renderMv(){
   let rows=[...B.keys()].map(b=>({l:B[b],x:[T7[b]],c:bcol(b)}));
   if(mvScope.startsWith("b:") && !T7.includes(+mvScope.slice(2))) rows.push({l:A.short[+mvScope.slice(2)],x:[+mvScope.slice(2)],c:css("--ink-3")});
   rows.push({l:"İlk 7",x:T7,tot:1},{l:"Sektör",x:ALLIDX,tot:1});
-  document.getElementById("mvTable").innerHTML=`<thead><tr><th scope="col" class="l">Banka · ${PL[curP]}</th><th scope="col">Mevduat (mlr TL)</th>${MV.vade.map(([l])=>`<th scope="col">${esc(l)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>{ const t=asum(curP,MV.top,r.x); const okr=hasMV(curP,r.x); return `<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td><td>${okr?nf1.format(mlr(t)):'–'}</td>${MV.vade.map(([l,cs])=>`<td>${okr&&t?pct(sumCodes(curP,cs,r.x)/t):'<span class="muted">–</span>'}</td>`).join("")}</tr>`;}).join("")}</tbody>`;
+  document.getElementById("mvTable").innerHTML=`<thead><tr><th scope="col" class="l">Banka · ${PL[curP]}</th><th scope="col">Mevduat (mlr TL)</th>${MV.vade.map(([l])=>`<th scope="col">${esc(l)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>{ const t=asum(curP,MV.top,r.x); const okr=hasMV(curP,r.x); return `<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td><td>${okr?nf1.format(mlr(t)):'–'}</td>${MV.vade.map(([l,cs])=>{ const v=sumCodes(curP,cs,r.x); return `<td>${okr&&t?(mvMode==="bak"?nf1.format(mlr(v)):pct(v/t)):'<span class="muted">–</span>'}</td>`;}).join("")}</tr>`;}).join("")}</tbody>`;
+  document.getElementById("mvUnit").textContent = mvMode==="bak" ? "Vade dilimlerindeki bakiye, milyar TL" : "Vade dilimlerinin mevduat içindeki payı";
   renderMvChart();
 }
 function renderMvChart(){ if(!MV) return;
