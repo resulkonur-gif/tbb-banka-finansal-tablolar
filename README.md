@@ -15,7 +15,7 @@ Mart 2018'den bu yana çeyreklik olarak çeken ve tek dosyalık, etkileşimli bi
 * **Nakit yaratma kapasitesi:** Nakit akış tablosundan faaliyet nakit kârı, kârın nakde dönüşüm oranı, faiz tahsilatı oranı ve dönem başı nakitten dönem sonu nakde köprü.
 * **Likidite:** Likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO).
 * **Mevduat yapısı:** Dipnotlardan mevduatın türlere (tasarruf, döviz tevdiat, ticari ve resmi kuruluşlar, kıymetli maden, bankalar) ve vade dilimlerine göre dağılımı.
-* **Yasal özkaynak ve sermaye yeterliliği:** Çekirdek, ilave ana ve katkı sermaye, yasal özkaynak, risk ağırlıklı tutarlar, ÇSYO, ASYO ve SYO.
+* **Yasal özkaynak ve sermaye yeterliliği:** Çekirdek, ilave ana ve katkı sermaye, yasal özkaynak, risk ağırlıklı tutarlar, ÇSYO, ASYO ve SYO; açılır panelde sermaye bileşimi, asgari oranlar ve tamponlara göre fazla, özkaynak dipnotundaki tüm kalemler ve kalem grafiği.
 * **İki banka karşılaştırması**, oran haritası, bilanço yapısı ve 300'ü aşkın kalemin tamamını gezme.
 
 ![Nakit yaratma kapasitesi](docs/ekran_nakit.png)

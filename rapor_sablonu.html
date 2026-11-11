@@ -327,6 +327,28 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
 #mvTable tr.tot td,#ozTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
 #mvTable thead th:first-child,#ozTable thead th:first-child{min-width:170px}
 #ozTable thead th{white-space:normal;vertical-align:bottom}
+details.ozdet{padding:0}
+details.ozdet>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 20px;font-size:16px;font-weight:500}
+details.ozdet>summary::-webkit-details-marker{display:none}
+details.ozdet>summary .chev{width:24px;height:24px;flex:none;transition:transform .2s;color:var(--m-primary)}
+details.ozdet[open]>summary .chev{transform:rotate(180deg)}
+details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
+.ozdet-body{display:flex;flex-direction:column;gap:22px;padding:4px 20px 20px}
+.ozdet-body h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.ozdet-body .hint{margin:0 0 10px;font-size:13px;color:var(--ink-3)}
+.ozdet-body table td.l,.ozdet-body table th.l{text-align:left}
+.ozdet-body tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
+#ozMix td.bar{min-width:220px;width:34%}
+#ozMix .stackbar{margin:0}
+#ozItems td.l{max-width:440px;white-space:normal;line-height:1.35}
+#ozItems tr.hdr td{max-width:none;font-weight:700;background:var(--surface-2);font-size:12.5px;letter-spacing:.03em;text-transform:none}
+#ozItems tr.sum td{font-weight:600}
+#ozItems tr.ratio td.l{color:var(--ink-2)}
+#ozItems tbody tr:not(.hdr){cursor:pointer}
+#ozItems tbody tr:not(.hdr):hover td{background:var(--m-state)}
+#ozItems tbody tr.sel td{background:color-mix(in srgb, var(--m-primary) 12%, transparent)}
+#ozItems .ic{font-size:11px;color:var(--ink-3);margin-left:6px}
+.pos{color:var(--good)}
 #cashTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
@@ -452,6 +474,34 @@ select:focus,input[type=search]:focus{outline:none;border-color:var(--m-primary)
     <div class="kpis" id="ozKpis"></div>
     <div class="scroll"><table class="xtable" id="ozTable" style="min-width:1100px"></table></div>
     <div class="panel"><div class="controls"><label class="field" for="ozMetric">Oran<select id="ozMetric"></select></label></div><div class="chartbox tall"><canvas id="ozChart" role="img" aria-label="Sermaye yeterliliği oranları, 2018–2026"></canvas></div><p class="muted" style="font-size:12.5px">Tek banka için bankanın açıkladığı oran; ilk 7 için toplam özkaynak (ya da çekirdek / ana sermaye) toplam risk ağırlıklı tutarlara bölündü.</p></div>
+    <details class="notes ozdet" id="ozDet">
+      <summary><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7.4 8.6 12 13.2l4.6-4.6L18 10l-6 6-6-6z"/></svg><span>Tüm özkaynak kalemleri ve karşılaştırmalar<br><span class="sub">Sermaye bileşimi, asgari oranlar ve tamponlar, dipnottaki tüm kalemler ve kalem grafiği</span></span></summary>
+      <div class="ozdet-body">
+        <div>
+          <h3 id="ozMixH">Sermaye bileşimi</h3>
+          <p class="hint">Çekirdek, ilave ana ve katkı sermayenin ana sermaye + katkı sermaye toplamı içindeki payı ve çekirdek sermayeden yapılan indirimlerin büyüklüğü.</p>
+          <div class="scroll"><table class="xtable" id="ozMix" style="min-width:980px"></table></div>
+        </div>
+        <div>
+          <h3 id="ozBufH">Asgari oranlar ve tamponlar</h3>
+          <p class="hint">Yasal asgari oranlar (çekirdek %4,5, ana sermaye %6, toplam %8) ile bankanın açıkladığı toplam ilave çekirdek sermaye gereksinimi (tamponlar) toplandı; “fazla”, oranın bu eşiğin kaç puan üstünde olduğunu gösterir. Sistemik önemli banka tamponu dipnotta ayrı verilmediği için toplam tampondan koruma ve döngüsel tampon çıkarılarak bulundu; bankalar bu tamponu genellikle konsolide tablolarda gösterir. Bankaya özgü ek yükümlülükler dahil değildir.</p>
+          <div class="scroll"><table class="xtable" id="ozBuf" style="min-width:1100px"></table></div>
+        </div>
+        <div class="panel" style="margin:0">
+          <div class="controls">
+            <label class="field" for="ozItemSel" style="flex:1 1 320px;min-width:0">Kalem<select id="ozItemSel" style="width:100%"></select></label>
+            <div class="seg" id="ozModeSeg" role="group" aria-label="Kalem gösterimi"><button type="button" data-v="bak" aria-pressed="true">Bakiye</button><button type="button" data-v="oz" aria-pressed="false">Yasal özkaynağa oran</button><button type="button" data-v="rwa" aria-pressed="false">Risk ağırlıklı tutara oran</button></div>
+          </div>
+          <div class="chartbox tall"><canvas id="ozItemChart" role="img" aria-label="Seçilen özkaynak kaleminin bankalara göre seyri"></canvas></div>
+        </div>
+        <div>
+          <h3 id="ozItemsH">Özkaynak kalemleri</h3>
+          <div class="controls" style="margin-bottom:10px"><label style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="ozHideEmpty" checked> Değeri olmayan kalemleri gizle</label><span class="muted" id="ozItemsUnit" style="font-size:13px"></span></div>
+          <div class="scroll"><table class="xtable" id="ozItems" style="min-width:1250px"></table></div>
+          <p class="muted" style="font-size:12.5px;margin-top:8px">Satıra tıklayınca kalem yukarıdaki grafikte gösterilir. Gösterim seçimi (bakiye ya da oran) tablo ve grafik için ortaktır; oran kalemleri her zaman yüzde olarak gösterilir. İlk 7 ve sektör için tampon oranları risk ağırlıklı tutarlarla ağırlıklandırıldı.</p>
+        </div>
+      </div>
+    </details>
   </section>
 
   <section aria-labelledby="h-all">
@@ -1140,12 +1190,83 @@ function renderOz(){
   const x=scIdx(ozScope), nm=scName(ozScope), yq=yoyP(curP), ok=hasOZ(curP,x), pv=yq&&hasOZ(yq,x);
   const amt=(l,c)=>{ const v=asum(curP,c,x), w=pv?asum(yq,c,x):null; return `<div class="kpi" style="cursor:default"><span class="k-l">${l}</span><span class="k-v">${ok?fmtBig(v):'–'}</span><span class="k-u">${ok?unitBig(v):''}</span><span class="k-c ${w&&ok?(v>=w?'up':'down'):'muted'}">${w&&ok?chg(v/w-1)+' <span class="muted" style="font-weight:500">bir yılda</span>':'Bir yıl önceki veri yok'}</span></div>`; };
   const rat=(l,k)=>{ const v=GR[k].f(curP,x), w=pv?GR[k].f(yq,x):null; return `<div class="kpi" style="cursor:default"><span class="k-l">${l}</span><span class="k-v">${pct(v)}</span><span class="k-u">${x.length>1?'toplamlardan hesaplandı':'bankanın açıkladığı'}</span><span class="k-c ${w==null||v==null?'muted':(v>=w?'up':'down')}">${w==null||v==null?'Bir yıl önceki veri yok':(v-w>=0?'+':'−')+nf1.format(Math.abs(v-w)*100)+' puan <span class="muted" style="font-weight:500">bir yılda</span>'}</span></div>`; };
-  document.getElementById("ozKpis").innerHTML = ok ? [amt("Yasal özkaynak",159977),amt("Çekirdek sermaye",159935),amt("Risk ağırlıklı tutarlar",159978),rat("Sermaye yeterliliği oranı","car"),rat("Çekirdek sermaye yeterliliği","cet1")].join("") : '<p class="muted">Bu kapsam ve dönem için özkaynak dipnotu yok.</p>';
+  document.getElementById("ozKpis").innerHTML = ok ? [amt("Yasal özkaynak",159977),amt("Çekirdek sermaye",159935),amt("İlave ana sermaye",159952),amt("Katkı sermaye",159966),amt("Risk ağırlıklı tutarlar",159978),rat("Sermaye yeterliliği oranı","car"),rat("Çekirdek sermaye yeterliliği","cet1")].join("") : '<p class="muted">Bu kapsam ve dönem için özkaynak dipnotu yok.</p>';
   let rows=[...B.keys()].map(b=>({l:B[b],x:[T7[b]],c:bcol(b)}));
   if(ozScope.startsWith("b:") && !T7.includes(+ozScope.slice(2))) rows.push({l:A.short[+ozScope.slice(2)],x:[+ozScope.slice(2)],c:css("--ink-3")});
   rows.push({l:"İlk 7",x:T7,tot:1},{l:"Sektör",x:ALLIDX,tot:1});
   document.getElementById("ozTable").innerHTML=`<thead><tr><th scope="col" class="l">Banka · ${PL[curP]}</th>${OZ.map(([l])=>`<th scope="col">${l} <span class="muted" style="font-weight:500">(mlr)</span></th>`).join("")}<th scope="col">ÇSYO</th><th scope="col">ASYO</th><th scope="col">SYO</th><th scope="col">Yasal / muhasebe özkaynağı</th></tr></thead><tbody>${rows.map(r=>{ const okr=hasOZ(curP,r.x); return `<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td>${OZ.map(([l,c])=>`<td>${okr?sgn(asum(curP,c,r.x)):'–'}</td>`).join("")}${["cet1","t1","car"].map(k=>`<td>${okr?pct(GR[k].f(curP,r.x)):'–'}</td>`).join("")}<td>${okr?pct(div(asum(curP,159977,r.x),asum(curP,102170,r.x))):'–'}</td></tr>`;}).join("")}</tbody>`;
   renderOzChart();
+  renderOzDet();
+}
+/* ---------- özkaynak ayrıntıları (açılır panel) ---------- */
+const OZ_TAB="9. Yasal Özkaynak";
+const OZ_RAT={cet1:"Çekirdek sermaye yeterliliği oranı",t1:"Ana sermaye yeterliliği oranı",car:"Sermaye yeterliliği oranı",
+  buf:"Toplam ilave çekirdek sermaye gereksinimi oranı (tamponlar)",ccb:"Sermaye koruma tamponu oranı",ccyb:"Bankaya özgü döngüsel sermaye tamponu oranı",
+  bufR:"Tamponları karşılamak için kullanılabilir çekirdek sermayenin risk ağırlıklı tutarlara oranı"};
+const OZ_SUM=new Set([159909,159934,159935,159940,159951,159952,159953,159958,159965,159966,159967,159968,159977,159978]);
+let ozMode="bak", ozSel=null, OZROWS=null;
+const ozRat=(p,k,x)=>{ if(!A[k]||!A[k][p]) return null; if(k==="cet1"||k==="t1"||k==="car") return GR[k].f(p,x);
+  if(x.length===1){ const v=A[k][p][x[0]]; return v==null?null:v/100; }
+  let s=0,w=0; x.forEach(i=>{ const v=A[k][p][i], r=av(p,159978,i); if(v!=null&&r){ s+=v*r; w+=r; } }); return w? s/w/100 : null; };
+function ozRows(){ if(OZROWS) return OZROWS;
+  const its=ITEMS.filter(it=>it[3]===OZ_TAB && it[2]>0);
+  const HDR=new Set([159900,159936,159954,159976,159979,159983,159988,159993,109871]);
+  const rows=its.map(it=>({t:"amt",c:it[0],n:it[1],hdr:HDR.has(it[0])}));
+  const ins=(after,keys)=>{ let j=rows.findIndex(r=>r.c===after); const add=keys.filter(k=>A[k]).map(k=>({t:"rat",k,n:OZ_RAT[k]})); if(j<0) rows.push(...add); else rows.splice(j+1,0,...add); };
+  ins(159979,["cet1","t1","car"]); ins(159983,["buf","ccb","ccyb","bufR"]);
+  OZROWS=rows; return rows; }
+function ozCols(){ const c=[...B.keys()].map(b=>({l:B[b],x:[T7[b]],c:bcol(b)}));
+  if(ozScope.startsWith("b:") && !T7.includes(+ozScope.slice(2))) c.push({l:A.short[+ozScope.slice(2)],x:[+ozScope.slice(2)],c:css("--ink-3")});
+  c.push({l:"İlk 7",x:T7,tot:1},{l:"Sektör",x:ALLIDX,tot:1}); return c; }
+const ozVal=(r,p,x)=>{ if(r.t==="rat") return ozRat(p,r.k,x); if(!x.some(i=>has(p,r.c,i))) return null; const v=asum(p,r.c,x);
+  if(ozMode==="oz") return div(v,asum(p,159977,x)); if(ozMode==="rwa") return div(v,asum(p,159978,x)); return v; };
+const ozFmt=(r,v)=>{ if(v==null) return '<span class="muted">–</span>'; if(r.t==="rat"||ozMode!=="bak") return `<span class="${v<0?'neg':''}">${pct(v)}</span>`; return sgn(v); };
+const ozKey=r=>r.t==="rat"?"r:"+r.k:"c:"+r.c;
+function initOzDet(){ if(!A.car) return;
+  document.querySelectorAll("#ozModeSeg button").forEach(b=>b.onclick=()=>{ ozMode=b.dataset.v; document.querySelectorAll("#ozModeSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderOzItems(); renderOzItemChart(); });
+  document.getElementById("ozHideEmpty").onchange=renderOzItems;
+  const s=document.getElementById("ozItemSel"); s.onchange=()=>{ ozSel=s.value; renderOzItems(); renderOzItemChart(); };
+  document.getElementById("ozItems").addEventListener("click",e=>{ const tr=e.target.closest("tr[data-k]"); if(!tr) return; ozSel=tr.dataset.k; s.value=ozSel; renderOzItems(); renderOzItemChart(); document.getElementById("ozItemChart").closest(".panel").scrollIntoView({behavior:"smooth",block:"center"}); });
+  document.getElementById("ozDet").addEventListener("toggle",e=>{ if(e.target.open) renderOzDet(); });
+}
+function renderOzDet(){ const d=document.getElementById("ozDet"); if(!A.car||!d||!d.open) return;
+  const rows=ozRows(), s=document.getElementById("ozItemSel");
+  if(!s.options.length){ let g=null; rows.forEach(r=>{ if(r.hdr){ g=el("optgroup",{label:r.n}); s.appendChild(g); return; } (g||s).appendChild(el("option",{value:ozKey(r)},esc(r.n))); }); ozSel=ozSel||"c:159977"; s.value=ozSel; }
+  const cols=ozCols();
+  // sermaye bileşimi
+  const MIXC=["--b0","--b2","--b1"];
+  document.getElementById("ozMixH").textContent=`Sermaye bileşimi · ${PL[curP]}`;
+  document.getElementById("ozMix").innerHTML=`<thead><tr><th class="l" scope="col">Banka</th><th class="l" scope="col">Çekirdek / ilave ana / katkı</th><th scope="col">Çekirdek</th><th scope="col">İlave ana</th><th scope="col">Katkı</th><th scope="col">Yasal özkaynak (mlr)</th><th scope="col">ÇS indirimleri / indirimler öncesi ÇS</th><th scope="col">Bir yıl önce</th></tr></thead><tbody>${cols.map(r=>{ const ok=hasOZ(curP,r.x);
+    if(!ok) return `<tr class="${r.tot?'tot':''}"><td class="l">${esc(r.l)}</td><td colspan="7" class="muted">Veri yok</td></tr>`;
+    const parts=[["Çekirdek",159935],["İlave ana",159952],["Katkı",159966]].map(([l,c],k)=>({l,x:Math.max(0,asum(curP,c,r.x)),c:css(MIXC[k])})); const T=parts.reduce((a,b)=>a+b.x,0)||1; parts.forEach(q=>q.s=q.x/T);
+    const ded=p=>{ const a=asum(p,159934,r.x), b=asum(p,159909,r.x); return b? Math.abs(a)/b : null; }; const yq=yoyP(curP);
+    return `<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td><td class="bar">${stackHTML(parts)}</td>${parts.map(q=>`<td>${pct(q.s)}</td>`).join("")}<td>${sgn(asum(curP,159977,r.x))}</td><td>${pct(ded(curP))}</td><td class="muted">${yq&&hasOZ(yq,r.x)?pct(ded(yq)):'–'}</td></tr>`; }).join("")}</tbody>`;
+  // asgari oranlar ve tamponlar
+  document.getElementById("ozBufH").textContent=`Asgari oranlar ve tamponlar · ${PL[curP]}`;
+  const ex=(v,m)=>v==null||m==null?'–':`<span class="${v-m<0?'neg':''}">${v-m>=0?'+':'−'}${nf1.format(Math.abs(v-m)*100)}</span>`;
+  document.getElementById("ozBuf").innerHTML=`<thead><tr><th class="l" scope="col">Banka</th><th scope="col">Koruma tamponu</th><th scope="col">Döngüsel tampon</th><th scope="col">Sistemik önemli banka tamponu<br><span class="muted" style="font-weight:500">(toplamdan kalan)</span></th><th scope="col">Toplam tampon</th><th scope="col">ÇSYO</th><th scope="col">ÇSYO eşiği (%4,5 + tampon)</th><th scope="col">Fazla (puan)</th><th scope="col">ASYO</th><th scope="col">Fazla (puan, %6 + tampon)</th><th scope="col">SYO</th><th scope="col">Fazla (puan, %8 + tampon)</th></tr></thead><tbody>${cols.map(r=>{
+    const b=ozRat(curP,"buf",r.x), c1=ozRat(curP,"cet1",r.x), t1=ozRat(curP,"t1",r.x), cr=ozRat(curP,"car",r.x), m=x=>b==null?null:x+b;
+    return `<tr class="${r.tot?'tot':''}"><td class="l">${r.c?`<span style="color:${r.c}">■</span> `:''}${esc(r.l)}</td>${["ccb","ccyb"].map(k=>`<td>${pct(ozRat(curP,k,r.x),2)}</td>`).join("")}<td>${(()=>{ const a=ozRat(curP,"ccb",r.x), c=ozRat(curP,"ccyb",r.x); if(b==null||a==null) return '–'; const d=b-a-(c||0); return pct(Math.abs(d)<5e-4?0:d,2); })()}</td><td>${pct(b,2)}</td><td>${pct(c1)}</td><td class="muted">${pct(m(.045),2)}</td><td>${ex(c1,m(.045))}</td><td>${pct(t1)}</td><td>${ex(t1,m(.06))}</td><td>${pct(cr)}</td><td>${ex(cr,m(.08))}</td></tr>`; }).join("")}</tbody>`;
+  renderOzItems(); renderOzItemChart();
+}
+function renderOzItems(){ const d=document.getElementById("ozDet"); if(!d||!d.open) return;
+  const rows=ozRows(), cols=ozCols(), hide=document.getElementById("ozHideEmpty").checked;
+  document.getElementById("ozItemsH").textContent=`Özkaynak kalemleri · ${PL[curP]}`;
+  document.getElementById("ozItemsUnit").textContent= ozMode==="bak" ? "Tutarlar milyar TL" : ozMode==="oz" ? "Tutarlar yasal özkaynağın yüzdesi olarak" : "Tutarlar risk ağırlıklı tutarların yüzdesi olarak";
+  const body=[]; let hdr=null, buf=[];
+  const flush=()=>{ if(buf.length){ if(hdr) body.push(hdr); body.push(...buf); } else if(hdr && !hide) body.push(hdr); buf=[]; };
+  rows.forEach(r=>{
+    if(r.hdr){ flush(); hdr=`<tr class="hdr"><td class="l" colspan="${cols.length+1}">${esc(r.n)}</td></tr>`; return; }
+    const vs=cols.map(cl=>ozVal(r,curP,cl.x));
+    if(hide && vs.every(v=>v==null||v===0)) return;
+    const k=ozKey(r);
+    buf.push(`<tr data-k="${k}" class="${r.t==='rat'?'ratio':''} ${OZ_SUM.has(r.c)?'sum':''} ${k===ozSel?'sel':''}"><td class="l">${esc(r.n)}${r.t==="amt"?`<span class="ic">${r.c}</span>`:''}</td>${vs.map((v,j)=>`<td>${ozFmt(r,v)}</td>`).join("")}</tr>`);
+  }); flush();
+  document.getElementById("ozItems").innerHTML=`<thead><tr><th class="l" scope="col">Kalem</th>${cols.map(c=>`<th scope="col">${c.c?`<span style="color:${c.c}">■</span> `:''}${esc(c.l)}</th>`).join("")}</tr></thead><tbody>${body.join("")||`<tr><td class="muted" colspan="${cols.length+1}">Bu dönem için özkaynak dipnotu yok.</td></tr>`}</tbody>`;
+}
+function renderOzItemChart(){ const d=document.getElementById("ozDet"); if(!d||!d.open||!ozSel) return;
+  const r=ozRows().find(x=>ozKey(x)===ozSel); if(!r) return; const isPct=r.t==="rat"||ozMode!=="bak"; const idx=[...B.keys(),NB];
+  mkChart("ozItemChart",{type:"line",data:{labels:P.map(p=>PL[p]),datasets:idx.map(b=>({label:b===NB?"İlk 7":B[b],data:P.map(p=>{ const v=ozVal(r,p,idxOf(b)); return v==null?null:(isPct?v*100:mlr(v)); }),borderColor:bcol(b),backgroundColor:bcol(b),borderWidth:b===NB?3.5:2,borderDash:b===NB?[6,4]:[],tension:.25,spanGaps:true,pointRadius:P.map(p=>p===curP?5:0)}))},options:baseOpts(isPct?(v=>"%"+nf1.format(v)):(v=>nf0.format(v)))});
 }
 function renderOzChart(){ if(!A.car) return;
   const k=document.getElementById("ozMetric").value; const idx=[...B.keys(),NB];
@@ -1168,7 +1289,7 @@ function renderAll(){ renderPeriodBar(); renderKpis(); renderKpiPanel(); renderS
   document.getElementById("xExpand").onclick=()=>{ ITEMS.forEach((_,i)=>{ if(kids[i].length) open.add(i); }); renderExplorer(); };
   document.getElementById("xCollapse").onclick=()=>{ open.clear(); renderExplorer(); };
   document.querySelectorAll("#mixSeg button").forEach(b=>b.onclick=()=>{ mixKind=b.dataset.v; document.querySelectorAll("#mixSeg button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); renderMix(); });
-  initAllBanks(); initVs(); initCash(); initMv(); initOz();
+  initAllBanks(); initVs(); initCash(); initMv(); initOz(); initOzDet();
   renderAll();
   const rerender=()=>{ renderAll(); };
   let mq=null; try{ mq=matchMedia("(prefers-color-scheme: dark)"); mq.addEventListener("change",rerender); }catch(e){}

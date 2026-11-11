@@ -30,15 +30,18 @@ LIKIDITE = {
     "kons": {"359460": "hqla", "359463": "out", "359466": "lcr", "359467": "lcrYp", "487130": "asf", "487131": "rsf", "487144": "nsfr"},
 }
 # Dipnot kökleri (solo kodları): mevduat vade yapısı ve özkaynak kalemleri
-DIPNOT_ADI = {"114171": "8. Mevduat Vade Yapısı", "109865": "9. Yasal Özkaynak"}
+DIPNOT_ADI = {"114171": "8. Mevduat Vade Yapısı", "109869": "9. Yasal Özkaynak"}
 # Sermaye yeterliliği oranları (yüzde); kalem listesine girmez, ayrı dizi olarak tutulur
-SERMAYE_ORAN = {"159980": "cet1", "159981": "t1", "159982": "car", "159984": "buf"}
+SERMAYE_ORAN = {"159980": "cet1", "159981": "t1", "159982": "car", "159984": "buf",
+                "159985": "ccb", "159986": "ccyb", "109885": "sib", "159987": "bufR"}
 MEVDUAT_TUR = [("114173", "Tasarruf"), ("114181", "Döviz tevdiat"), ("114206", "Ticari kuruluş"), ("114198", "Resmi kuruluş"),
                ("114214", "Diğer kuruluş"), ("114222", "Kıymetli maden"), ("114230", "Bankalar")]
 VADE = ["Vadesiz", "7 Gün İhbarlı", "1Aya Kadar", "1-3 Ay", "3-6 Ay", "6 Ay-1 Yıl", "1 Yıl ve Üstü", "Birikimli Mevduat"]
 VADE_ETIKET = {"1Aya Kadar": "1 aya kadar", "7 Gün İhbarlı": "7 gün ihbarlı", "1 Yıl ve Üstü": "1 yıl ve üstü", "Birikimli Mevduat": "Birikimli"}
-ORANLAR = ("lcr", "lcrYp", "nsfr", "cet1", "t1", "car", "buf")
-YENI_AD = {"114172": "Toplam Mevduat", "159909": "İndirimler Öncesi Çekirdek Sermaye", "159953": "Ana Sermaye Toplamı (Çekirdek + İlave Ana Sermaye)",
+PAY_KOD = {"cet1": "159935", "t1": "159953", "car": "159977"}   # oranın pay kalemi (payda: risk ağırlıklı tutarlar 159978)
+TAMPON = {"buf": 6, "ccb": 6, "ccyb": 6, "bufR": 100}            # yüzde olarak makul üst sınır
+ORANLAR = ("lcr", "lcrYp", "nsfr", "cet1", "t1", "car", "buf", "ccb", "ccyb", "sib", "bufR")
+YENI_AD = {"114172": "Toplam Mevduat", "109865": "Özkaynak kalemleri", "159909": "İndirimler Öncesi Çekirdek Sermaye", "159953": "Ana Sermaye Toplamı (Çekirdek + İlave Ana Sermaye)",
            "159977": "Yasal Özkaynak (Ana Sermaye + Katkı Sermaye)", "159978": "Toplam Risk Ağırlıklı Tutarlar"}
 ILK7 = [3, 6, 32, 5, 30, 8, 37]  # Ziraat, VakıfBank, İş, Halkbank, Garanti BBVA, Akbank, Yapı Kredi
 KISA = {3: "Ziraat", 6: "VakıfBank", 32: "İş Bankası", 5: "Halkbank", 30: "Garanti BBVA", 8: "Akbank", 37: "Yapı Kredi"}
@@ -142,7 +145,10 @@ def veri_kur(tur, sec, banks, solo_kodlar):
         a = kok_eslestir.get(a, a)
         if a in DIPNOT_ADI:
             skey = tuple(int(x) for x in re.findall(r"\d+", sk or "")) or (10**9,)
-            dipnot.append([skey, eslestir(c), c, re.sub(r"^\d+\.\s*", "", ad.strip()), DIPNOT_ADI[a], d, str(ust)])
+            mc = eslestir(c)
+            if tur == "kons" and mc == c and int(c) < off:
+                mc = str(int(c) + 9000000)   # yalnız konsolide tabloda olan kalem
+            dipnot.append([skey, mc, c, re.sub(r"^\d+\.\s*", "", ad.strip()), DIPNOT_ADI[a], d, str(ust)])
             continue
         kok = str(ust)
         kok = kok_eslestir.get(kok, kok)
@@ -214,7 +220,22 @@ def veri_kur(tur, sec, banks, solo_kodlar):
                          for b in bks]
         for c, key in oranlar.items():
             sc = 1000 if p in olcekli_syo else 1
-            A[key][p] = [None if (c, b, p) not in val else round(sum(val[(c, b, p)]) / sc, 2) for b in bks]
+            arr = []
+            for b in bks:
+                if (c, b, p) not in val:
+                    arr.append(None); continue
+                x = sum(val[(c, b, p)]) / sc
+                if key in PAY_KOD:      # oranı tutarlardan doğrula; bankanın açıkladığı birim hatalıysa hesaplanan kullanılır
+                    pay, rwa = val.get((str(int(PAY_KOD[key]) + off), b, p)), val.get((str(159978 + off), b, p))
+                    if pay and rwa and sum(rwa) > 0:
+                        h = sum(pay) / sum(rwa) * 100
+                        if abs(x - h) > max(0.5, 0.05 * abs(h)):
+                            x = h
+                elif key in TAMPON:     # tampon oranları birkaç yüzdeyi geçemez; 10'un katlarıyla yayımlananlar düzeltilir
+                    while x > TAMPON[key]:
+                        x /= 10
+                arr.append(round(x, 2))
+            A[key][p] = arr
     T7 = [bks.index(c) for c in ILK7 if c in bks]
     if len(T7) != 7:
         sys.exit(f"[{tur}] ilk 7 bankanın hepsi veride yok")
