@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   guncelle:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # ubuntu-latest Ubuntu 26ya geçiyor; Playwright kurulumu orada takılıyor
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
