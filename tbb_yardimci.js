@@ -24,7 +24,13 @@ window.__tbb = (function () {
     const depth = no => { let d = 0, g = G[no]; while (g && g.UST_GRUP_NO && G[g.UST_GRUP_NO] && d < 10) { d++; g = G[g.UST_GRUP_NO]; } return d; };
     const now = new Date().toISOString();
     return Object.values(mlt_data_bankalar).map(b => {
-      const cur = (b.GRUPLAR || []).filter(g => g.GIRIS_TARIHI <= now && g.CIKIS_TARIHI > now && G[+g.GRUP_NO] && +g.GRUP_NO !== 0);
+      const ok = g => G[+g.GRUP_NO] && +g.GRUP_NO !== 0;
+      // bugün geçerli üyelik: çıkış tarihi boş olan kayıt da geçerlidir
+      let cur = (b.GRUPLAR || []).filter(g => ok(g) && (!g.GIRIS_TARIHI || g.GIRIS_TARIHI <= now) && (!g.CIKIS_TARIHI || g.CIKIS_TARIHI > now));
+      if (!cur.length) {   // geçerli kayıt yoksa en son girilen gruplar
+        const all = (b.GRUPLAR || []).filter(ok), son = all.reduce((m, g) => (g.GIRIS_TARIHI || "") > m ? (g.GIRIS_TARIHI || "") : m, "");
+        cur = all.filter(g => (g.GIRIS_TARIHI || "") === son);
+      }
       cur.sort((a, c) => depth(+c.GRUP_NO) - depth(+a.GRUP_NO));
       let name = cur.length ? G[+cur[0].GRUP_NO].TR_ADI.trim() : "";
       name = GROUP_FIX[name] || name || "Grup bilgisi yok";

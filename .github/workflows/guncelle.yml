@@ -4,6 +4,7 @@ name: TBB verisini güncelle
 # veriyi TBB Veri Sistemi'nden çeker, raporu üretir; veri değiştiyse docs/index.html'i günceller.
 # Elle çalıştırmak için: Actions sekmesi → "TBB verisini güncelle" → Run workflow.
 # Bu dosya değiştirilip main dalına gönderildiğinde de bir kez çalışır.
+# Mali bünye dipnotları docs/dipnot klasörüne ayrı dosyalar olarak yazılır (sayfa istenince yükler).
 on:
   schedule:
     - cron: "23 5 15,28 * *"   # UTC 05:23 = Türkiye 08:23

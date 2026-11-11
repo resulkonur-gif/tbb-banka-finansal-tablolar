@@ -103,6 +103,10 @@ def main():
         if not donemler:
             sys.exit("Seçilen aralıkta dönem yok.")
         bankalar = page.evaluate("__tbb.banks()")
+        grupsuz = [b[1] for b in bankalar if b[2] == "Grup bilgisi yok"]
+        if grupsuz:
+            log(f"TBB grubu bulunamayan bankalar: {grupsuz}")
+            log("  grup kayıtları: " + json.dumps(page.evaluate("""(adlar) => Object.values(mlt_data_bankalar).filter(b => adlar.includes(b.TR_ADI.trim())).map(b => [b.TR_ADI.trim(), b.GRUPLAR])""", grupsuz), ensure_ascii=False)[:3000])
         log(f"{len(donemler)} dönem ({donemler[0]}–{donemler[-1]}), {len(bankalar)} banka")
 
         bolumler = {}
