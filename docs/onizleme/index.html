@@ -414,6 +414,8 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 </style>
 
 
+
+
 <style id="yozCss">
 .yoz-src{margin:-8px 0 16px;padding:10px 14px;border-radius:8px;background:var(--warm-soft);color:var(--ink);font-size:13.5px}
 .yoz-karne thead th button{all:unset;cursor:pointer}
@@ -537,6 +539,10 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 
   
 
+  
+
+  
+
   <!--YOZ-->
   <section aria-labelledby="h-yoz" id="yozSec">
     <div class="sec-head">
@@ -597,6 +603,31 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="banks" id="banks"></div>
   </section>
 
+  <section aria-labelledby="h-mix">
+    <div class="sec-head">
+      <h2 id="h-mix">Bilanço yapısı</h2>
+      <p class="insight">Seçili dönemde her bankanın aktifinin ya da pasifinin neye dağıldığı, yüzde olarak.</p>
+    </div>
+    <div class="controls"><div class="seg" id="mixSeg"><button type="button" data-v="a" aria-pressed="true">Aktif</button><button type="button" data-v="p" aria-pressed="false">Pasif</button></div></div>
+    <div class="panel"><div id="mixRows" class="stack"></div><div class="legend" id="mixLegend"></div></div>
+  </section>
+
+  <section aria-labelledby="h-x">
+    <div class="sec-head">
+      <h2 id="h-x">Tüm kalemler</h2>
+      <p class="insight">Altı tablonun <span data-t="nitem"></span> kalemi. Okla alt kalemleri açın, grafik simgesiyle kalemin 2018’den bu yana seyrini görün. Gelir tablosu ve nakit akış kalemleri yıl başından kümülatiftir; grafikleri yıllar içinde aynı çeyreği gösterir.</p>
+    </div>
+    <div class="controls">
+      <label class="field" for="xTab">Tablo<select id="xTab"></select></label>
+      <label class="field" for="xMode">Gösterim<select id="xMode"><option value="amt">Tutar (milyar TL)</option><option value="share">İlk 7 içindeki pay (%)</option><option value="yoy">Bir yıl öncesine göre değişim (%)</option><option value="toa">Banka aktifine oranı (%)</option></select></label>
+      <label class="field" for="xSearch">Kalem ara<input type="search" id="xSearch" placeholder="ör. kredi, mevduat, swap" autocomplete="off"></label>
+      <button class="btn" type="button" id="xExpand">Tümünü aç</button>
+      <button class="btn" type="button" id="xCollapse">Tümünü kapat</button>
+    </div>
+    <div class="scroll" style="max-height:720px;overflow:auto"><table class="xtable" id="xtable"></table></div>
+    <div class="xfoot"><span id="xCount"></span><span id="xModeNote"></span></div>
+  </section>
+
   <section aria-labelledby="h-cash">
     <div class="sec-head">
       <h2 id="h-cash">Nakit yaratma kapasitesi</h2>
@@ -627,6 +658,10 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="scroll"><table class="xtable" id="mvTable" style="min-width:1000px"></table></div>
     <div class="panel"><div class="controls"><label class="field" for="mvMetric">Grafikteki pay<select id="mvMetric"></select></label></div><div class="chartbox tall"><canvas id="mvChart" role="img" aria-label="Mevduat payları, 2018–2026"></canvas></div></div>
   </section>
+
+  
+
+  
 
   
 
@@ -740,31 +775,6 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="controls"><label class="field" for="heatMetric">Oran<select id="heatMetric"></select></label></div>
     <div class="scroll"><table class="heat" id="heat"></table></div>
     <p class="insight" id="heatNote"></p>
-  </section>
-
-  <section aria-labelledby="h-mix">
-    <div class="sec-head">
-      <h2 id="h-mix">Bilanço yapısı</h2>
-      <p class="insight">Seçili dönemde her bankanın aktifinin ya da pasifinin neye dağıldığı, yüzde olarak.</p>
-    </div>
-    <div class="controls"><div class="seg" id="mixSeg"><button type="button" data-v="a" aria-pressed="true">Aktif</button><button type="button" data-v="p" aria-pressed="false">Pasif</button></div></div>
-    <div class="panel"><div id="mixRows" class="stack"></div><div class="legend" id="mixLegend"></div></div>
-  </section>
-
-  <section aria-labelledby="h-x">
-    <div class="sec-head">
-      <h2 id="h-x">Tüm kalemler</h2>
-      <p class="insight">Altı tablonun <span data-t="nitem"></span> kalemi. Okla alt kalemleri açın, grafik simgesiyle kalemin 2018’den bu yana seyrini görün. Gelir tablosu ve nakit akış kalemleri yıl başından kümülatiftir; grafikleri yıllar içinde aynı çeyreği gösterir.</p>
-    </div>
-    <div class="controls">
-      <label class="field" for="xTab">Tablo<select id="xTab"></select></label>
-      <label class="field" for="xMode">Gösterim<select id="xMode"><option value="amt">Tutar (milyar TL)</option><option value="share">İlk 7 içindeki pay (%)</option><option value="yoy">Bir yıl öncesine göre değişim (%)</option><option value="toa">Banka aktifine oranı (%)</option></select></label>
-      <label class="field" for="xSearch">Kalem ara<input type="search" id="xSearch" placeholder="ör. kredi, mevduat, swap" autocomplete="off"></label>
-      <button class="btn" type="button" id="xExpand">Tümünü aç</button>
-      <button class="btn" type="button" id="xCollapse">Tümünü kapat</button>
-    </div>
-    <div class="scroll" style="max-height:720px;overflow:auto"><table class="xtable" id="xtable"></table></div>
-    <div class="xfoot"><span id="xCount"></span><span id="xModeNote"></span></div>
   </section>
 
   
@@ -1678,6 +1688,8 @@ function renderMakro(){
    <tr><td>USD/TRY</td><td>–</td><td>–</td><td>${f1(bv("TP.PKAUO.S05.C.U"))}</td></tr></tbody>`;
 }
 /*/MKR*/
+
+
 
 
 /*YOZ*/
