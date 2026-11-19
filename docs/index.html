@@ -1686,7 +1686,7 @@ function setTab(v){
   dnLoad(id).then(pk=>{ if(SRCKEY!==v) return; SRC=srcDN(pk,d.ad,d.f); resetOpen(); renderTable(); })
     .catch(()=>{ if(SRCKEY!==v) return; $("nvTable").innerHTML=`<tbody><tr><td class="muted">Dipnot verisi yüklenemedi. Rapor yerel bir dosyadan açıldıysa <code>dipnot</code> klasörünün HTML dosyasıyla aynı yerde olduğundan emin olun.</td></tr></tbody>`; });
 }
-function resetOpen(){ OPEN=new Set(); if(!SRC) return; const depth=SRC.rows.length>120?1:2; SRC.rows.forEach((r,i)=>{ if(r.kids && r.lv<depth) OPEN.add(i); }); }
+function resetOpen(){ OPEN=new Set(); if(!SRC) return; const depth=SRC.rows.length>120?1:2, oranT=SRC.rows.filter(r=>r.r).length*2>SRC.rows.length; SRC.rows.forEach((r,i)=>{ if(r.kids && (oranT || r.lv<depth)) OPEN.add(i); }); }
 const CARET='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>';
 
 /* tablo: sütunlar (karşılaştırmada kurumlar, tek bankada dönemler) */
@@ -1744,8 +1744,8 @@ const nk=s=>s.toLocaleLowerCase("tr-TR").replace(/\s+/g," ").trim();
 function mxInfo(){
   if(SRC.mx) return SRC.mx; const rows=SRC.rows, kids=rows.map(()=>[]); rows.forEach((r,i)=>{ if(r.par>=0) kids[r.par].push(i); });
   const isM=i=>kids[i].length>0 && kids[i].every(j=>rows[j].kids===0);
-  const cols=[], ck={}; rows.forEach((r,i)=>{ if(isM(i)) kids[i].forEach(j=>{ const k=nk(rows[j].n); if(!(k in ck)){ ck[k]=cols.length; cols.push({k,l:rows[j].n}); } }); });
-  return SRC.mx={kids,isM,cols,n:rows.filter((r,i)=>isM(i)).length};
+  const mk=ks=>{ const nm=ks.map(j=>nk(rows[j].n)), cnt={}; nm.forEach(n=>cnt[n]=(cnt[n]||0)+1); let sec=""; return ks.map((j,q)=>{ const n=nm[q]; if(cnt[n]===1 && q+1<ks.length && cnt[nm[q+1]]>1){ sec=rows[j].n; return null; } return (cnt[n]>1&&sec)? sec+" · "+rows[j].n : rows[j].n; }); }; const cols=[], ck={}; rows.forEach((r,i)=>{ if(isM(i)){ const ky=mk(kids[i]); kids[i].forEach((j,q)=>{ if(ky[q]==null) return; const k=nk(ky[q]); if(!(k in ck)){ ck[k]=cols.length; cols.push({k,l:ky[q]}); } }); } });
+  return SRC.mx={kids,isM,cols,mk,n:rows.filter((r,i)=>isM(i)).length};
 }
 const hasMatrix=()=>SRC && mxInfo().n>=2 && mxInfo().cols.length>=2;
 function mxEnt(){ if(VIEW==="tek") return TEK(); const es=ENTS(); return es.find(e=>e.id===NVS[K("mxe")])||es[0]||ent("all"); }
@@ -1758,7 +1758,7 @@ function renderMatrix(){
   rows.forEach((r,i)=>{
     if(r.par>=0 && isM(r.par)) return;                       // sütun hücresi
     const lv=r.lv-rows[0].lv;
-    if(isM(i)){ const cell={}; let rat=false; kids[i].forEach(j=>{ cell[nk(rows[j].n)]=eVal(rows[j],curP,e); if(rows[j].r) rat=true; });
+    if(isM(i)){ const cell={}; let rat=false; const ky=mxInfo().mk(kids[i]); kids[i].forEach((j,q)=>{ if(ky[q]==null) return; cell[nk(ky[q])]=eVal(rows[j],curP,e); if(rows[j].r) rat=true; });
       if(rat) anyRatio=true; const sg=(!rat&&liab(i))?-1:1; const vs=cols.map(c=>c.k in cell&&cell[c.k]!=null?sg*cell[c.k]:null);
       const tot = rat? null : (vs.some(v=>v!=null)? vs.reduce((a,v)=>a+(v||0),0) : null);
       out.push({i,lv,r,vs,tot,rat,m:1}); return; }

@@ -308,6 +308,9 @@ def dipnot_kur(tur, sec, bks):
             for k in N[c]["k"]:
                 kur(k)
         kur(r)
+        # hesaplanan satır kodları her dipnotta 9.500.001'den başlar: öncekinin değerleri yeni dipnotun toplamlarına karışmasın
+        for k_ in [k_ for k_ in V if str(k_).isdigit() and int(k_) >= 9500000]:
+            del V[k_]
         sayac = [9500000]
         def yeni(n, kids=None):
             sayac[0] += 1; c = str(sayac[0]); N[c] = {"c": c, "n": n, "k": kids or [], "h": 1}; return c
@@ -351,16 +354,21 @@ def dipnot_kur(tur, sec, bks):
             t = topla(satirlar, isim); N[kap]["k"].append(t); return t
         rn = _n(ad.get(r, ""))
         if rn.startswith("kur riskine"):
+            # TBB'de "Net Bilanço Pozisyonu" ve "Net Nazım Hesap Pozisyonu" zaten var; döviz cinsi kırılımları hesaplanıp
+            # bilanço içi ve bilanço dışı pozisyon tek satırda netleştirilir: Net Genel Pozisyon
+            net_bi, net_bd = None, None
             for nb in ara(lambda n: n == "net bilanço pozisyonu"):
                 va, yu = bul(nb, lambda n: n == "varlıklar"), bul(nb, lambda n: n == "yükümlülükler")
                 tv = toplam_ekle(va, "Toplam Varlıklar") if va else None
                 ty = toplam_ekle(yu, "Toplam Yükümlülükler") if yu else None
                 if tv and ty:
-                    N[nb]["k"].append(topla([tv, ty], "Net Bilanço Pozisyonu (varlıklar − yükümlülükler)", [1, "fark"]))
+                    net_bi = topla([tv, ty], "Net Bilanço Pozisyonu (varlıklar − yükümlülükler)", [1, "fark"])
             for nn in ara(lambda n: n == "net nazım hesap pozisyonu"):
                 al, bo = bul(nn, lambda n: "türev" in n and "alacak" in n), bul(nn, lambda n: "türev" in n and "borç" in n)
                 if al and bo:
-                    N[nn]["k"].append(topla([al, bo], "Net Nazım Hesap Pozisyonu (alacaklar − borçlar)", [1, "fark"]))
+                    net_bd = topla([al, bo], "Net Nazım Hesap Pozisyonu (alacaklar − borçlar)", [1, "fark"])
+            if net_bi and net_bd:
+                N[r]["k"].append(topla([net_bi, net_bd], "Net Genel Pozisyon (bilanço içi + bilanço dışı)"))
         elif rn == "faiz oranı riski":
             for vy in ara(lambda n: "faiz riski-varlık-yüküm" in n):
                 for isim, kos in (("Toplam Varlıklar", "varlıklar"), ("Toplam Yükümlülükler", "yükümlülükler")):
