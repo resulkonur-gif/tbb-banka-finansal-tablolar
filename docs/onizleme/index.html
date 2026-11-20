@@ -430,6 +430,8 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 .yoz-yontem summary{cursor:pointer;font-weight:600}
 .yoz-yontem li{margin:4px 0}
 </style>
+
+
 <style id="mkrCss">
 .mkr-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
 .mkr-tile{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);display:flex;flex-direction:column;gap:4px;position:relative}
@@ -442,6 +444,14 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 .mkr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--line);flex:none;margin-top:3px}
 .mkr-dot.yesil{background:var(--good)} .mkr-dot.sari{background:var(--warm)} .mkr-dot.kirmizi{background:var(--bad)}
 </style>
+<style id="girisCss">
+#chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
+a.choice{color:inherit;text-decoration:none}
+.land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
+.land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
+.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
+</style>
 </head>
 <body><div style="position:sticky;top:0;z-index:9999;background:#7a4b00;color:#fff;padding:8px 16px;font:500 14px/1.4 Roboto,system-ui,sans-serif;text-align:center">ÖNİZLEME — Eylül 2026 dönemi KAP ön verisidir: 7 bankanın 14 raporu, banka PDF'lerinden okundu; TBB bu dönemi henüz yayımlamadı. Öteki bankalar ve raporda bulunamayan kalemler bu dönem için boştur; sektör ve grup toplamları Eylül 2026 için yalnız bu bankaları kapsar. <a href="../" style="color:#ffd58a">Ana rapor</a></div>
 
@@ -450,9 +460,36 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
   <div class="land fade-in">
     <span class="land-kicker">TBB Veri Sistemi · TFRS 9 · Mart 2018 – Haziran 2026</span>
     <h1>Türk Bankacılık Sistemi<br><span class="land-h1b">Finansal Tabloları Karşılaştırması</span></h1>
-    <p class="land-sub">TBB’de veri yayımlayan 56 bankanın Mart 2018’den Haziran 2026’ya 34 çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Dört sayfada da TBB’deki dipnotların tamamı var: mali bünye (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç), aktifler, pasifler, nazım hesaplar, gelir tablosu ve risk grubu; banka bazlı karşılaştırmada istediğiniz bankaları ve grupları seçin, tek banka görünümünde bir bankayı geçmiş dönemleriyle karşılaştırın.</p>
-    <p class="land-q">Nereden başlayalım?</p>
-    <div class="choices">
+    <!--GIRIS--><p class="land-sub" id="subTop">Türk bankacılık sistemini üç kaynaktan izleyin: TBB'nin yayımladığı banka banka finansal tablolar ve dipnotlar, TCMB'nin makro verileri (rezervler, faiz, enflasyon, dış finansman, kur) ve BDDK'nın sektör ve banka grubu bültenleri. Her kaynak kendi sayfasında; veriler birbirine karıştırılmaz.</p><!--/GIRIS-->
+    <p class="land-sub" id="subFin" hidden>TBB’de veri yayımlayan 56 bankanın Mart 2018’den Haziran 2026’ya 34 çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Dört sayfada da TBB’deki dipnotların tamamı var: mali bünye (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç), aktifler, pasifler, nazım hesaplar, gelir tablosu ve risk grubu; banka bazlı karşılaştırmada istediğiniz bankaları ve grupları seçin, tek banka görünümünde bir bankayı geçmiş dönemleriyle karşılaştırın.</p>
+    <!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->
+    <p class="land-q" id="landQ">Nereden başlayalım?</p>
+    <!--GIRIS-->
+    <div class="choices" id="chTop">
+      <button type="button" class="choice" id="chFinBtn">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h20v3H2zm15-9h3v7h-3zm-5-9L2 6v2h20V6z"/></svg></span>
+        <span class="ch-t">Finansal raporlar</span>
+        <span class="ch-d">TBB Veri Sistemi'ndeki banka finansal tabloları ve dipnotları: solo ve konsolide raporlar, banka bazlı karşılaştırma, tek banka görünümü.</span>
+        <span class="chips" id="chipsFin"></span>
+        <span class="ch-go">Raporları aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </button>
+      <a class="choice t" href="tcmb/">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49 9.5 12.48l4 4L22 6.92 20.59 5.5l-7.09 7.97-4-4L2 16.99z"/></svg></span>
+        <span class="ch-t">TCMB verileri</span>
+        <span class="ch-d">Makro pano: TCMB rezervleri ve swap hariç net rezerv, rezerv yeterliliği, reel faiz, enflasyon beklentisi, cari denge, dolarizasyon, yabancı portföy akımları, reel kur, kredi–mevduat faiz farkı.</span>
+        <span class="chips"><span class="chip">9 gösterge</span><span class="chip">107 ay · 2018'den</span><span class="chip">Son veri Kas 2026</span></span>
+        <span class="ch-go">Makro panoyu aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+      </a>
+      <a class="choice k" href="https://resulkonur-gif.github.io/bddk-veri/" target="_blank" rel="noopener">
+        <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
+        <span class="ch-t">BDDK verileri</span>
+        <span class="ch-d">BDDK aylık ve haftalık bültenleri: sektör ve banka grupları için bilanço, krediler, mevduat, menkul kıymetler, sermaye yeterliliği ve rasyolar; ayrı sayfada açılır.</span>
+        <span class="chips"><span class="chip">Aylık bülten · 2018'den</span><span class="chip">Haftalık bülten · 2014'ten</span><span class="chip">10 banka grubu</span></span>
+        <span class="ch-go">BDDK sayfasını aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg></span>
+      </a>
+    </div>
+<!--/GIRIS-->
+    <div class="choices" id="chFin" hidden>
       <button type="button" class="choice" data-mode="solo">
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h3v7H4zm6.5 0h3v7h-3zM2 19h20v3H2zm15-9h3v7h-3zm-5-9L2 6v2h20V6z"/></svg></span>
         <span class="ch-t">Solo</span>
@@ -511,6 +548,10 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
     <div class="pctl" id="periodSeg"></div>
     <span class="pbar-note" id="periodNote"></span>
   </div>
+
+  
+
+  
 
   
 
@@ -1816,6 +1857,8 @@ function renderYozChart(){
   s.onchange=()=>{ yozState.met=s.value; try{localStorage.setItem("yoz.state",JSON.stringify(yozState))}catch(e){} renderYozChart(); };
 })();
 /*/YOZ*/
+
+
 /*MKR*/
 function renderMakro(){
   const MM=window.MAKRO, sec=document.getElementById("mkrSec"); if(!MM||!sec) return;
@@ -2288,7 +2331,7 @@ return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
     else stop=bootNV(d,m,view);
     try{ localStorage.setItem("bk.mode",m); }catch(e){}
   }
-  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ if(b.dataset.view){ let m="solo"; try{ m=localStorage.getItem("bk.mode")||"solo"; }catch(e){} start(DATA[m]?m:"solo", b.dataset.view); } else start(b.dataset.mode,"rapor"); });
+  document.querySelectorAll(".choice[data-mode],.choice[data-view]").forEach(b=>b.onclick=()=>{ if(b.dataset.view){ let m="solo"; try{ m=localStorage.getItem("bk.mode")||"solo"; }catch(e){} start(DATA[m]?m:"solo", b.dataset.view); } else start(b.dataset.mode,"rapor"); });
   document.querySelectorAll("#modeSeg button").forEach(b=>b.onclick=()=>{ if(b.dataset.mode!==mode) start(b.dataset.mode); });
   document.getElementById("homeBtn").onclick=()=>{ if(stop){ try{stop()}catch(e){} stop=null; } root.replaceChildren(); mode=null; app.hidden=true; land.hidden=false; window.scrollTo(0,0); };
   const bar=document.getElementById("appbar"); addEventListener("scroll",()=>bar.classList.toggle("lift",scrollY>4),{passive:true});
@@ -2297,5 +2340,20 @@ return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
 })();
 </script>
 
+<script id="girisJs">
+(function(){
+  const g=id=>document.getElementById(id), top=g("chTop"), fin=g("chFin"), back=g("landBack"), sT=g("subTop"), sF=g("subFin"), q=g("landQ");
+  if(!top||!fin) return;
+  const kick=document.querySelector("#landing .land-kicker"), kickFin=kick?kick.textContent:"";
+  try{ const d=DATA.solo, k=DATA.kons;
+    g("chipsFin").innerHTML=[`${d.A.names.length} banka`,`${d.periods.length} çeyrek`,"Solo ve konsolide","Dipnotlar"].map(x=>`<span class="chip">${x}</span>`).join("");
+  }catch(e){}
+  function adim(f){ if(kick) kick.textContent=f?kickFin:"TBB · TCMB · BDDK · Türk bankacılık sistemi verileri"; top.hidden=f; fin.hidden=!f; back.hidden=!f; sT.hidden=f; sF.hidden=!f;
+    if(q) q.textContent=f?"Hangi görünümle başlayalım?":"Hangi veriye bakalım?";
+    try{ history.replaceState(null,"",f?"#finansal":location.pathname+location.search); }catch(e){} window.scrollTo(0,0); }
+  g("chFinBtn").onclick=()=>adim(true); back.onclick=()=>adim(false);
+  adim(location.hash==="#finansal");
+})();
+</script>
 </body>
 </html>
