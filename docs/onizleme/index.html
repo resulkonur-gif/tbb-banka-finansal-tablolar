@@ -432,6 +432,7 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 </style>
 
 
+
 <style id="mkrCss">
 .mkr-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
 .mkr-tile{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);display:flex;flex-direction:column;gap:4px;position:relative}
@@ -476,9 +477,9 @@ a.choice{color:inherit;text-decoration:none}
       <a class="choice t" href="tcmb/">
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49 9.5 12.48l4 4L22 6.92 20.59 5.5l-7.09 7.97-4-4L2 16.99z"/></svg></span>
         <span class="ch-t">TCMB verileri</span>
-        <span class="ch-d">Makro pano: TCMB rezervleri ve swap hariç net rezerv, rezerv yeterliliği, reel faiz, enflasyon beklentisi, cari denge, dolarizasyon, yabancı portföy akımları, reel kur, kredi–mevduat faiz farkı.</span>
-        <span class="chips"><span class="chip">9 gösterge</span><span class="chip">107 ay · 2018'den</span><span class="chip">Son veri Kas 2026</span></span>
-        <span class="ch-go">Makro panoyu aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
+        <span class="ch-d">Her gün kurlar ve sepet kur, TCMB fonlama maliyeti, TLREF, BIST 100 ve Mali endeks, TCMB net dış varlıkları; her hafta brüt rezervler ve yabancı portföy akımları; her ay makro pano ve aylık tablolar.</span>
+        <span class="chips"><span class="chip">Günlük · haftalık · aylık</span><span class="chip">9 günlük gösterge</span><span class="chip">Son gün 20 Kas 2026</span></span>
+        <span class="ch-go">TCMB verilerini aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
       </a>
       <a class="choice k" href="https://resulkonur-gif.github.io/bddk-veri/" target="_blank" rel="noopener">
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
@@ -548,6 +549,8 @@ a.choice{color:inherit;text-decoration:none}
     <div class="pctl" id="periodSeg"></div>
     <span class="pbar-note" id="periodNote"></span>
   </div>
+
+  
 
   
 
@@ -1857,6 +1860,7 @@ function renderYozChart(){
   s.onchange=()=>{ yozState.met=s.value; try{localStorage.setItem("yoz.state",JSON.stringify(yozState))}catch(e){} renderYozChart(); };
 })();
 /*/YOZ*/
+
 
 
 /*MKR*/
