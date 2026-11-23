@@ -63,6 +63,11 @@ def main():
             print(f"TBB {onz} dönemini yayımladı; önizleme kaldırıldı.")
         else:
             print(f"Önizleme üretilemedi; mevcut önizleme ({onz}) korunuyor.")
+    # giriş ekranı: önizleme duyurusu docs/onizleme'nin son hâline göre (varsa göster, yoksa kaldır)
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import giris_sayfasi
+    giris_sayfasi.uygula(docs)
 
 
 if __name__ == "__main__":

@@ -442,6 +442,11 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 #chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
 a.choice{color:inherit;text-decoration:none}
+.land-onz{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;border:1px solid var(--m-primary);border-radius:20px;padding:18px 22px;margin:4px 0 22px;background:color-mix(in srgb,var(--m-primary) 7%,transparent)}
+.land-onz:hover{background:color-mix(in srgb,var(--m-primary) 13%,transparent)}
+.lo-k{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--m-primary)}
+.lo-t{font-size:19px;font-weight:500}.lo-d{font-size:14px;color:var(--m-on-surface-variant)}
+.lo-go{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--m-primary);font-size:14.5px}.lo-go svg{width:18px;height:18px;fill:currentColor}
 .land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
 .land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
 #footTop[hidden],#footFin[hidden],.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
@@ -456,7 +461,7 @@ a.choice{color:inherit;text-decoration:none}
     <h1>Türk Bankacılık Sistemi<br><span class="land-h1b">Finansal Tabloları Karşılaştırması</span></h1>
     <!--GIRIS--><p class="land-sub" id="subTop">Türk bankacılık sistemini üç kaynaktan izleyin: TBB'nin yayımladığı banka banka finansal tablolar ve dipnotlar, TCMB'nin makro verileri (rezervler, faiz, enflasyon, dış finansman, kur) ve BDDK'nın sektör ve banka grubu bültenleri. Her kaynak kendi sayfasında; veriler birbirine karıştırılmaz.</p><!--/GIRIS-->
     <p class="land-sub" id="subFin" hidden>TBB’de veri yayımlayan 56 bankanın Mart 2018’den Haziran 2026’ya 34 çeyreklik finansal tabloları tek sayfada: bilanço, gelir tablosu, nakit akış tablosu, mevduatın vade yapısı, yasal özkaynak ve sermaye yeterliliği, likidite karşılama oranı (LKO) ve net istikrarlı fonlama oranı (NİFO). Toplam aktif, kredi/mevduat oranı, özkaynak kârlılığı ve faaliyet nakit kârı gibi göstergeleri bankalar, banka grupları ve sektör düzeyinde karşılaştırın; iki bankayı yan yana koyun, 300’ü aşkın kalemin tamamını gezin. Dört sayfada da TBB’deki dipnotların tamamı var: mali bünye (risk profilleri, kur ve faiz riski, kalan vadeler, kaldıraç), aktifler, pasifler, nazım hesaplar, gelir tablosu ve risk grubu; banka bazlı karşılaştırmada istediğiniz bankaları ve grupları seçin, tek banka görünümünde bir bankayı geçmiş dönemleriyle karşılaştırın.</p>
-    <!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->
+    <!--GIRIS--><a class="land-onz" href="onizleme/"><span class="lo-k">Yeni dönem · ön veri</span><span class="lo-t">Eylül 2026 dönemi TBB'de henüz yok; KAP raporlarından önizleme hazır</span><span class="lo-d">7 bankanın 14 raporu, banka PDF'lerinden okundu. Bütün bölümler (çeyreğe ilişkin notlar, aktif kalitesi, karşılık ve gider kalemleri, dipnotlar) Eylül 2026 dahil.</span><span class="lo-go">Eylül 2026 önizlemesini aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span></a><!--/GIRIS--><!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->
     <p class="land-q" id="landQ">Nereden başlayalım?</p>
     <!--GIRIS-->
     <div class="choices" id="chTop">

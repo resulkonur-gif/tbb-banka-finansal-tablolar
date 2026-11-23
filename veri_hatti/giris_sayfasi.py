@@ -65,6 +65,11 @@ CSS = """<style id="girisCss">
 #chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
 a.choice{color:inherit;text-decoration:none}
+.land-onz{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;border:1px solid var(--m-primary);border-radius:20px;padding:18px 22px;margin:4px 0 22px;background:color-mix(in srgb,var(--m-primary) 7%,transparent)}
+.land-onz:hover{background:color-mix(in srgb,var(--m-primary) 13%,transparent)}
+.lo-k{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--m-primary)}
+.lo-t{font-size:19px;font-weight:500}.lo-d{font-size:14px;color:var(--m-on-surface-variant)}
+.lo-go{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--m-primary);font-size:14.5px}.lo-go svg{width:18px;height:18px;fill:currentColor}
 .land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
 .land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
 #footTop[hidden],#footFin[hidden],.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
@@ -122,6 +127,28 @@ def bddk_ozeti(site: Path):
     return ("bddk/", "", OK, "".join(f'<span class="chip">{c}</span>' for c in cips))
 
 
+AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+
+
+def onizleme_duyurusu(site: Path) -> str:
+    """site/onizleme varsa (TBB'nin yayımlamadığı dönem, KAP ön verisi) giriş ekranında duyuru ve bağlantı."""
+    o = Path(site) / "onizleme" / "index.html"
+    if not o.exists():
+        return ""
+    try:
+        h = o.read_text(encoding="utf-8")
+        p = max(json.loads("[" + re.search(r'"periods":\[([^\]]*)\]', h).group(1) + "]"))
+        m = re.search(r"ÖNİZLEME — [^:]*:\s*([^;<]+)", h)
+        ayrinti = m.group(1).strip() if m else "bankaların KAP raporlarından okundu"
+    except Exception:                                                   # noqa: BLE001
+        return ""
+    ad = f"{AYLAR[int(p[5:]) - 1]} {p[:4]}"
+    return (f'<!--GIRIS--><a class="land-onz" href="onizleme/"><span class="lo-k">Yeni dönem · ön veri</span>'
+            f'<span class="lo-t">{ad} dönemi TBB\'de henüz yok; KAP raporlarından önizleme hazır</span>'
+            f'<span class="lo-d">{ayrinti}. Bütün bölümler (çeyreğe ilişkin notlar, aktif kalitesi, karşılık ve gider '
+            f'kalemleri, dipnotlar) {ad} dahil.</span><span class="lo-go">{ad} önizlemesini aç {OK}</span></a><!--/GIRIS-->')
+
+
 def uygula(site: Path):
     yol = Path(site) / "index.html"
     h = yol.read_text(encoding="utf-8")
@@ -143,7 +170,7 @@ def uygula(site: Path):
     # sıra: başlık · subTop (genel) / subFin (TBB metni) · soru · geri düğmesi · üç kaynak kartı / dört rapor kartı
     land = land.replace('<p class="land-sub">', f'<!--GIRIS--><p class="land-sub" id="subTop">{UST_METIN}</p><!--/GIRIS-->'
                         '\n    <p class="land-sub" id="subFin" hidden>', 1)
-    land = land.replace('<p class="land-q">', '<!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->\n    <p class="land-q" id="landQ">', 1)
+    land = land.replace('<p class="land-q">', onizleme_duyurusu(Path(site)) + '<!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->\n    <p class="land-q" id="landQ">', 1)
     land = land.replace('<div class="choices">', kartlar(makro_ozeti(Path(site)), bddk_ozeti(Path(site))) + '\n    <div class="choices" id="chFin" hidden>', 1)
     eski_not = "Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir."
     if eski_not in land:
