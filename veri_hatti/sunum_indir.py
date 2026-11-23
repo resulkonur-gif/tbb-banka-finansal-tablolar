@@ -214,7 +214,14 @@ def guncelle(kok: Path, son_donem: str, donemler: list[str] | None = None, log=p
     kaynak = kaynaklari_oku(klasor)
     g = Getirici(log)
     sonuc: dict = {}
-    for donem in donemler or ceyrekler(PDF_BASLANGIC, son_donem):
+    kayit = klasor / "bulunamadi.json"                  # art arda bulunamayanlar: eski dönemlerde tekrar denenmez
+    try:
+        bulunamadi = json.loads(kayit.read_text(encoding="utf-8"))
+    except Exception:                                   # noqa: BLE001
+        bulunamadi = {}
+    tum = donemler or ceyrekler(PDF_BASLANGIC, son_donem)
+    taze = set(tum[-2:])                                # son iki dönem her çalıştırmada denenir
+    for donem in tum:
         yil, ay = int(donem[:4]), int(donem[5:])
         for banka, kay in kaynak.items():
             if banka.startswith("_"):
@@ -224,13 +231,22 @@ def guncelle(kok: Path, son_donem: str, donemler: list[str] | None = None, log=p
             if var:
                 sonuc.setdefault(donem, {})[banka] = var[0].name
                 continue
+            anahtar = f"{donem}/{banka}"
+            if donem not in taze and bulunamadi.get(anahtar, 0) >= 2:
+                sonuc.setdefault(donem, {})[banka] = None
+                continue
             try:
                 p = banka_indir(g, banka, kay, yil, ay, hedef)
             except Exception as e:                          # noqa: BLE001
                 log(f"  ! sunum {donem} {banka}: {e}")
                 p = None
             sonuc.setdefault(donem, {})[banka] = p.name if p else None
+            if p:
+                bulunamadi.pop(anahtar, None)
+            else:
+                bulunamadi[anahtar] = bulunamadi.get(anahtar, 0) + 1
             log(f"  sunum {donem} {banka}: {p.name if p else 'bulunamadı (yayımlanmamış olabilir ya da adres değişmiş)'}")
+    kayit.write_text(json.dumps(bulunamadi, ensure_ascii=False, indent=1), encoding="utf-8")
     return sonuc
 
 

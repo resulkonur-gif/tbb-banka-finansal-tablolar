@@ -80,17 +80,23 @@ jobs:
 
       - name: Siteyi yayınla
         run: |
-          python veri_hatti/yayinla_site.py --kok "$KOK" --docs docs
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A docs/index.html docs/dipnot docs/tcmb docs/bddk docs/onizleme
-          if git diff --cached --quiet; then
-            echo "Site değişmedi." >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          git commit -m "Tam site güncellendi (veri hattı)"
-          for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 10; done
-          echo "Site yayınlandı." >> "$GITHUB_STEP_SUMMARY"
+          # docs/ her denemede deponun en son hâlinin üstüne yeniden yazılır (çakışma olmaz)
+          for i in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python veri_hatti/yayinla_site.py --kok "$KOK" --docs docs
+            git add -A docs
+            if git diff --cached --quiet; then
+              echo "Site değişmedi." >> "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+            git commit -q -m "Tam site güncellendi (veri hattı)"
+            if git push -q origin HEAD:main; then
+              echo "Site yayınlandı." >> "$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+            sleep 15
+          done
+          echo "Site yayınlanamadı (3 deneme)." >> "$GITHUB_STEP_SUMMARY"; exit 1
 
       - name: Çıktıları sakla (Excel, özet, günlük)
         if: always()
