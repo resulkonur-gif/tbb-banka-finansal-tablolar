@@ -1,0 +1,107 @@
+name: Veri hattı (tam site)
+
+# veri_hatti/veri_hatti.py'yi GitHub sunucusunda çalıştırır: TBB, KAP raporları, PDF ek veri, yatırımcı sunumları,
+# TCMB (EVDS) ve BDDK; tam siteyi docs/ altına (ve varsa önizlemeyi docs/onizleme altına) yazar.
+# Ana klasör önbellekte (actions/cache) saklanır: ilk çalıştırma her şeyi indirir, sonrakiler yalnız yeniyi.
+# Ne zaman çalışır:
+#   • Elle: Actions → "Veri hattı (tam site)" → Run workflow
+#   • Her pazartesi 06:17 (Türkiye 09:17)
+#   • "TBB verisini güncelle" iş akışı bittiğinde (o, docs/index.html'i yalnız TBB verisiyle yazar; bu yeniden tam siteyi kurar)
+#   • Bu dosya ya da veri_hatti/ değişip main'e gönderildiğinde
+# EVDS anahtarı: Settings → Secrets and variables → Actions → New repository secret → EVDS_API_KEY (yoksa TCMB verisi
+# depodaki son hâliyle kalır).
+on:
+  workflow_dispatch:
+    inputs:
+      bastan:
+        description: "TBB ve EVDS'yi baştan çek (normalde gerekmez)"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_run:
+    workflows: ["TBB verisini güncelle"]
+    types: [completed]
+  push:
+    branches: [main]
+    paths: [".github/workflows/veri_hatti.yml", "veri_hatti/**.py"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: veri-hatti
+  cancel-in-progress: false
+
+jobs:
+  calistir:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 330
+    env:
+      KOK: /home/runner/bankaveri
+      EVDS_API_KEY: ${{ secrets.EVDS_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Paketleri kur
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install playwright pymupdf openpyxl requests
+          python -m playwright install chromium
+
+      - name: Ana klasörü önbellekten al
+        uses: actions/cache/restore@v4
+        with:
+          path: /home/runner/bankaveri
+          key: veri-hatti-${{ github.run_id }}
+          restore-keys: veri-hatti-
+
+      - name: Veri hattını çalıştır
+        run: |
+          mkdir -p "$KOK"
+          EK=""
+          if [ "${{ inputs.bastan }}" = "true" ]; then EK="--bastan"; fi
+          python veri_hatti/veri_hatti.py --kok "$KOK" --depo "$GITHUB_WORKSPACE" $EK
+          cat "$KOK/OZET.md" >> "$GITHUB_STEP_SUMMARY" || true
+
+      - name: Ana klasörü önbelleğe yaz
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /home/runner/bankaveri
+          key: veri-hatti-${{ github.run_id }}
+
+      - name: Siteyi yayınla
+        run: |
+          python veri_hatti/yayinla_site.py --kok "$KOK" --docs docs
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docs/index.html docs/dipnot docs/tcmb docs/bddk docs/onizleme
+          if git diff --cached --quiet; then
+            echo "Site değişmedi." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Tam site güncellendi (veri hattı)"
+          for i in 1 2 3; do git pull --rebase origin main && git push && break; sleep 10; done
+          echo "Site yayınlandı." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Çıktıları sakla (Excel, özet, günlük)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: veri-hatti-ciktilari
+          path: |
+            /home/runner/bankaveri/OZET.md
+            /home/runner/bankaveri/gunluk/
+            /home/runner/bankaveri/4_pdf_ek_veri/ek_veri.xlsx
+            /home/runner/bankaveri/5_makro/tcmb/TCMB_Arsiv.xlsx
+            /home/runner/bankaveri/6_karsilastirma/
+            /home/runner/bankaveri/8_degerlendirme/
+          if-no-files-found: ignore
