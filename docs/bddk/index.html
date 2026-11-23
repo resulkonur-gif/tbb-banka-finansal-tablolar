@@ -396,52 +396,6 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 #cashTable tr.tot td{font-weight:700;background:color-mix(in srgb, var(--surface-2) 55%, transparent)}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
-<style id="mkrCss">
-.mkr-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:14px}
-.mkr-tile{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);display:flex;flex-direction:column;gap:4px;position:relative}
-.mkr-tile::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:4px;border-radius:0 3px 3px 0;background:var(--line)}
-.mkr-tile.yesil::before{background:var(--good)} .mkr-tile.sari::before{background:var(--warm)} .mkr-tile.kirmizi::before{background:var(--bad)}
-.mkr-tile .l{font-size:12.5px;color:var(--ink-2);font-weight:600;display:flex;justify-content:space-between;gap:8px}
-.mkr-tile .v{font-family:var(--display);font-size:24px;font-weight:800;color:var(--ink)}
-.mkr-tile .c{font-size:12px;color:var(--ink-3)}
-.mkr-tile .n{font-size:12.5px;color:var(--ink-2);line-height:1.45}
-.mkr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--line);flex:none;margin-top:3px}
-.mkr-dot.yesil{background:var(--good)} .mkr-dot.sari{background:var(--warm)} .mkr-dot.kirmizi{background:var(--bad)}
-</style>
-<style id="girisCss">
-#chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
-a.choice{color:inherit;text-decoration:none}
-.land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
-.land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
-.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
-</style>
-<style id="yozCss">
-.yoz-src{margin:-8px 0 16px;padding:10px 14px;border-radius:8px;background:var(--warm-soft);color:var(--ink);font-size:13.5px}
-.yoz-karne thead th button{all:unset;cursor:pointer}
-.yoz-karne thead th{vertical-align:bottom;white-space:normal;min-width:64px;line-height:1.25}
-.yoz-karne td.g{background:color-mix(in srgb,var(--good) 16%,transparent)}
-.yoz-karne td.b{background:color-mix(in srgb,var(--bad) 14%,transparent)}
-.yoz-karne tr.tot td{font-weight:700;border-top:2px solid var(--line)}
-.yoz-karne td:first-child{font-weight:600}
-.yoz-karne .sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:0}
-.yoz-notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:16px}
-.yoz-note{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--surface);font-size:13.5px;line-height:1.5}
-.yoz-note h4{margin:0 0 6px;font-size:15px;display:flex;align-items:center;gap:8px}
-.yoz-note .tag{font-size:11.5px;font-weight:700;border-radius:6px;padding:1px 7px}
-.yoz-note .tag.g{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
-.yoz-note .tag.b{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
-.yoz-note p{margin:4px 0}
-.yoz-tb td,.yoz-tb th{font-variant-numeric:tabular-nums}
-.yoz-tb th{text-align:right}.yoz-tb th:first-child{text-align:left}
-.yoz-tb tr.k td{font-weight:700}
-.yoz-tb tr.alt td:first-child{padding-left:22px;color:var(--ink-2)}
-.yoz-tb tr.bas td{background:var(--surface-2);font-weight:800;color:var(--bad)}
-.yoz-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
-.yoz-yontem{margin-top:20px;font-size:13px;color:var(--ink-2)}
-.yoz-yontem summary{cursor:pointer;font-weight:600}
-.yoz-yontem li{margin:4px 0}
-</style>
 
 <style>a.choice{color:inherit;text-decoration:none} .bd-top{margin:-24px 0 8px}
 .bd-top a{color:var(--m-primary);font-weight:500;font-size:14px;text-decoration:none} .bd-top a:hover{text-decoration:underline}</style>
@@ -455,7 +409,7 @@ a.choice{color:inherit;text-decoration:none}
     <p class="land-q">Hangi bülteni açalım?</p>
     <div class="choices">
       <a class="choice" href="aylik.html"><span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11zM7 11h5v5H7z"/></svg></span><span class="ch-t">Aylık bülten</span><span class="ch-d">17 tablonun tamamı: bilanço, kâr-zarar, krediler, mevduat, menkul kıymetler, likidite, sermaye yeterliliği ve rasyolar. Sektör ve 10 banka grubu, her ay; dönem karşılaştırması ve uzun dönem grafikleri.</span><span class="chips"><span class="chip">Aylık · Ocak 2018 – Eylül 2026</span><span class="chip">17 tablo</span><span class="chip">10 banka grubu</span></span><span class="ch-go">Aylık bülteni aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span></a>
-      <a class="choice k" href="haftalik.html"><span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49 9.5 12.48l4 4L22 6.92 20.59 5.5l-7.09 7.97-4-4L2 16.99z"/></svg></span><span class="ch-t">Haftalık bülten</span><span class="ch-d">9 tablo, her cuma: krediler, takipteki alacaklar, menkul değerler, mevduat ve döviz pozisyonu. TL ve yabancı para ayrımıyla haftalık, aylık ve yıllık değişimler.</span><span class="chips"><span class="chip">Haftalık · 3 Ocak 2014 – 6 Kasım 2026</span><span class="chip">9 tablo</span><span class="chip">TL ve YP ayrımı</span></span><span class="ch-go">Haftalık bülteni aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span></a>
+      <a class="choice k" href="haftalik.html"><span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18.49 9.5 12.48l4 4L22 6.92 20.59 5.5l-7.09 7.97-4-4L2 16.99z"/></svg></span><span class="ch-t">Haftalık bülten</span><span class="ch-d">9 tablo, her cuma: krediler, takipteki alacaklar, menkul değerler, mevduat ve döviz pozisyonu. TL ve yabancı para ayrımıyla haftalık, aylık ve yıllık değişimler.</span><span class="chips"><span class="chip">Haftalık · 3 Ocak 2014 – 13 Kasım 2026</span><span class="chip">9 tablo</span><span class="chip">TL ve YP ayrımı</span></span><span class="ch-go">Haftalık bülteni aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span></a>
     </div>
     <p class="land-foot">Kaynak: BDDK Aylık ve Haftalık Bülten. Tutarlar BDDK'nın yayımladığı hâliyle, nominaldir.</p>
   </div>
