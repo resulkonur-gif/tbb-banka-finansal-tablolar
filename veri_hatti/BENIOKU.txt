@@ -1,0 +1,93 @@
+BANKA VERİ HATTI
+================
+
+Tek komut, tek ana klasör. Bütün veri Python ile çekilir ve aşağıdaki düzende tutulur:
+
+  ANA_KLASOR\
+    durum.json                         hangi dönem hangi kaynaktan, ne zaman
+    1_tbb\                             TBB Veri Sistemi (tbb_veri.csv, site\)
+    2_kap_raporlari\2026-09\Akbank\    KAP finansal rapor PDF'leri  (2025-12'den itibaren)
+    3_yatirimci_sunumlari\2026-09\...  sonuç sunumları (PDF + .txt metni), kaynaklar.json
+    4_pdf_ek_veri\                     ek_veri.xlsx  (okunan + elle düzeltme), ek_veri.json, taksonomi.json
+    5_makro\                           makro_veri.json (EVDS aylık) + tcmb\ (günlük/haftalık arşiv, TCMB_Arsiv.xlsx)
+    6_karsilastirma\                   karsilastirma_YYYYAA.xlsx (KAP <-> TBB)
+    7_site\onizleme\                   TBB'nin henüz yayımlamadığı dönem için önizleme
+    8_degerlendirme\                   girdi_YYYY-AA.md (değerlendirme için toplu girdi)
+    gunluk\                            her çalıştırmanın günlüğü
+
+ÇALIŞTIRMA (TEST İÇİN EN KOLAYI)
+  1) calistir.bat'a çift tıklayın. Hiçbir şey düzenlemeden çalışır:
+       ana klasör  Belgeler\BankaVeri, depo Belgeler\tbb-banka-finansal-tablolar (yoksa git ile indirilir).
+     İsterseniz dosyanın başındaki KOK / DEPO / EVDS_API_KEY satırlarını doldurun
+     (EVDS anahtarı yoksa TCMB verisi paketteki son hâliyle kalır).
+  2) Bitince OZET.md yazılır ve site tarayıcıda açılır; site oluşmazsa nedeni gunluk\ klasöründe.
+  Elle:  python veri_hatti.py --kok "D:\BankaVeri" --depo "C:\yol\tbb-banka-finansal-tablolar" [--evds-anahtar ANAHTAR] [--yayinla]
+
+  İlk çalıştırma (ana klasör boş): her şey tek tek indirilir — TBB 2018-03'ten bütün dönemler, KAP raporları
+    2025-12'den, yatırımcı sunumları, EVDS aylık seriler 2016'dan ve günlük/haftalık seriler 2018'den;
+    karşılaştırma Excel'leri, ek veri Excel'i, TCMB arşiv Excel'i, siteler. Birkaç saat sürebilir.
+  Sonraki çalıştırmalar yalnız yeniyi indirir:
+    TBB      : arşivdeki son dönemden sonrası sorulur; yeni dönem yoksa hiçbir şey çekilmez, site yeniden üretilmez
+    KAP      : klasörde olan dönem/banka atlanır
+    Ek veri  : yalnız yeni gelen PDF'ler okunur (elle düzeltmeler korunur)
+    Karşılaştırma: yalnız yeni dönem ya da TBB'nin yeni yayımladığı dönem için yeniden yapılır
+    Sunumlar : klasörde olan dönem/banka atlanır
+    EVDS     : aylık seride son 6 ay (yıllık % ve toplam serilerde 24 ay), günlük/haftalıkta son 30 gün yenilenir
+    Siteler  : girdilerin parmak izi değişmediyse yeniden üretilmez
+  Her çalıştırmanın sonunda ana klasörde OZET.md: bu çalıştırmada ne geldi, KAP dönem × banka tablosu, çıktıların yeri.
+
+  Çıktılar (HTML ve Excel):
+    7_site\site\index.html        TBB dönemleriyle tam site (makro pano, çeyrek notları, TCMB ve BDDK sayfaları)
+    7_site\onizleme\index.html    TBB'nin henüz yayımlamadığı dönem varsa KAP verisiyle önizleme
+    6_karsilastirma\*.xlsx         KAP ↔ TBB karşılaştırmaları
+    4_pdf_ek_veri\ek_veri.xlsx     serbest karşılık, TÜFE varsayımı ve duyarlılığı (elle düzeltme sütunlu)
+    5_makro\tcmb\TCMB_Arsiv.xlsx  günlük, haftalık ve aylık TCMB serileri
+    1_tbb\tbb_veri.csv, 1_tbb\site\index.html   ham TBB verisi ve TBB sitesi
+
+  Seçenekler: --son 2026-09  --tbb-atla  --kap-atla  --sunum-atla  --ek-veri-yeniden  --bastan (TBB ve EVDS'yi baştan çek)
+  --yayinla: TBB sitesini (docs/) ve varsa önizlemeyi GitHub'a gönderir; ana siteye yalnız TBB verisi gider.
+
+HER PAZARTESİ OTOMATİK (yalnız sizin bilgisayarınızda; Claude'a bağlı değildir)
+  Windows     : haftalik_gorev_kur.bat "C:\yol\tbb-banka-finansal-tablolar" "D:\BankaVeri" [EVDS_ANAHTARI]
+  macOS/Linux : bash haftalik_gorev_kur.sh /yol/tbb-banka-finansal-tablolar /yol/BankaVeri [EVDS_ANAHTARI]
+  Eski görev (otomatik_guncelle.py) Windows'ta ayrı adla kayıtlıysa silin:
+      schtasks /Delete /TN "TBB-KAP haftalik guncelleme" /F
+
+PDF EK VERİ VE ELLE DÜZELTME
+  4_pdf_ek_veri\ek_veri.xlsx: her kalem için "Okunan değer" (program) ve yanında sarı "Güncel değer (elle)"
+  ile "Açıklama (elle)". İkisi de saklanır; geçerli olan elle girilendir. Ayrıntı: DUZELTME_PROSEDURU.md
+  Kalemler (taksonomi.json): serbest karşılık bakiyesi / önceki yıl sonu / hareket / metindeki iptal,
+  TÜFE varsayımı (%), TÜFE ±1 puan duyarlılığı (mn TL).
+
+YATIRIMCI SUNUMLARI
+  3_yatirimci_sunumlari\kaynaklar.json: banka başına dosya adı kalıbı ve taranacak IR sayfaları.
+  Ziraat, İş Bankası ve Garanti için dosya kalıbı gerçek dosyalardan alındı; Yapı Kredi, Halkbank,
+  Akbank ve VakıfBank sayfa taramasıyla bulunur (adresler tahmindir — ilk çalıştırma günlüğüne bakın;
+  "bulunamadı" çıkan bankanın sayfa adresini kaynaklar.json'da düzeltmeniz yeterli).
+  Her PDF'in yanına metni .txt olarak yazılır; 8_degerlendirme\girdi_YYYY-AA.md hepsini listeler.
+
+GEREKENLER
+  Python 3.10+, git (yayın için), playwright + chromium, pymupdf, openpyxl, requests (kurulum betikleri yükler).
+  EVDS anahtarı: evds2.tcmb.gov.tr -> Profil -> API Anahtarı (yoksa makro_veri.json'daki son veri kullanılır).
+
+DOSYALAR
+  veri_hatti.py        ana akış (bunu çalıştırın); calistir.bat / calistir.sh tek tık
+  tbb_artimli.py       TBB verisini yalnız yeni dönemlerle günceller
+  bddk_sayfa.py        BDDK sayfalarını siteye taşır
+  tcmb_veri.py, tcmb_sayfa.py   TCMB günlük/haftalık arşivi ve sayfası
+  pdf_ek_veri.py       ek veri deposu ve taksonomi
+  sunum_indir.py       yatırımcı sunumları
+  otomatik_guncelle.py TBB adımı ve yayın yardımcıları (veri_hatti.py kullanır; tek başına da çalışır)
+  banka_karsilastir.py KAP indirme, PDF okuma, KAP <-> TBB karşılaştırma
+  eylul_ekle.py, yatirimci_ozeti.py, makro_pano.py   önizleme sitesi
+
+TCMB VERİLERİ (tcmb_veri.py + tcmb_sayfa.py)
+  Günlük  : USD, EUR, sepet kur (0,5 USD + 0,5 EUR), EUR/USD, TCMB ağırlıklı ortalama fonlama maliyeti, TLREF,
+            BIST 100, BIST Mali, TCMB net dış varlıkları (analitik bilanço)
+  Haftalık: TCMB brüt rezervleri, yabancıların hisse ve DİBS net alımları
+  Aylık   : makro pano serileri (makro_pano.py), ay sonu kurlar
+  Arşiv   : 5_makro\tcmb\gunluk.csv, haftalik.csv, seriler.json, TCMB_Arsiv.xlsx
+  İlk çalıştırma (EVDS anahtarıyla) 2018'den bütün geçmişi çeker; sonrakiler yalnız son 30 günü yeniler.
+  Pakette gelen tcmb_arsiv\ yalnız son 12 ayı içeren tohumdur; anahtarla ilk çalıştırmada 2018'e tamamlanır.
+  Elle: python tcmb_veri.py --arsiv D:\BankaVeri\5_makro\tcmb --anahtar ANAHTAR
+        python tcmb_sayfa.py --site docs\onizleme --arsiv D:\BankaVeri\5_makro\tcmb

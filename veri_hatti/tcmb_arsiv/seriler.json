@@ -1,0 +1,85 @@
+{
+ "gunluk": [
+  {
+   "kod": "TP.DK.USD.A.YTL",
+   "ad": "ABD doları (döviz alış)",
+   "birim": "TL",
+   "grup": "Kurlar"
+  },
+  {
+   "kod": "TP.DK.EUR.A.YTL",
+   "ad": "Euro (döviz alış)",
+   "birim": "TL",
+   "grup": "Kurlar"
+  },
+  {
+   "kod": "TP.APIFON4",
+   "ad": "TCMB ağırlıklı ortalama fonlama maliyeti",
+   "birim": "%",
+   "grup": "Faizler"
+  },
+  {
+   "kod": "TP.BISTTLREF.ORAN",
+   "ad": "BIST TLREF (gecelik referans faiz)",
+   "birim": "%",
+   "grup": "Faizler"
+  },
+  {
+   "kod": "TP.MK.F.BILESIK",
+   "ad": "BIST 100 endeksi (kapanış)",
+   "birim": "endeks",
+   "grup": "Borsa"
+  },
+  {
+   "kod": "TP.MK.F.MALI",
+   "ad": "BIST Mali endeks (kapanış)",
+   "birim": "endeks",
+   "grup": "Borsa"
+  },
+  {
+   "kod": "TP.AB.A02",
+   "ad": "Analitik bilanço: dış varlıklar",
+   "birim": "bin TL",
+   "grup": "Rezervler"
+  },
+  {
+   "kod": "TP.AB.A10",
+   "ad": "Analitik bilanço: toplam döviz yükümlülükleri",
+   "birim": "bin TL",
+   "grup": "Rezervler"
+  }
+ ],
+ "haftalik": [
+  {
+   "kod": "TP.AB.TOPLAM",
+   "ad": "TCMB brüt rezervleri (altın + döviz)",
+   "birim": "milyon $",
+   "grup": "Rezervler"
+  },
+  {
+   "kod": "TP.AB.C1",
+   "ad": "TCMB altın rezervi",
+   "birim": "milyon $",
+   "grup": "Rezervler"
+  },
+  {
+   "kod": "TP.AB.C2",
+   "ad": "TCMB döviz rezervi",
+   "birim": "milyon $",
+   "grup": "Rezervler"
+  },
+  {
+   "kod": "TP.MKNETHAR.M7",
+   "ad": "Yurt dışı yerleşikler: hisse senedi net alımı",
+   "birim": "milyon $",
+   "grup": "Portföy akımları"
+  },
+  {
+   "kod": "TP.MKNETHAR.M8",
+   "ad": "Yurt dışı yerleşikler: DİBS net alımı",
+   "birim": "milyon $",
+   "grup": "Portföy akımları"
+  }
+ ],
+ "kaynak": "TCMB EVDS (evds3.tcmb.gov.tr)"
+}
