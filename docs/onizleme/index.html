@@ -412,14 +412,6 @@ details.ozdet>summary .sub{font-size:13px;font-weight:400;color:var(--ink-3)}
 .mkr-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--line);flex:none;margin-top:3px}
 .mkr-dot.yesil{background:var(--good)} .mkr-dot.sari{background:var(--warm)} .mkr-dot.kirmizi{background:var(--bad)}
 </style>
-<style id="girisCss">
-#chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
-a.choice{color:inherit;text-decoration:none}
-.land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
-.land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
-.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
-</style>
 <style id="yozCss">
 .yoz-src{margin:-8px 0 16px;padding:10px 14px;border-radius:8px;background:var(--warm-soft);color:var(--ink);font-size:13.5px}
 .yoz-karne thead th button{all:unset;cursor:pointer}
@@ -445,6 +437,14 @@ a.choice{color:inherit;text-decoration:none}
 .yoz-yontem{margin-top:20px;font-size:13px;color:var(--ink-2)}
 .yoz-yontem summary{cursor:pointer;font-weight:600}
 .yoz-yontem li{margin:4px 0}
+</style>
+<style id="girisCss">
+#chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
+a.choice{color:inherit;text-decoration:none}
+.land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
+.land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
+#footTop[hidden],#footFin[hidden],.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
 </style>
 </head>
 <body><div style="position:sticky;top:0;z-index:9999;background:#7a4b00;color:#fff;padding:8px 16px;font:500 14px/1.4 Roboto,system-ui,sans-serif;text-align:center">ÖNİZLEME — Eylül 2026 dönemi KAP ön verisidir: 7 bankanın 14 raporu, banka PDF'lerinden okundu; TBB bu dönemi henüz yayımlamadı. Öteki bankalar ve raporda bulunamayan kalemler bu dönem için boştur; sektör ve grup toplamları Eylül 2026 için yalnız bu bankaları kapsar. <a href="../" style="color:#ffd58a">Ana rapor</a></div>
@@ -478,7 +478,7 @@ a.choice{color:inherit;text-decoration:none}
         <span class="ch-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
         <span class="ch-t">BDDK verileri</span>
         <span class="ch-d">BDDK aylık ve haftalık bültenleri: sektör ve banka grupları için bilanço, krediler, mevduat, menkul kıymetler, sermaye yeterliliği ve rasyolar.</span>
-        <span class="chips"><span class="chip">Aylık · Ocak 2018 – Eylül 2026</span><span class="chip">Haftalık · 3 Ocak 2014 – 13 Kasım 2026</span><span class="chip">10 banka grubu</span></span>
+        <span class="chips"><span class="chip">Aylık · Ocak 2018 – Eylül 2026</span><span class="chip">Haftalık · 3 Ocak 2014 – 6 Kasım 2026</span><span class="chip">10 banka grubu</span></span>
         <span class="ch-go">BDDK verilerini aç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
       </a>
     </div>
@@ -513,7 +513,7 @@ a.choice{color:inherit;text-decoration:none}
         <span class="ch-go">Bankayı seç <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg></span>
       </button>
     </div>
-    <p class="land-foot">Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir.<br>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> (LinkedIn)</p>
+    <p class="land-foot"><!--GIRIS--><span id="footTop">Kaynaklar: banka finansal tabloları ve dipnotları <b>TBB Veri Sistemi</b>; TBB'nin henüz yayımlamadığı dönemin ön verisi, serbest karşılık ve TÜFE varsayımları bankaların <b>KAP</b> finansal raporları; makro, kur, faiz ve rezerv verileri <b>TCMB EVDS</b>; sektör ve banka grubu verileri <b>BDDK</b> aylık ve haftalık bültenleri. Tutarlar kaynağın yayımladığı hâliyle, nominaldir; kaynaklar birbirine karıştırılmaz.</span><!--/GIRIS--><!--GIRIS--><span id="footFin" hidden>Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB'nin yayımladığı hâliyle, nominaldir; TBB'nin henüz yayımlamadığı dönem önizlemede bankaların KAP raporlarından gelir.</span><!--/GIRIS--><br>Hazırlayan: <a href="https://www.linkedin.com/in/resulkonur/" target="_blank" rel="noopener" style="color:var(--m-primary);font-weight:500">Resul Konur</a> (LinkedIn)</p>
   </div>
 </div>
 
@@ -2321,7 +2321,8 @@ return ()=>CLEAN.forEach(f=>{ try{f()}catch(e){} });
   try{ const d=DATA.solo, k=DATA.kons;
     g("chipsFin").innerHTML=[`${d.A.names.length} banka`,`${d.periods.length} çeyrek`,"Solo ve konsolide","Dipnotlar"].map(x=>`<span class="chip">${x}</span>`).join("");
   }catch(e){}
-  function adim(f){ if(kick) kick.textContent=f?kickFin:"TBB · TCMB · BDDK · Türk bankacılık sistemi verileri"; top.hidden=f; fin.hidden=!f; back.hidden=!f; sT.hidden=f; sF.hidden=!f;
+  const fT=g("footTop"), fF=g("footFin");
+  function adim(f){ if(fT) fT.hidden=f; if(fF) fF.hidden=!f; if(kick) kick.textContent=f?kickFin:"TBB · TCMB · BDDK · Türk bankacılık sistemi verileri"; top.hidden=f; fin.hidden=!f; back.hidden=!f; sT.hidden=f; sF.hidden=!f;
     if(q) q.textContent=f?"Hangi görünümle başlayalım?":"Hangi veriye bakalım?";
     try{ history.replaceState(null,"",f?"#finansal":location.pathname+location.search); }catch(e){} window.scrollTo(0,0); }
   g("chFinBtn").onclick=()=>adim(true); back.onclick=()=>adim(false);

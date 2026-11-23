@@ -53,13 +53,21 @@ def kartlar(makro_ozet: str, bddk: tuple | None = None) -> str:
 <!--/GIRIS-->"""
 
 
+FOOT_UST = ('<!--GIRIS--><span id="footTop">Kaynaklar: banka finansal tabloları ve dipnotları <b>TBB Veri Sistemi</b>; '
+            'TBB\'nin henüz yayımlamadığı dönemin ön verisi, serbest karşılık ve TÜFE varsayımları bankaların <b>KAP</b> finansal raporları; '
+            'makro, kur, faiz ve rezerv verileri <b>TCMB EVDS</b>; sektör ve banka grubu verileri <b>BDDK</b> aylık ve haftalık bültenleri. '
+            'Tutarlar kaynağın yayımladığı hâliyle, nominaldir; kaynaklar birbirine karıştırılmaz.</span><!--/GIRIS-->')
+FOOT_FIN = ('<!--GIRIS--><span id="footFin" hidden>Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an '
+            'değiştirebilirsiniz. Tutarlar TBB\'nin yayımladığı hâliyle, nominaldir; TBB\'nin henüz yayımlamadığı dönem '
+            'önizlemede bankaların KAP raporlarından gelir.</span><!--/GIRIS-->')
+
 CSS = """<style id="girisCss">
 #chTop{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:900px){#chTop{grid-template-columns:minmax(0,1fr)}}
 a.choice{color:inherit;text-decoration:none}
 .land-back{all:unset;margin-bottom:-16px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--m-primary);padding:6px 10px 6px 4px;border-radius:20px;align-self:flex-start}
 .land-back:hover{background:var(--m-scl)} .land-back svg{width:18px;height:18px;fill:currentColor}
-.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
+#footTop[hidden],#footFin[hidden],.land-back[hidden],#chTop[hidden],#chFin[hidden],#subTop[hidden],#subFin[hidden]{display:none}
 </style>"""
 
 JS = """<script id="girisJs">
@@ -70,7 +78,8 @@ JS = """<script id="girisJs">
   try{ const d=DATA.solo, k=DATA.kons;
     g("chipsFin").innerHTML=[`${d.A.names.length} banka`,`${d.periods.length} çeyrek`,"Solo ve konsolide","Dipnotlar"].map(x=>`<span class="chip">${x}</span>`).join("");
   }catch(e){}
-  function adim(f){ if(kick) kick.textContent=f?kickFin:"TBB · TCMB · BDDK · Türk bankacılık sistemi verileri"; top.hidden=f; fin.hidden=!f; back.hidden=!f; sT.hidden=f; sF.hidden=!f;
+  const fT=g("footTop"), fF=g("footFin");
+  function adim(f){ if(fT) fT.hidden=f; if(fF) fF.hidden=!f; if(kick) kick.textContent=f?kickFin:"TBB · TCMB · BDDK · Türk bankacılık sistemi verileri"; top.hidden=f; fin.hidden=!f; back.hidden=!f; sT.hidden=f; sF.hidden=!f;
     if(q) q.textContent=f?"Hangi görünümle başlayalım?":"Hangi veriye bakalım?";
     try{ history.replaceState(null,"",f?"#finansal":location.pathname+location.search); }catch(e){} window.scrollTo(0,0); }
   g("chFinBtn").onclick=()=>adim(true); back.onclick=()=>adim(false);
@@ -100,13 +109,13 @@ def bddk_ozeti(site: Path):
         return None
     def kapsam(ad):
         try:
-            h = (k / ad).read_text(encoding="utf-8")
+            h = (k / ad).read_text(encoding="utf-8") if (k / ad).exists() else ""
             m = re.search(r'<span class="land-kicker">[^<]*?·\s*([^<]+)</span>', h)
             return m.group(1).strip() if m else None
         except Exception:                                               # noqa: BLE001
             return None
     cips = []
-    a, w = kapsam("index.html"), kapsam("haftalik.html")
+    a, w = kapsam("aylik.html") or kapsam("index.html"), kapsam("haftalik.html")
     if a: cips.append(f"Aylık · {a}")
     if w: cips.append(f"Haftalık · {w}")
     cips.append("10 banka grubu")
@@ -117,6 +126,9 @@ def uygula(site: Path):
     yol = Path(site) / "index.html"
     h = yol.read_text(encoding="utf-8")
     # önceki yamayı temizle
+    h = re.sub(r'<!--GIRIS--><span id="footTop">.*?<!--/GIRIS--><!--GIRIS--><span id="footFin" hidden>.*?<!--/GIRIS-->',
+               "Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir.",
+               h, flags=re.S)
     h = re.sub(r"\s*<!--GIRIS-->.*?<!--/GIRIS-->", "", h, flags=re.S)
     h = re.sub(r'<style id="girisCss">.*?</style>\s*', "", h, flags=re.S)
     h = re.sub(r'<script id="girisJs">.*?</script>\s*', "", h, flags=re.S)
@@ -133,6 +145,9 @@ def uygula(site: Path):
                         '\n    <p class="land-sub" id="subFin" hidden>', 1)
     land = land.replace('<p class="land-q">', '<!--GIRIS--><button type="button" class="land-back" id="landBack" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>Veri kaynakları</button><!--/GIRIS-->\n    <p class="land-q" id="landQ">', 1)
     land = land.replace('<div class="choices">', kartlar(makro_ozeti(Path(site)), bddk_ozeti(Path(site))) + '\n    <div class="choices" id="chFin" hidden>', 1)
+    eski_not = "Solo ya da konsolide seçimini her sayfanın üst çubuğundan istediğiniz an değiştirebilirsiniz. Tutarlar TBB’nin yayımladığı haliyle, nominaldir."
+    if eski_not in land:
+        land = land.replace(eski_not, FOOT_UST + FOOT_FIN, 1)
     h = h[:i] + land + h[j:]
     # landing'deki tıklama işleyicisi yalnız rapor kartlarına bağlansın (yeni kartlar bağlantı / adım düğmesi)
     eski = 'document.querySelectorAll(".choice").forEach(b=>b.onclick='
