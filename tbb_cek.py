@@ -38,6 +38,17 @@ except ImportError:
     sys.exit("Playwright kurulu değil:  pip install playwright  &&  playwright install chromium")
 
 URL = "https://verisistemi.tbb.org.tr/index.php?/tbb/report_mali"
+def tarayici_ac(p, **kw):
+    """Önce Playwright'ın Chromium'u; kurulamadıysa (ör. iş bilgisayarı) yüklü Edge ya da Chrome."""
+    hatalar = []
+    for kanal in (None, "msedge", "chrome"):
+        try:
+            return p.chromium.launch(channel=kanal, **kw) if kanal else p.chromium.launch(**kw)
+        except Exception as e:                              # noqa: BLE001
+            hatalar.append(f"{kanal or 'chromium'}: {str(e).splitlines()[0][:120]}")
+    raise RuntimeError("Tarayıcı açılamadı (" + "; ".join(hatalar) + ")")
+
+
 HERE = Path(__file__).resolve().parent
 
 # Tablo kök kodları: alt kalemleriyle seçilenler ve yalnız kendisi seçilen likidite kalemleri
@@ -88,7 +99,7 @@ def main():
     js = (HERE / "tbb_yardimci.js").read_text(encoding="utf-8")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=not args.gorunur)
+        browser = tarayici_ac(p, headless=not args.gorunur)
 
         def sayfa_ac(eski=None):
             """TBB sayfasını (yeniden) açar. Uzun çekimde sekme belleği dolup çökebildiği için

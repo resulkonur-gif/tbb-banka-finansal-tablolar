@@ -103,3 +103,14 @@ TCMB VERİLERİ (tcmb_veri.py + tcmb_sayfa.py)
   Elle: python tcmb_veri.py --arsiv D:\BankaVeri\5_makro\tcmb --anahtar ANAHTAR
         python tcmb_sayfa.py --site docs\onizleme --arsiv D:\BankaVeri\5_makro\tcmb
 ```
+
+## Tek dosya: `banka_veri.py` (git ve depo kopyası gerekmez)
+
+Depo kökündeki `banka_veri.py` bütün hattı (TBB çekici, rapor şablonu, veri hattı modülleri,
+TCMB arşivi) içinde taşır. Yalnız Python 3.10+ gerekir; eksik paketleri kullanıcı hesabına kurar,
+Chromium indirilemezse yüklü Edge/Chrome'u kullanır.
+
+    python banka_veri.py                       # Belgeler\BankaVeri altına
+    python banka_veri.py --klasor D:\BankaVeri --evds-anahtar ANAHTAR
+
+Kod değiştiğinde yeniden üretmek için: `python veri_hatti/tek_dosya_uret.py`.

@@ -26,6 +26,17 @@ import sys
 from pathlib import Path
 from urllib.parse import urljoin
 
+def tarayici_ac(p, **kw):
+    """Önce Playwright'ın Chromium'u; kurulamadıysa (ör. iş bilgisayarı) yüklü Edge ya da Chrome."""
+    hatalar = []
+    for kanal in (None, "msedge", "chrome"):
+        try:
+            return p.chromium.launch(channel=kanal, **kw) if kanal else p.chromium.launch(**kw)
+        except Exception as e:                              # noqa: BLE001
+            hatalar.append(f"{kanal or 'chromium'}: {str(e).splitlines()[0][:120]}")
+    raise RuntimeError("Tarayıcı açılamadı (" + "; ".join(hatalar) + ")")
+
+
 BURADA = Path(__file__).resolve().parent
 sys.path.insert(0, str(BURADA))
 PDF_BASLANGIC = "2025-12"
@@ -124,7 +135,7 @@ class Getirici:
         except Exception:                                   # noqa: BLE001
             return ""
         with sync_playwright() as p:
-            b = p.chromium.launch()
+            b = tarayici_ac(p)
             sf = b.new_page(user_agent=UA["User-Agent"])
             sf.goto(url, wait_until="networkidle", timeout=60000)
             h = sf.content()
