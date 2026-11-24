@@ -105,17 +105,47 @@ def paketleri_hazirla(log, kurma: bool) -> bool:
     return True
 
 
+TARAYICI_DENE = """
+import sys
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    for kanal in sys.argv[1:]:
+        try:
+            b = p.chromium.launch(channel=kanal) if kanal != "chromium" else p.chromium.launch()
+            b.close(); print(kanal); break
+        except Exception:
+            pass
+"""
+
+
+def tarayici_bul(adaylar) -> str:
+    try:
+        r = subprocess.run([sys.executable, "-c", TARAYICI_DENE, *adaylar], capture_output=True, text=True, timeout=120)
+        return (r.stdout or "").strip().splitlines()[-1] if r.stdout.strip() else ""
+    except Exception:                                   # noqa: BLE001
+        return ""
+
+
 def chromium_hazirla(klasor: Path, log, kurma: bool):
-    isaret = klasor / "_program" / ".chromium_tamam"
-    if isaret.exists() or kurma:
+    isaret = klasor / "_program" / ".tarayici"
+    if isaret.exists():
         return
-    log("Playwright tarayıcısı (Chromium) kuruluyor… (bir kez, ~150 MB)")
-    r = subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"])
-    if r.returncode == 0:
+    bulunan = tarayici_bul(["chromium", "msedge", "chrome"])
+    if not bulunan and not kurma:
+        log("Bilgisayarda kullanılabilir tarayıcı bulunamadı; Playwright Chromium'u indiriliyor… (~150 MB)")
+        r = subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], capture_output=True, text=True)
+        if r.returncode == 0:
+            bulunan = "chromium"
+        else:
+            satir = next((x for x in (r.stderr or r.stdout or "").splitlines() if x.strip()), "")
+            log(f"  Chromium indirilemedi ({satir.strip()[:100]}).")
+    if bulunan:
+        log(f"Tarayıcı: {dict(chromium='Playwright Chromium', msedge='Microsoft Edge', chrome='Google Chrome')[bulunan]}")
         isaret.parent.mkdir(parents=True, exist_ok=True)
-        isaret.write_text("ok", encoding="utf-8")
+        isaret.write_text(bulunan, encoding="utf-8")
     else:
-        log("  Chromium indirilemedi; bilgisayardaki Microsoft Edge ya da Google Chrome kullanılacak.")
+        log("! Tarayıcı açılamadı: TBB ve yatırımcı sunumu adımları çalışmayabilir (KAP, TCMB, BDDK etkilenmez).")
+        log("  Microsoft Edge ya da Google Chrome kurulu olmalı.")
 
 
 def programi_ac(klasor: Path, log) -> Path:
