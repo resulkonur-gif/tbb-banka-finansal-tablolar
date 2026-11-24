@@ -38,12 +38,19 @@ except ImportError:
     sys.exit("Playwright kurulu değil:  pip install playwright  &&  playwright install chromium")
 
 URL = "https://verisistemi.tbb.org.tr/index.php?/tbb/report_mali"
-def tarayici_ac(p, **kw):
-    """Playwright'ın Chromium'u; yoksa yüklü Edge ya da Chrome. Her aday bir sekme açılarak sınanır.
-    Şirket politikası olan Edge'de normal açılış sekme açamayabilir; o zaman ayrı (boş) profille açılır."""
+ADAYLAR = [("chromium", False, False), ("msedge", False, False), ("msedge", True, False), ("chrome", False, False),
+           ("chrome", True, False), ("msedge", True, True), ("chrome", True, True)]
+ADAY_AD = {"chromium": "Playwright Chromium", "msedge": "Microsoft Edge", "chrome": "Google Chrome"}
+
+
+def aday_adi(kanal, kalici, gorunur):
+    return ADAY_AD[kanal] + (" (ayrı profil)" if kalici else "") + (" (görünür pencere)" if gorunur else "")
+
+
+def tek_aday(p, kanal, kalici, gorunur, **kw):
+    """Bir tarayıcı seçeneğini açar ve bir sekme açarak sınar; Browser gibi kullanılabilen nesne döndürür."""
     import tempfile
     ek = ["--no-first-run", "--no-default-browser-check", "--disable-extensions", "--disable-features=msEdgeStartupBoost"]
-    hatalar = []
 
     class _Kalici:                                          # launch_persistent_context'i Browser gibi kullanmak için
         def __init__(self, ctx):
@@ -53,28 +60,43 @@ def tarayici_ac(p, **kw):
         def close(self):
             self._ctx.close()
 
-    adaylar = [(None, False), ("msedge", False), ("msedge", True), ("chrome", False), ("chrome", True)]
-    for kanal, kalici in adaylar:
-        b = None
+    ayar = dict(kw, args=ek, timeout=60000, **({"channel": kanal} if kanal != "chromium" else {}))
+    if gorunur:
+        ayar["headless"] = False
+    b = None
+    try:
+        if kalici:
+            ctx = p.chromium.launch_persistent_context(tempfile.mkdtemp(prefix="bv_tarayici_"), **ayar)
+            b = _Kalici(ctx)
+        else:
+            b = p.chromium.launch(**ayar)
+        b.new_page().close()
+        return b
+    except Exception:
         try:
-            ayar = dict(kw, args=ek, **({"channel": kanal} if kanal else {}))
-            if kalici:
-                ctx = p.chromium.launch_persistent_context(tempfile.mkdtemp(prefix="bv_tarayici_"), **ayar)
-                for s in list(ctx.pages):
-                    s.close()
-                b = _Kalici(ctx)
-            else:
-                b = p.chromium.launch(**ayar)
-            s = b.new_page()
-            s.close()
-            return b
+            if b:
+                b.close()
+        except Exception:                                   # noqa: BLE001
+            pass
+        raise
+
+
+def tarayici_ac(p, **kw):
+    """BV_TARAYICI (ör. "msedge|1|0") verilmişse önce o seçenek; yoksa sırayla bütün adaylar."""
+    import os
+    adaylar = list(ADAYLAR)
+    secili = os.environ.get("BV_TARAYICI", "")
+    if secili:
+        k, a, g = secili.split("|")
+        adaylar.insert(0, (k, a == "1", g == "1"))
+    hatalar = []
+    for kanal, kalici, gorunur in adaylar:
+        try:
+            return tek_aday(p, kanal, kalici, gorunur, **kw)
         except Exception as e:                              # noqa: BLE001
-            hatalar.append(f"{kanal or 'chromium'}{' (ayrı profil)' if kalici else ''}: {str(e).splitlines()[0][:100]}")
-            try:
-                if b:
-                    b.close()
-            except Exception:                               # noqa: BLE001
-                pass
+            hatalar.append(f"{aday_adi(kanal, kalici, gorunur)}: {str(e).splitlines()[0][:100]}")
+            if secili:
+                break
     raise RuntimeError("Tarayıcı açılamadı (" + "; ".join(hatalar) + ")")
 
 

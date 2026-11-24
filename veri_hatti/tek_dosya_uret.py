@@ -105,48 +105,65 @@ def paketleri_hazirla(log, kurma: bool) -> bool:
     return True
 
 
-def tarayici_bul(program: Path) -> str:
-    """tbb_cek.tarayici_ac ile gerçekten sekme açılabiliyor mu; açılabilen adayın adını döndürür."""
+def aday_sina(program: Path, aday) -> tuple[bool, str]:
+    """Tek bir tarayıcı seçeneğini ayrı süreçte, 45 sn sınırla dener (Playwright sekme açarken süresiz bekleyebiliyor)."""
     kod = ("import sys; sys.path.insert(0, sys.argv[1])\n"
            "from playwright.sync_api import sync_playwright\n"
            "import tbb_cek\n"
+           "k, a, g = sys.argv[2], sys.argv[3] == '1', sys.argv[4] == '1'\n"
            "with sync_playwright() as p:\n"
-           "    b = tbb_cek.tarayici_ac(p, headless=True); b.close(); print('tamam')\n")
+           "    b = tbb_cek.tek_aday(p, k, a, g, headless=True); b.close(); print('tamam')\n")
+    k, a, g = aday
     try:
-        r = subprocess.run([sys.executable, "-c", kod, str(program)], capture_output=True, text=True, timeout=240)
-    except Exception as e:                              # noqa: BLE001
-        return "", str(e)
+        r = subprocess.run([sys.executable, "-c", kod, str(program), k, "1" if a else "0", "1" if g else "0"],
+                           capture_output=True, text=True, timeout=45)
+    except subprocess.TimeoutExpired:
+        return False, "45 sn içinde yanıt vermedi"
     if "tamam" in (r.stdout or ""):
-        return "tamam", ""
-    hata = [x for x in (r.stderr or "").splitlines() if "Tarayıcı açılamadı" in x or "Error" in x]
-    return "", (hata[-1] if hata else (r.stderr or "").strip()[-300:])
+        return True, ""
+    satirlar = [x.strip() for x in (r.stderr or "").splitlines() if x.strip()]
+    hata = next((x for x in reversed(satirlar) if "Error" in x or "rror:" in x), satirlar[-1] if satirlar else "")
+    return False, hata[:160]
 
 
-def chromium_hazirla(klasor: Path, program: Path, log, kurma: bool):
+def tarayici_sec(program: Path, log) -> str:
+    sys.path.insert(0, str(program))
+    import tbb_cek
+    for aday in tbb_cek.ADAYLAR:
+        ad = tbb_cek.aday_adi(*aday)
+        print(f"  {ad} … ", end="", flush=True)
+        tamam, hata = aday_sina(program, aday)
+        print("tamam" if tamam else f"olmadı ({hata})", flush=True)
+        if tamam:
+            return "|".join([aday[0], "1" if aday[1] else "0", "1" if aday[2] else "0"])
+    return ""
+
+
+def chromium_hazirla(klasor: Path, program: Path, log, kurma: bool) -> str:
     isaret = klasor / "_program" / ".tarayici"
-    if isaret.exists() and isaret.read_text(encoding="utf-8") == SURUM:
-        return
-    log("Tarayıcı sınanıyor…")
-    tamam, hata = tarayici_bul(program)
-    if not tamam and not kurma:
-        log("  Açılamadı; Playwright güncelleniyor ve yeniden deneniyor…")
+    if isaret.exists():
+        icerik = isaret.read_text(encoding="utf-8").split("\n")
+        if len(icerik) == 2 and icerik[0] == SURUM and icerik[1]:
+            return icerik[1]
+    log("Tarayıcı sınanıyor (her seçenek en çok 45 sn):")
+    secim = tarayici_sec(program, log)
+    if not secim and not kurma:
+        log("  Hiçbiri olmadı; Playwright güncelleniyor ve yeniden deneniyor…")
         pip_kur(["-q", "--upgrade", "playwright"], lambda m: None)
-        tamam, hata = tarayici_bul(program)
-    if not tamam and not kurma:
+        secim = tarayici_sec(program, log)
+    if not secim and not kurma:
         log("  Playwright Chromium indiriliyor… (~150 MB)")
         r = subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], capture_output=True, text=True)
         if r.returncode == 0:
-            tamam, hata = tarayici_bul(program)
+            secim = tarayici_sec(program, log)
         else:
             log("  Chromium indirilemedi (şirket ağı engelliyor olabilir).")
-    if tamam:
-        log("  Tarayıcı hazır.")
+    if secim:
         isaret.parent.mkdir(parents=True, exist_ok=True)
-        isaret.write_text(SURUM, encoding="utf-8")
+        isaret.write_text(SURUM + "\n" + secim, encoding="utf-8")
     else:
         log("! Tarayıcı açılamadı; TBB ve yatırımcı sunumu adımları atlanacak (KAP, TCMB, BDDK çalışır).")
-        log("  Ayrıntı: " + hata[:400])
-    return bool(tamam)
+    return secim
 
 
 def programi_ac(klasor: Path, log) -> Path:
@@ -219,13 +236,16 @@ def main():
     if not paketleri_hazirla(yaz, a.kurma):
         sys.exit(1)
     program = programi_ac(klasor, yaz)
-    tarayici_var = chromium_hazirla(klasor, program, yaz, a.kurma) is not False
+    secim = chromium_hazirla(klasor, program, yaz, a.kurma)
+    tarayici_var = bool(secim)
     anahtar = evds_anahtari(a, klasor, yaz)
 
     env = dict(os.environ, PYTHONPATH=str(program) + os.pathsep + os.environ.get("PYTHONPATH", ""),
                PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
     if anahtar:
         env["EVDS_API_KEY"] = anahtar
+    if secim:
+        env["BV_TARAYICI"] = secim
     komut = [sys.executable, str(program / "veri_hatti" / "veri_hatti.py"), "--kok", str(klasor), "--depo", str(program)]
     if not tarayici_var:
         a.tbb_atla = a.sunum_atla = True
