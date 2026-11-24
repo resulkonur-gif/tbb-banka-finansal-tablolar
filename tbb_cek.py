@@ -39,13 +39,42 @@ except ImportError:
 
 URL = "https://verisistemi.tbb.org.tr/index.php?/tbb/report_mali"
 def tarayici_ac(p, **kw):
-    """Önce Playwright'ın Chromium'u; kurulamadıysa (ör. iş bilgisayarı) yüklü Edge ya da Chrome."""
+    """Playwright'ın Chromium'u; yoksa yüklü Edge ya da Chrome. Her aday bir sekme açılarak sınanır.
+    Şirket politikası olan Edge'de normal açılış sekme açamayabilir; o zaman ayrı (boş) profille açılır."""
+    import tempfile
+    ek = ["--no-first-run", "--no-default-browser-check", "--disable-extensions", "--disable-features=msEdgeStartupBoost"]
     hatalar = []
-    for kanal in (None, "msedge", "chrome"):
+
+    class _Kalici:                                          # launch_persistent_context'i Browser gibi kullanmak için
+        def __init__(self, ctx):
+            self._ctx = ctx
+        def new_page(self, **_):
+            return self._ctx.new_page()
+        def close(self):
+            self._ctx.close()
+
+    adaylar = [(None, False), ("msedge", False), ("msedge", True), ("chrome", False), ("chrome", True)]
+    for kanal, kalici in adaylar:
+        b = None
         try:
-            return p.chromium.launch(channel=kanal, **kw) if kanal else p.chromium.launch(**kw)
+            ayar = dict(kw, args=ek, **({"channel": kanal} if kanal else {}))
+            if kalici:
+                ctx = p.chromium.launch_persistent_context(tempfile.mkdtemp(prefix="bv_tarayici_"), **ayar)
+                for s in list(ctx.pages):
+                    s.close()
+                b = _Kalici(ctx)
+            else:
+                b = p.chromium.launch(**ayar)
+            s = b.new_page()
+            s.close()
+            return b
         except Exception as e:                              # noqa: BLE001
-            hatalar.append(f"{kanal or 'chromium'}: {str(e).splitlines()[0][:120]}")
+            hatalar.append(f"{kanal or 'chromium'}{' (ayrı profil)' if kalici else ''}: {str(e).splitlines()[0][:100]}")
+            try:
+                if b:
+                    b.close()
+            except Exception:                               # noqa: BLE001
+                pass
     raise RuntimeError("Tarayıcı açılamadı (" + "; ".join(hatalar) + ")")
 
 

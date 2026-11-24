@@ -105,47 +105,48 @@ def paketleri_hazirla(log, kurma: bool) -> bool:
     return True
 
 
-TARAYICI_DENE = """
-import sys
-from playwright.sync_api import sync_playwright
-with sync_playwright() as p:
-    for kanal in sys.argv[1:]:
-        try:
-            b = p.chromium.launch(channel=kanal) if kanal != "chromium" else p.chromium.launch()
-            b.close(); print(kanal); break
-        except Exception:
-            pass
-"""
-
-
-def tarayici_bul(adaylar) -> str:
+def tarayici_bul(program: Path) -> str:
+    """tbb_cek.tarayici_ac ile gerçekten sekme açılabiliyor mu; açılabilen adayın adını döndürür."""
+    kod = ("import sys; sys.path.insert(0, sys.argv[1])\n"
+           "from playwright.sync_api import sync_playwright\n"
+           "import tbb_cek\n"
+           "with sync_playwright() as p:\n"
+           "    b = tbb_cek.tarayici_ac(p, headless=True); b.close(); print('tamam')\n")
     try:
-        r = subprocess.run([sys.executable, "-c", TARAYICI_DENE, *adaylar], capture_output=True, text=True, timeout=120)
-        return (r.stdout or "").strip().splitlines()[-1] if r.stdout.strip() else ""
-    except Exception:                                   # noqa: BLE001
-        return ""
+        r = subprocess.run([sys.executable, "-c", kod, str(program)], capture_output=True, text=True, timeout=240)
+    except Exception as e:                              # noqa: BLE001
+        return "", str(e)
+    if "tamam" in (r.stdout or ""):
+        return "tamam", ""
+    hata = [x for x in (r.stderr or "").splitlines() if "Tarayıcı açılamadı" in x or "Error" in x]
+    return "", (hata[-1] if hata else (r.stderr or "").strip()[-300:])
 
 
-def chromium_hazirla(klasor: Path, log, kurma: bool):
+def chromium_hazirla(klasor: Path, program: Path, log, kurma: bool):
     isaret = klasor / "_program" / ".tarayici"
-    if isaret.exists():
+    if isaret.exists() and isaret.read_text(encoding="utf-8") == SURUM:
         return
-    bulunan = tarayici_bul(["chromium", "msedge", "chrome"])
-    if not bulunan and not kurma:
-        log("Bilgisayarda kullanılabilir tarayıcı bulunamadı; Playwright Chromium'u indiriliyor… (~150 MB)")
+    log("Tarayıcı sınanıyor…")
+    tamam, hata = tarayici_bul(program)
+    if not tamam and not kurma:
+        log("  Açılamadı; Playwright güncelleniyor ve yeniden deneniyor…")
+        pip_kur(["-q", "--upgrade", "playwright"], lambda m: None)
+        tamam, hata = tarayici_bul(program)
+    if not tamam and not kurma:
+        log("  Playwright Chromium indiriliyor… (~150 MB)")
         r = subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], capture_output=True, text=True)
         if r.returncode == 0:
-            bulunan = "chromium"
+            tamam, hata = tarayici_bul(program)
         else:
-            satir = next((x for x in (r.stderr or r.stdout or "").splitlines() if x.strip()), "")
-            log(f"  Chromium indirilemedi ({satir.strip()[:100]}).")
-    if bulunan:
-        log(f"Tarayıcı: {dict(chromium='Playwright Chromium', msedge='Microsoft Edge', chrome='Google Chrome')[bulunan]}")
+            log("  Chromium indirilemedi (şirket ağı engelliyor olabilir).")
+    if tamam:
+        log("  Tarayıcı hazır.")
         isaret.parent.mkdir(parents=True, exist_ok=True)
-        isaret.write_text(bulunan, encoding="utf-8")
+        isaret.write_text(SURUM, encoding="utf-8")
     else:
-        log("! Tarayıcı açılamadı: TBB ve yatırımcı sunumu adımları çalışmayabilir (KAP, TCMB, BDDK etkilenmez).")
-        log("  Microsoft Edge ya da Google Chrome kurulu olmalı.")
+        log("! Tarayıcı açılamadı; TBB ve yatırımcı sunumu adımları atlanacak (KAP, TCMB, BDDK çalışır).")
+        log("  Ayrıntı: " + hata[:400])
+    return bool(tamam)
 
 
 def programi_ac(klasor: Path, log) -> Path:
@@ -218,7 +219,7 @@ def main():
     if not paketleri_hazirla(yaz, a.kurma):
         sys.exit(1)
     program = programi_ac(klasor, yaz)
-    chromium_hazirla(klasor, yaz, a.kurma)
+    tarayici_var = chromium_hazirla(klasor, program, yaz, a.kurma) is not False
     anahtar = evds_anahtari(a, klasor, yaz)
 
     env = dict(os.environ, PYTHONPATH=str(program) + os.pathsep + os.environ.get("PYTHONPATH", ""),
@@ -226,6 +227,8 @@ def main():
     if anahtar:
         env["EVDS_API_KEY"] = anahtar
     komut = [sys.executable, str(program / "veri_hatti" / "veri_hatti.py"), "--kok", str(klasor), "--depo", str(program)]
+    if not tarayici_var:
+        a.tbb_atla = a.sunum_atla = True
     for bayrak in ("tbb_atla", "kap_atla", "sunum_atla", "ek_veri_yeniden", "bastan"):
         if getattr(a, bayrak):
             komut.append("--" + bayrak.replace("_", "-"))
